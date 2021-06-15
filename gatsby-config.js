@@ -27,6 +27,20 @@ module.exports = {
       },
     },
     `gatsby-plugin-typescript`,
-    `gatsby-plugin-typegen`
+    `gatsby-plugin-typegen`,
+
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `markdowns`,
+        path: `${__dirname}/src/markdowns`
+      }
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        footnotes: false,
+      }
+    },
   ],
 }
