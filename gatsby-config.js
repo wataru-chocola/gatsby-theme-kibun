@@ -27,8 +27,14 @@ module.exports = {
       },
     },
     `gatsby-plugin-typescript`,
-    `gatsby-plugin-typegen`,
-
+    {
+      resolve: `gatsby-plugin-typegen`,
+      options: {
+        emitSchema: {
+          'src/__generated__/gatsby-schema.graphql': true,
+        },
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
