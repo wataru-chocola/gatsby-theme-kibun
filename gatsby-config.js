@@ -1,6 +1,8 @@
 module.exports = {
   siteMetadata: {
     title: `My Testsite`,
+    description: `My testsite here`,
+    siteUrl: `https://mytest.exmaple.com/`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
