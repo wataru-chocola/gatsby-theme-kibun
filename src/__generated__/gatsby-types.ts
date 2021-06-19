@@ -263,6 +263,8 @@ type Site = Node & {
   readonly siteMetadata: Maybe<SiteSiteMetadata>;
   readonly port: Maybe<Scalars['Int']>;
   readonly host: Maybe<Scalars['String']>;
+  readonly polyfill: Maybe<Scalars['Boolean']>;
+  readonly pathPrefix: Maybe<Scalars['String']>;
   readonly id: Scalars['ID'];
   readonly parent: Maybe<Node>;
   readonly children: ReadonlyArray<Node>;
@@ -280,6 +282,7 @@ type Site_buildTimeArgs = {
 type SiteSiteMetadata = {
   readonly title: Maybe<Scalars['String']>;
   readonly description: Maybe<Scalars['String']>;
+  readonly siteUrl: Maybe<Scalars['String']>;
 };
 
 type SiteFunction = Node & {
@@ -695,6 +698,9 @@ type SitePluginPluginOptions = {
   readonly footnotes: Maybe<Scalars['Boolean']>;
   readonly offsetY: Maybe<Scalars['Int']>;
   readonly className: Maybe<Scalars['String']>;
+  readonly maintainCase: Maybe<Scalars['Boolean']>;
+  readonly removeAccents: Maybe<Scalars['Boolean']>;
+  readonly isIconAfterHeader: Maybe<Scalars['Boolean']>;
   readonly noInlineHighlight: Maybe<Scalars['Boolean']>;
   readonly staticFolderName: Maybe<Scalars['String']>;
   readonly maxWidth: Maybe<Scalars['Int']>;
@@ -727,7 +733,11 @@ type SitePluginPluginOptionsPlugins = {
 
 type SitePluginPluginOptionsPluginsPluginOptions = {
   readonly offsetY: Maybe<Scalars['Int']>;
+  readonly icon: Maybe<Scalars['String']>;
   readonly className: Maybe<Scalars['String']>;
+  readonly maintainCase: Maybe<Scalars['Boolean']>;
+  readonly removeAccents: Maybe<Scalars['Boolean']>;
+  readonly isIconAfterHeader: Maybe<Scalars['Boolean']>;
   readonly noInlineHighlight: Maybe<Scalars['Boolean']>;
   readonly staticFolderName: Maybe<Scalars['String']>;
   readonly maxWidth: Maybe<Scalars['Int']>;
@@ -922,6 +932,8 @@ type Query_siteArgs = {
   siteMetadata: Maybe<SiteSiteMetadataFilterInput>;
   port: Maybe<IntQueryOperatorInput>;
   host: Maybe<StringQueryOperatorInput>;
+  polyfill: Maybe<BooleanQueryOperatorInput>;
+  pathPrefix: Maybe<StringQueryOperatorInput>;
   id: Maybe<StringQueryOperatorInput>;
   parent: Maybe<NodeFilterInput>;
   children: Maybe<NodeFilterListInput>;
@@ -1979,6 +1991,7 @@ type DirectorySortInput = {
 type SiteSiteMetadataFilterInput = {
   readonly title: Maybe<StringQueryOperatorInput>;
   readonly description: Maybe<StringQueryOperatorInput>;
+  readonly siteUrl: Maybe<StringQueryOperatorInput>;
 };
 
 type SiteConnection = {
@@ -2030,8 +2043,11 @@ type SiteFieldsEnum =
   | 'buildTime'
   | 'siteMetadata.title'
   | 'siteMetadata.description'
+  | 'siteMetadata.siteUrl'
   | 'port'
   | 'host'
+  | 'polyfill'
+  | 'pathPrefix'
   | 'id'
   | 'parent.id'
   | 'parent.parent.id'
@@ -2133,6 +2149,8 @@ type SiteFilterInput = {
   readonly siteMetadata: Maybe<SiteSiteMetadataFilterInput>;
   readonly port: Maybe<IntQueryOperatorInput>;
   readonly host: Maybe<StringQueryOperatorInput>;
+  readonly polyfill: Maybe<BooleanQueryOperatorInput>;
+  readonly pathPrefix: Maybe<StringQueryOperatorInput>;
   readonly id: Maybe<StringQueryOperatorInput>;
   readonly parent: Maybe<NodeFilterInput>;
   readonly children: Maybe<NodeFilterListInput>;
@@ -2354,6 +2372,9 @@ type SitePluginPluginOptionsFilterInput = {
   readonly footnotes: Maybe<BooleanQueryOperatorInput>;
   readonly offsetY: Maybe<IntQueryOperatorInput>;
   readonly className: Maybe<StringQueryOperatorInput>;
+  readonly maintainCase: Maybe<BooleanQueryOperatorInput>;
+  readonly removeAccents: Maybe<BooleanQueryOperatorInput>;
+  readonly isIconAfterHeader: Maybe<BooleanQueryOperatorInput>;
   readonly noInlineHighlight: Maybe<BooleanQueryOperatorInput>;
   readonly staticFolderName: Maybe<StringQueryOperatorInput>;
   readonly maxWidth: Maybe<IntQueryOperatorInput>;
@@ -2390,7 +2411,11 @@ type SitePluginPluginOptionsPluginsFilterInput = {
 
 type SitePluginPluginOptionsPluginsPluginOptionsFilterInput = {
   readonly offsetY: Maybe<IntQueryOperatorInput>;
+  readonly icon: Maybe<StringQueryOperatorInput>;
   readonly className: Maybe<StringQueryOperatorInput>;
+  readonly maintainCase: Maybe<BooleanQueryOperatorInput>;
+  readonly removeAccents: Maybe<BooleanQueryOperatorInput>;
+  readonly isIconAfterHeader: Maybe<BooleanQueryOperatorInput>;
   readonly noInlineHighlight: Maybe<BooleanQueryOperatorInput>;
   readonly staticFolderName: Maybe<StringQueryOperatorInput>;
   readonly maxWidth: Maybe<IntQueryOperatorInput>;
@@ -2581,6 +2606,9 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.footnotes'
   | 'pluginCreator.pluginOptions.offsetY'
   | 'pluginCreator.pluginOptions.className'
+  | 'pluginCreator.pluginOptions.maintainCase'
+  | 'pluginCreator.pluginOptions.removeAccents'
+  | 'pluginCreator.pluginOptions.isIconAfterHeader'
   | 'pluginCreator.pluginOptions.noInlineHighlight'
   | 'pluginCreator.pluginOptions.staticFolderName'
   | 'pluginCreator.pluginOptions.maxWidth'
@@ -3220,7 +3248,11 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.plugins.name'
   | 'pluginOptions.plugins.version'
   | 'pluginOptions.plugins.pluginOptions.offsetY'
+  | 'pluginOptions.plugins.pluginOptions.icon'
   | 'pluginOptions.plugins.pluginOptions.className'
+  | 'pluginOptions.plugins.pluginOptions.maintainCase'
+  | 'pluginOptions.plugins.pluginOptions.removeAccents'
+  | 'pluginOptions.plugins.pluginOptions.isIconAfterHeader'
   | 'pluginOptions.plugins.pluginOptions.noInlineHighlight'
   | 'pluginOptions.plugins.pluginOptions.staticFolderName'
   | 'pluginOptions.plugins.pluginOptions.maxWidth'
@@ -3264,6 +3296,9 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.footnotes'
   | 'pluginOptions.offsetY'
   | 'pluginOptions.className'
+  | 'pluginOptions.maintainCase'
+  | 'pluginOptions.removeAccents'
+  | 'pluginOptions.isIconAfterHeader'
   | 'pluginOptions.noInlineHighlight'
   | 'pluginOptions.staticFolderName'
   | 'pluginOptions.maxWidth'
@@ -3484,6 +3519,11 @@ type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
 
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 
