@@ -336,6 +336,8 @@ type Site implements Node {
     locale: String
   ): Date
   siteMetadata: SiteSiteMetadata
+  port: Int
+  host: String
   polyfill: Boolean
   pathPrefix: String
   id: ID!
@@ -770,6 +772,9 @@ type SitePluginPluginOptions {
   decoding: String
   disableBgImageOnAlpha: Boolean
   disableBgImage: Boolean
+  stylesProvider: SitePluginPluginOptionsStylesProvider
+  fonts: SitePluginPluginOptionsFonts
+  modules: [String]
   pathCheck: Boolean
 }
 
@@ -811,6 +816,19 @@ type SitePluginPluginOptionsPluginsPluginOptions {
 
 type SitePluginPluginOptionsEmitSchema {
   src___generated___gatsby_schema_graphql: Boolean
+}
+
+type SitePluginPluginOptionsStylesProvider {
+  injectFirst: Boolean
+}
+
+type SitePluginPluginOptionsFonts {
+  google: [SitePluginPluginOptionsFontsGoogle]
+}
+
+type SitePluginPluginOptionsFontsGoogle {
+  family: String
+  variants: [String]
 }
 
 type SitePluginPackageJson {
@@ -865,7 +883,7 @@ type Query {
   allFile(filter: FileFilterInput, sort: FileSortInput, skip: Int, limit: Int): FileConnection!
   directory(sourceInstanceName: StringQueryOperatorInput, absolutePath: StringQueryOperatorInput, relativePath: StringQueryOperatorInput, extension: StringQueryOperatorInput, size: IntQueryOperatorInput, prettySize: StringQueryOperatorInput, modifiedTime: DateQueryOperatorInput, accessTime: DateQueryOperatorInput, changeTime: DateQueryOperatorInput, birthTime: DateQueryOperatorInput, root: StringQueryOperatorInput, dir: StringQueryOperatorInput, base: StringQueryOperatorInput, ext: StringQueryOperatorInput, name: StringQueryOperatorInput, relativeDirectory: StringQueryOperatorInput, dev: IntQueryOperatorInput, mode: IntQueryOperatorInput, nlink: IntQueryOperatorInput, uid: IntQueryOperatorInput, gid: IntQueryOperatorInput, rdev: IntQueryOperatorInput, ino: FloatQueryOperatorInput, atimeMs: FloatQueryOperatorInput, mtimeMs: FloatQueryOperatorInput, ctimeMs: FloatQueryOperatorInput, atime: DateQueryOperatorInput, mtime: DateQueryOperatorInput, ctime: DateQueryOperatorInput, birthtime: DateQueryOperatorInput, birthtimeMs: FloatQueryOperatorInput, blksize: IntQueryOperatorInput, blocks: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Directory
   allDirectory(filter: DirectoryFilterInput, sort: DirectorySortInput, skip: Int, limit: Int): DirectoryConnection!
-  site(buildTime: DateQueryOperatorInput, siteMetadata: SiteSiteMetadataFilterInput, polyfill: BooleanQueryOperatorInput, pathPrefix: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Site
+  site(buildTime: DateQueryOperatorInput, siteMetadata: SiteSiteMetadataFilterInput, port: IntQueryOperatorInput, host: StringQueryOperatorInput, polyfill: BooleanQueryOperatorInput, pathPrefix: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Site
   allSite(filter: SiteFilterInput, sort: SiteSortInput, skip: Int, limit: Int): SiteConnection!
   siteFunction(functionRoute: StringQueryOperatorInput, pluginName: StringQueryOperatorInput, originalAbsoluteFilePath: StringQueryOperatorInput, originalRelativeFilePath: StringQueryOperatorInput, relativeCompiledFilePath: StringQueryOperatorInput, absoluteCompiledFilePath: StringQueryOperatorInput, matchPath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): SiteFunction
   allSiteFunction(filter: SiteFunctionFilterInput, sort: SiteFunctionSortInput, skip: Int, limit: Int): SiteFunctionConnection!
@@ -1760,6 +1778,8 @@ enum SiteFieldsEnum {
   siteMetadata___title
   siteMetadata___description
   siteMetadata___siteUrl
+  port
+  host
   polyfill
   pathPrefix
   id
@@ -1862,6 +1882,8 @@ type SiteGroupConnection {
 input SiteFilterInput {
   buildTime: DateQueryOperatorInput
   siteMetadata: SiteSiteMetadataFilterInput
+  port: IntQueryOperatorInput
+  host: StringQueryOperatorInput
   polyfill: BooleanQueryOperatorInput
   pathPrefix: StringQueryOperatorInput
   id: StringQueryOperatorInput
@@ -2075,6 +2097,9 @@ input SitePluginPluginOptionsFilterInput {
   decoding: StringQueryOperatorInput
   disableBgImageOnAlpha: BooleanQueryOperatorInput
   disableBgImage: BooleanQueryOperatorInput
+  stylesProvider: SitePluginPluginOptionsStylesProviderFilterInput
+  fonts: SitePluginPluginOptionsFontsFilterInput
+  modules: StringQueryOperatorInput
   pathCheck: BooleanQueryOperatorInput
 }
 
@@ -2120,6 +2145,23 @@ input SitePluginPluginOptionsPluginsPluginOptionsFilterInput {
 
 input SitePluginPluginOptionsEmitSchemaFilterInput {
   src___generated___gatsby_schema_graphql: BooleanQueryOperatorInput
+}
+
+input SitePluginPluginOptionsStylesProviderFilterInput {
+  injectFirst: BooleanQueryOperatorInput
+}
+
+input SitePluginPluginOptionsFontsFilterInput {
+  google: SitePluginPluginOptionsFontsGoogleFilterListInput
+}
+
+input SitePluginPluginOptionsFontsGoogleFilterListInput {
+  elemMatch: SitePluginPluginOptionsFontsGoogleFilterInput
+}
+
+input SitePluginPluginOptionsFontsGoogleFilterInput {
+  family: StringQueryOperatorInput
+  variants: StringQueryOperatorInput
 }
 
 input SitePluginPackageJsonFilterInput {
@@ -2359,6 +2401,9 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___decoding
   pluginCreator___pluginOptions___disableBgImageOnAlpha
   pluginCreator___pluginOptions___disableBgImage
+  pluginCreator___pluginOptions___stylesProvider___injectFirst
+  pluginCreator___pluginOptions___fonts___google
+  pluginCreator___pluginOptions___modules
   pluginCreator___pluginOptions___pathCheck
   pluginCreator___nodeAPIs
   pluginCreator___browserAPIs
@@ -2878,6 +2923,11 @@ enum SitePluginFieldsEnum {
   pluginOptions___decoding
   pluginOptions___disableBgImageOnAlpha
   pluginOptions___disableBgImage
+  pluginOptions___stylesProvider___injectFirst
+  pluginOptions___fonts___google
+  pluginOptions___fonts___google___family
+  pluginOptions___fonts___google___variants
+  pluginOptions___modules
   pluginOptions___pathCheck
   nodeAPIs
   browserAPIs

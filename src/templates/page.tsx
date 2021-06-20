@@ -12,6 +12,7 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
+      <h1>{title}</h1>
       <div dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
       <div dangerouslySetInnerHTML={{ __html: pageinfo.html! }} />
     </Layout>
