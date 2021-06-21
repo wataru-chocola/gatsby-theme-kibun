@@ -8,6 +8,7 @@ import Seo from "../components/seo";
 
 import AppBar from "../components/appbar";
 import SideBar from "../components/sidebar";
+import PathBreadcrumbs from "../components/breadcrumbs";
 
 
 const drawerWidth = 240;
@@ -44,6 +45,7 @@ const Layout: React.FC<{ pageTitle: string }> = ({ pageTitle, children }) => {
       <main className={classes.content}>
         <Toolbar />
         <Container maxWidth="md">
+          <PathBreadcrumbs crumbs={[{path: 'dummy', title: 'Dummy'}, {path: 'cc', title: 'dd'}]} />
           <Typography paragraph>
           {children}
           </Typography>
