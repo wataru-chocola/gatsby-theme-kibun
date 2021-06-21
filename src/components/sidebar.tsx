@@ -20,10 +20,10 @@ const SideBar: React.FC<DrawerProps> = (props) => {
       <Toolbar />
       <div className={classes.drawerContainer}>
         <List>
-          <ListItem button>
+          <ListItem button key={1}>
             <ListItemText primary="Link 1" />
           </ListItem>
-          <ListItem button>
+          <ListItem button key={2}>
             <ListItemText primary="Link 2" />
           </ListItem>
         </List>
