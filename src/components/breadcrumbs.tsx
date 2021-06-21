@@ -15,8 +15,8 @@ interface PathBreadcrumbsProps extends BreadcrumbsProps {
 const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = (props) => {
   const items = props.crumbs.map((crum, i) =>
     i != props.crumbs.length - 1 ?
-      <Link color="inherit" to={crum.path}>{crum.title}</Link> :
-      <Typography color="textPrimary">{crum.title}</Typography>
+      <Link color="inherit" to={crum.path} key={i}>{crum.title}</Link> :
+      <Typography color="textPrimary" key={i}>{crum.title}</Typography>
   );
   return (
     <Breadcrumbs aria-label="breadcrumb">
