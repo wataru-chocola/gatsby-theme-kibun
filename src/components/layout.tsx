@@ -7,7 +7,7 @@ import { Container } from "@material-ui/core";
 import Seo from "../components/seo";
 
 import AppBar from "../components/appbar";
-import SideBar from "../components/sidebar";
+import SideBarDrawer from "../components/sidebar";
 import PathBreadcrumbs from "../components/breadcrumbs";
 
 
@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
   },
   content: {
     flexGrow: 1,
@@ -40,7 +43,9 @@ const Layout: React.FC<{ pageTitle: string }> = ({ pageTitle, children }) => {
       <Seo title={pageTitle} />
       <AppBar className={classes.appBar} />
       <nav aria-label="sidemenu">
-        <SideBar className={classes.drawer} />
+        <SideBarDrawer className={classes.drawer} classes={{
+          paper: classes.drawerPaper,
+        }}/>
       </nav>
       <main className={classes.content}>
         <Toolbar />

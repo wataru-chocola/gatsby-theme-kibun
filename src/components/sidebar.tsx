@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideBar: React.FC<DrawerProps> = (props) => {
+const SideBarDrawer: React.FC<DrawerProps> = (props) => {
   const classes = useStyles();
 
   return (
@@ -32,4 +32,4 @@ const SideBar: React.FC<DrawerProps> = (props) => {
   );
 };
 
-export default SideBar;
+export default SideBarDrawer;
