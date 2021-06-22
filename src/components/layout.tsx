@@ -76,7 +76,10 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
       <nav aria-label="sidemenu">
         <Hidden smUp implementation="css">
           <MobileDrawer container={container}
-           open={mobileDrawerOpen} onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            open={mobileDrawerOpen} onClose={handleDrawerToggle}
           >
             <DrawerContent />
           </MobileDrawer>
