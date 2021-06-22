@@ -5,6 +5,8 @@ date: 2021-02-19T20:27:58+09:00
 
 # hello
 
+日本語。`code`。
+
 ```python
 import sys
 sys.stdout.write("hello, world")
