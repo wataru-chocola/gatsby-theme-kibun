@@ -6,6 +6,7 @@
   "author": "",
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@types/react-helmet": "^6.1.1",
     "gatsby": "^3.6.2",
     "gatsby-plugin-image": "^1.6.0",

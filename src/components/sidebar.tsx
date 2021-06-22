@@ -12,24 +12,39 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideBarDrawer: React.FC<DrawerProps> = (props) => {
+
+export const DrawerContent = () => {
   const classes = useStyles();
 
   return (
-    <Drawer variant="permanent" {...props}>
+    <div className={classes.drawerContainer}>
+      <List>
+        <ListItem button key={1}>
+          <ListItemText primary="Link 1" />
+        </ListItem>
+        <ListItem button key={2}>
+          <ListItemText primary="Link 2" />
+        </ListItem>
+      </List>
+    </div>
+  );
+};
+
+export const MobileDrawer: React.FC<DrawerProps> = (props) => {
+  return (
+    <Drawer variant="temporary" {...props}>
       <Toolbar />
-      <div className={classes.drawerContainer}>
-        <List>
-          <ListItem button key={1}>
-            <ListItemText primary="Link 1" />
-          </ListItem>
-          <ListItem button key={2}>
-            <ListItemText primary="Link 2" />
-          </ListItem>
-        </List>
-      </div>
+      {props.children}
     </Drawer>
   );
 };
 
-export default SideBarDrawer;
+
+export const SideBarDrawer: React.FC<DrawerProps> = (props) => {
+  return (
+    <Drawer variant="permanent" {...props}>
+      <Toolbar />
+      {props.children}
+    </Drawer>
+  );
+};
