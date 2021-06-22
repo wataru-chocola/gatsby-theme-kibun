@@ -4,10 +4,11 @@ import { AppBar as MUIAppBar, AppBarProps, Toolbar } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import { InputBase } from '@material-ui/core';
+import { Menu, MenuItem } from '@material-ui/core';
 import { useStaticQuery, graphql } from "gatsby";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import AccountIcon from "@material-ui/icons/Search";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 
 
 export const SiteTitle = () => {
@@ -106,6 +107,51 @@ export const SearchBox = () => {
         inputProps={{ 'aria-label': 'search' }}
       />
     </div>
+  );
+};
+
+
+export const AccountButton = () => {
+  const menuId = 'primary-search-account-menu';
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+    </Menu>
+  );
+
+  return (
+    <React.Fragment>
+      <IconButton
+        edge="end"
+        aria-label="account of current user"
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={handleProfileMenuOpen}
+        color="inherit"
+      >
+        <AccountCircle />
+      </IconButton>
+      {renderMenu}
+    </React.Fragment>
   );
 };
 

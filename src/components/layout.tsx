@@ -7,7 +7,7 @@ import { Hidden } from "@material-ui/core";
 
 import Seo from "../components/seo";
 
-import { AppBar, SiteTitle, MenuButton, SearchBox } from "../components/appbar";
+import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from "../components/appbar";
 import { SideBarDrawer, MobileDrawer, DrawerContent } from "../components/sidebar";
 import PathBreadcrumbs from "../components/breadcrumbs";
 
@@ -70,6 +70,7 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
+        <AccountButton />
       </AppBar>
 
       <nav aria-label="sidemenu">
