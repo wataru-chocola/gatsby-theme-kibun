@@ -7,7 +7,7 @@ import { Hidden } from "@material-ui/core";
 
 import Seo from "../components/seo";
 
-import { AppBar, SiteTitle, MenuButton } from "../components/appbar";
+import { AppBar, SiteTitle, MenuButton, SearchBox } from "../components/appbar";
 import { SideBarDrawer, MobileDrawer, DrawerContent } from "../components/sidebar";
 import PathBreadcrumbs from "../components/breadcrumbs";
 
@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       display: "none",
     },
+  },
+  grow: {
+    flexGrow: 1,
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -65,6 +68,8 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
       <AppBar className={classes.appBar} >
         <MenuButton className={classes.menuButton} onClick={handleDrawerToggle}/>
         <SiteTitle />
+        <div className={classes.grow} />
+        <SearchBox />
       </AppBar>
 
       <nav aria-label="sidemenu">
