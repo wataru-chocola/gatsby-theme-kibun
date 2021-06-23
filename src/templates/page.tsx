@@ -2,6 +2,7 @@ import React from "react";
 import { PageProps, graphql } from "gatsby";
 
 import Layout from "../components/layout"
+import { renderAst } from "../utils/rehype";
 
 
 export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
@@ -14,7 +15,7 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
     <Layout pageTitle={title}>
       <h1>{title}</h1>
       <div dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
-      <div dangerouslySetInnerHTML={{ __html: pageinfo.html! }} />
+      <div>{renderAst(pageinfo.htmlAst!)}</div>
     </Layout>
   )
 };
@@ -22,7 +23,7 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
 export const query = graphql`
   query PageMarkdown ($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
+      htmlAst
       tableOfContents
       frontmatter {
         title
