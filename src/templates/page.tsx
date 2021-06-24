@@ -2,6 +2,9 @@ import React from "react";
 import { PageProps, graphql } from "gatsby";
 
 import Layout from "../components/layout"
+import { Typography } from "@material-ui/core";
+import { renderAst } from "../utils/rehype";
+import * as css from "./page.module.scss";
 
 
 export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
@@ -12,9 +15,10 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
-      <h1>{title}</h1>
-      <div dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
-      <div dangerouslySetInnerHTML={{ __html: pageinfo.html! }} />
+      <Typography variant="h1">{title}</Typography>
+      <div className={css.toc}
+        dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
+      <div>{renderAst(pageinfo.htmlAst!)}</div>
     </Layout>
   )
 };
@@ -22,7 +26,7 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
 export const query = graphql`
   query PageMarkdown ($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
+      htmlAst
       tableOfContents
       frontmatter {
         title
