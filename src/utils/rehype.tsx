@@ -2,7 +2,7 @@ import React from "react";
 import rehypeReact from "rehype-react";
 import unified from "unified";
 import { Box, Typography } from "@material-ui/core";
-import { makeStyles, Theme } from "@material-ui/core";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import { MuiGatsbyLink } from "./link";
 
 const useStyles = makeStyles((theme: Theme) => ({
