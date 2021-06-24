@@ -1,7 +1,6 @@
 import React from "react";
 import { CssBaseline, Toolbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core";
-import { Typography } from "@material-ui/core";
 import { Container } from "@material-ui/core";
 import { Hidden } from "@material-ui/core";
 
@@ -98,9 +97,7 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
         <Toolbar />
         <Container maxWidth="md">
           <PathBreadcrumbs crumbs={[{path: 'dummy', title: 'Dummy'}, {path: 'cc', title: 'dd'}]} />
-          <Typography paragraph>
           {children}
-          </Typography>
         </Container>
       </main>
     </div>
