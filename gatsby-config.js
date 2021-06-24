@@ -84,5 +84,6 @@ module.exports = {
 
     `gatsby-plugin-material-ui`,
     `gatsby-theme-material-ui`,
+    `gatsby-plugin-sass`,
   ],
 }
