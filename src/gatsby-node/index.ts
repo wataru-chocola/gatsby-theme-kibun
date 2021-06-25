@@ -1,6 +1,7 @@
 import { CreatePagesArgs, CreateNodeArgs } from "gatsby";
 import * as path from 'path';
-const { createFilePath } = require(`gatsby-source-filesystem`);
+//const { createFilePath } = require(`gatsby-source-filesystem`);
+import { createFilePath } from "gatsby-source-filesystem";
 
 
 exports.onCreateNode = ({ node, getNode, actions }: CreateNodeArgs) => {
@@ -25,7 +26,7 @@ interface MarkdownPathQuery {
       }
     }>
   }
-};
+}
 
 exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) => {
   const { createPage } = actions;

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export const DrawerContent = () => {
+export const DrawerContent: React.FC = () => {
   const classes = useStyles();
 
   return (
