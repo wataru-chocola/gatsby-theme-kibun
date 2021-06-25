@@ -1,14 +1,16 @@
 import React from 'react';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline, Toolbar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
-import Seo from '../components/seo';
+import Seo from './seo';
+import theme from '../theme';
 
-import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from '../components/appbar';
-import { SideBarDrawer, MobileDrawer, DrawerContent } from '../components/sidebar';
-import PathBreadcrumbs from '../components/breadcrumbs';
+import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
+import { SideBarDrawer, MobileDrawer, DrawerContent } from './sidebar';
+import PathBreadcrumbs from './breadcrumbs';
 
 const drawerWidth = 240;
 
@@ -58,56 +60,61 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
   };
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
+    <React.Fragment>
       <Seo title={pageTitle} />
-      <AppBar className={classes.appBar}>
-        <MenuButton className={classes.menuButton} onClick={handleDrawerToggle} />
-        <SiteTitle />
-        <div className={classes.grow} />
-        <SearchBox />
-        <AccountButton />
-      </AppBar>
 
-      <nav aria-label="sidemenu">
-        <Hidden smUp implementation="css">
-          <MobileDrawer
-            container={container}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            open={mobileDrawerOpen}
-            onClose={handleDrawerToggle}
-          >
-            <DrawerContent />
-          </MobileDrawer>
-        </Hidden>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className={classes.root}>
+          <AppBar className={classes.appBar}>
+            <MenuButton className={classes.menuButton} onClick={handleDrawerToggle} />
+            <SiteTitle />
+            <div className={classes.grow} />
+            <SearchBox />
+            <AccountButton />
+          </AppBar>
 
-        <Hidden xsDown implementation="css">
-          <SideBarDrawer
-            className={classes.drawer}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-          >
-            <DrawerContent />
-          </SideBarDrawer>
-        </Hidden>
-      </nav>
+          <nav aria-label="sidemenu">
+            <Hidden smUp implementation="css">
+              <MobileDrawer
+                container={container}
+                classes={{
+                  paper: classes.drawerPaper,
+                }}
+                open={mobileDrawerOpen}
+                onClose={handleDrawerToggle}
+              >
+                <DrawerContent />
+              </MobileDrawer>
+            </Hidden>
 
-      <main className={classes.content}>
-        <Toolbar />
-        <Container maxWidth="md">
-          <PathBreadcrumbs
-            crumbs={[
-              { path: 'dummy', title: 'Dummy' },
-              { path: 'cc', title: 'dd' },
-            ]}
-          />
-          {children}
-        </Container>
-      </main>
-    </div>
+            <Hidden xsDown implementation="css">
+              <SideBarDrawer
+                className={classes.drawer}
+                classes={{
+                  paper: classes.drawerPaper,
+                }}
+              >
+                <DrawerContent />
+              </SideBarDrawer>
+            </Hidden>
+          </nav>
+
+          <main className={classes.content}>
+            <Toolbar />
+            <Container maxWidth="md">
+              <PathBreadcrumbs
+                crumbs={[
+                  { path: 'dummy', title: 'Dummy' },
+                  { path: 'cc', title: 'dd' },
+                ]}
+              />
+              {children}
+            </Container>
+          </main>
+        </div>
+      </ThemeProvider>
+    </React.Fragment>
   );
 };
 

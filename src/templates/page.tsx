@@ -6,7 +6,6 @@ import { Typography } from '@material-ui/core';
 import { renderAst } from '../utils/rehype';
 import * as css from './page.module.scss';
 
-//export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
 const Page: React.FC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const pageinfo = props.data.markdownRemark;
   if (pageinfo == null) {

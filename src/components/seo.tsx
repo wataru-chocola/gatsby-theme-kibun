@@ -20,7 +20,7 @@ interface SEOProps {
   title: string;
 }
 
-const SEO: React.FC<SEOProps> = ({ description = ``, lang = `en`, meta = [], title }) => {
+const SEO: React.FC<Partial<SEOProps>> = ({ description = ``, lang = `en`, meta = [], title }) => {
   const { site } = useStaticQuery<GatsbyTypes.SEOQuery>(
     graphql`
       query SEO {
@@ -75,12 +75,6 @@ const SEO: React.FC<SEOProps> = ({ description = ``, lang = `en`, meta = [], tit
       ] as MetaProps[]).concat(meta)}
     />
   );
-};
-
-SEO.defaultProps = {
-  lang: `en`,
-  meta: [],
-  description: ``,
 };
 
 export default SEO;

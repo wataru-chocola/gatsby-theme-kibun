@@ -712,9 +712,6 @@ type SitePluginPluginOptions = {
   readonly decoding: Maybe<Scalars['String']>;
   readonly disableBgImageOnAlpha: Maybe<Scalars['Boolean']>;
   readonly disableBgImage: Maybe<Scalars['Boolean']>;
-  readonly stylesProvider: Maybe<SitePluginPluginOptionsStylesProvider>;
-  readonly fonts: Maybe<SitePluginPluginOptionsFonts>;
-  readonly modules: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly pathCheck: Maybe<Scalars['Boolean']>;
 };
 
@@ -761,19 +758,6 @@ type SitePluginPluginOptionsOptions = {
 
 type SitePluginPluginOptionsEmitSchema = {
   readonly src___generated___gatsby_schema_graphql: Maybe<Scalars['Boolean']>;
-};
-
-type SitePluginPluginOptionsStylesProvider = {
-  readonly injectFirst: Maybe<Scalars['Boolean']>;
-};
-
-type SitePluginPluginOptionsFonts = {
-  readonly google: Maybe<ReadonlyArray<Maybe<SitePluginPluginOptionsFontsGoogle>>>;
-};
-
-type SitePluginPluginOptionsFontsGoogle = {
-  readonly family: Maybe<Scalars['String']>;
-  readonly variants: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 type SitePluginPackageJson = {
@@ -2407,9 +2391,6 @@ type SitePluginPluginOptionsFilterInput = {
   readonly decoding: Maybe<StringQueryOperatorInput>;
   readonly disableBgImageOnAlpha: Maybe<BooleanQueryOperatorInput>;
   readonly disableBgImage: Maybe<BooleanQueryOperatorInput>;
-  readonly stylesProvider: Maybe<SitePluginPluginOptionsStylesProviderFilterInput>;
-  readonly fonts: Maybe<SitePluginPluginOptionsFontsFilterInput>;
-  readonly modules: Maybe<StringQueryOperatorInput>;
   readonly pathCheck: Maybe<BooleanQueryOperatorInput>;
 };
 
@@ -2460,23 +2441,6 @@ type SitePluginPluginOptionsOptionsFilterInput = {
 
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
   readonly src___generated___gatsby_schema_graphql: Maybe<BooleanQueryOperatorInput>;
-};
-
-type SitePluginPluginOptionsStylesProviderFilterInput = {
-  readonly injectFirst: Maybe<BooleanQueryOperatorInput>;
-};
-
-type SitePluginPluginOptionsFontsFilterInput = {
-  readonly google: Maybe<SitePluginPluginOptionsFontsGoogleFilterListInput>;
-};
-
-type SitePluginPluginOptionsFontsGoogleFilterListInput = {
-  readonly elemMatch: Maybe<SitePluginPluginOptionsFontsGoogleFilterInput>;
-};
-
-type SitePluginPluginOptionsFontsGoogleFilterInput = {
-  readonly family: Maybe<StringQueryOperatorInput>;
-  readonly variants: Maybe<StringQueryOperatorInput>;
 };
 
 type SitePluginPackageJsonFilterInput = {
@@ -2746,9 +2710,6 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.decoding'
   | 'pluginCreator.pluginOptions.disableBgImageOnAlpha'
   | 'pluginCreator.pluginOptions.disableBgImage'
-  | 'pluginCreator.pluginOptions.stylesProvider.injectFirst'
-  | 'pluginCreator.pluginOptions.fonts.google'
-  | 'pluginCreator.pluginOptions.modules'
   | 'pluginCreator.pluginOptions.pathCheck'
   | 'pluginCreator.nodeAPIs'
   | 'pluginCreator.browserAPIs'
@@ -3349,11 +3310,6 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.decoding'
   | 'pluginOptions.disableBgImageOnAlpha'
   | 'pluginOptions.disableBgImage'
-  | 'pluginOptions.stylesProvider.injectFirst'
-  | 'pluginOptions.fonts.google'
-  | 'pluginOptions.fonts.google.family'
-  | 'pluginOptions.fonts.google.variants'
-  | 'pluginOptions.modules'
   | 'pluginOptions.pathCheck'
   | 'nodeAPIs'
   | 'browserAPIs'

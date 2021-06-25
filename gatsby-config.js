@@ -54,8 +54,8 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `markdowns`,
-        path: `${__dirname}/src/markdowns`
-      }
+        path: `${__dirname}/src/markdowns`,
+      },
     },
     {
       resolve: `gatsby-transformer-remark`,
@@ -90,11 +90,11 @@ module.exports = {
             resolve: `gatsby-remark-images`,
             options: { maxWidth: 1024 },
           },
-        ]
-      }
+        ],
+      },
     },
 
-    `gatsby-theme-material-ui`,
+    `gatsby-plugin-material-ui`,
     `gatsby-plugin-sass`,
   ],
-}
+};

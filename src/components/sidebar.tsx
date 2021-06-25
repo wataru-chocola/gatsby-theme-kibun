@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const DrawerContent: React.FC = () => {
+export const DrawerContent: React.VFC = () => {
   const classes = useStyles();
 
   return (
