@@ -44,6 +44,7 @@
     "babel-plugin-import": "^1.13.3",
     "babel-preset-gatsby": "^1.8.0",
     "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-react": "^7.24.0",
     "gatsby-plugin-eslint": "^3.0.0",
@@ -63,6 +64,8 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "typecheck": "tsc",
+    "lint": "eslint ./src/**/*.{ts,tsx,js,jsx}",
+    "lint-fix": "eslint --fix ./src/**/*.{ts,tsx,js,jsx} && prettier --write ./src/**/*.{ts,tsx,js,jsx}",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   }
 }

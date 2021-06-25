@@ -1,6 +1,6 @@
-import React from "react"
-import { Helmet } from "react-helmet"
-import { useStaticQuery, graphql } from "gatsby"
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { useStaticQuery, graphql } from 'gatsby';
 
 type NameMetaObj = {
   name: string;
@@ -31,10 +31,10 @@ const SEO: React.FC<SEOProps> = ({ description = ``, lang = `en`, meta = [], tit
           }
         }
       }
-    `
-  )
+    `,
+  );
 
-  const metaDescription = description || site?.siteMetadata?.description
+  const metaDescription = description || site?.siteMetadata?.description;
 
   return (
     <Helmet
@@ -74,13 +74,13 @@ const SEO: React.FC<SEOProps> = ({ description = ``, lang = `en`, meta = [], tit
         },
       ] as MetaProps[]).concat(meta)}
     />
-  )
-}
+  );
+};
 
 SEO.defaultProps = {
   lang: `en`,
   meta: [],
   description: ``,
-}
+};
 
-export default SEO
+export default SEO;
