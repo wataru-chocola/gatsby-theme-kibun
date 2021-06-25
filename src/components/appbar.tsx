@@ -1,30 +1,29 @@
-import React from "react";
-import { fade, makeStyles } from "@material-ui/core";
+import React from 'react';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import { AppBar as MUIAppBar, AppBarProps, Toolbar } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import { InputBase } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
-import { useStaticQuery, graphql } from "gatsby";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import { useStaticQuery, graphql } from 'gatsby';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
-
-export const SiteTitle = () => {
+export const SiteTitle: React.FC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
     graphql`
-    query SiteTitle {
-      site {
-        siteMetadata {
-          title
+      query SiteTitle {
+        site {
+          siteMetadata {
+            title
+          }
         }
       }
-    }
-    `
+    `,
   );
 
-  const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`
+  const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`;
 
   return (
     <Typography variant="h6" noWrap>
@@ -38,7 +37,7 @@ interface MenuButtonProps {
   className: string;
 }
 
-export const MenuButton = ({ onClick, className }: MenuButtonProps) => {
+export const MenuButton: React.FC<MenuButtonProps> = ({ onClick, className }) => {
   return (
     <IconButton
       color="inherit"
@@ -92,14 +91,15 @@ const useSearchStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SearchBox = () => {
+export const SearchBox: React.FC = () => {
   const classes = useSearchStyles();
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
         <SearchIcon />
       </div>
-      <InputBase placeholder="Search..."
+      <InputBase
+        placeholder="Search..."
         classes={{
           root: classes.inputRoot,
           input: classes.inputInput,
@@ -110,8 +110,7 @@ export const SearchBox = () => {
   );
 };
 
-
-export const AccountButton = () => {
+export const AccountButton: React.FC = () => {
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -159,9 +158,7 @@ export const AppBar: React.FC<AppBarProps> = (props) => {
   const { children, ...passThroughProps } = props;
   return (
     <MUIAppBar position="fixed" {...passThroughProps}>
-      <Toolbar>
-        {props.children}
-      </Toolbar>
+      <Toolbar>{props.children}</Toolbar>
     </MUIAppBar>
   );
 };
