@@ -1,49 +1,47 @@
-import { CreatePagesArgs, CreateNodeArgs } from "gatsby";
+import { CreatePagesArgs, CreateNodeArgs } from 'gatsby';
 import * as path from 'path';
-//const { createFilePath } = require(`gatsby-source-filesystem`);
-import { createFilePath } from "gatsby-source-filesystem";
-
+import { createFilePath } from 'gatsby-source-filesystem';
 
 exports.onCreateNode = ({ node, getNode, actions }: CreateNodeArgs) => {
-  const { createNodeField } = actions
+  const { createNodeField } = actions;
   if (node.internal.type === `MarkdownRemark`) {
-    const slug = createFilePath({ node, getNode, basePath: `src/markdowns` })
+    const slug = createFilePath({ node, getNode, basePath: `src/markdowns` });
     createNodeField({
       node,
       name: `slug`,
       value: slug,
-    })
+    });
   }
-}
+};
 
 interface MarkdownPathQuery {
   allMarkdownRemark: {
     edges: Array<{
       node: {
         fields: {
-          slug: string
-        }
-      }
-    }>
-  }
+          slug: string;
+        };
+      };
+    }>;
+  };
 }
 
 exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) => {
   const { createPage } = actions;
   const result = await graphql<MarkdownPathQuery>(
     `
-    query MarkdownPath {
-      allMarkdownRemark {
-        edges {
-          node {
-            fields {
-              slug
+      query MarkdownPath {
+        allMarkdownRemark {
+          edges {
+            node {
+              fields {
+                slug
+              }
             }
           }
         }
       }
-    }
-    `
+    `,
   );
 
   if (result.errors) {
@@ -52,7 +50,7 @@ exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) =>
   }
 
   result.data?.allMarkdownRemark.edges.forEach(({ node }) => {
-    const slug = node.fields.slug
+    const slug = node.fields.slug;
     createPage({
       path: slug,
       component: path.resolve('./src/templates/page.tsx'),
@@ -61,5 +59,4 @@ exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) =>
       },
     });
   });
-
 };
