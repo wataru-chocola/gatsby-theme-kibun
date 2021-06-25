@@ -12,7 +12,7 @@ interface PathBreadcrumbsProps extends BreadcrumbsProps {
   crumbs: Array<PathBreadcrumb>;
 }
 
-const PathBreadcrumbs: React.FC<PathBreadcrumbsProps> = (props) => {
+const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
   const items = props.crumbs.map((crum, i) =>
     i !== props.crumbs.length - 1 ? (
       <Link color="inherit" to={crum.path} key={i}>
