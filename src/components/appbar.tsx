@@ -10,7 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-export const SiteTitle: React.FC = () => {
+export const SiteTitle: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
     graphql`
       query SiteTitle {
@@ -37,19 +37,23 @@ interface MenuButtonProps {
   className: string;
 }
 
-export const MenuButton: React.FC<MenuButtonProps> = ({ onClick, className }) => {
-  return (
-    <IconButton
-      color="inherit"
-      aria-label="open drawer"
-      edge="start"
-      onClick={onClick}
-      className={className}
-    >
-      <MenuIcon />
-    </IconButton>
-  );
-};
+export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
+  ({ onClick, className }, ref) => {
+    return (
+      <IconButton
+        color="inherit"
+        aria-label="open drawer"
+        edge="start"
+        onClick={onClick}
+        className={className}
+        ref={ref}
+      >
+        <MenuIcon />
+      </IconButton>
+    );
+  },
+);
+MenuButton.displayName = 'MenuButton';
 
 const useSearchStyles = makeStyles((theme) => ({
   search: {
@@ -91,7 +95,7 @@ const useSearchStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SearchBox: React.FC = () => {
+export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
   const classes = useSearchStyles();
   return (
     <div className={classes.search}>
@@ -105,12 +109,14 @@ export const SearchBox: React.FC = () => {
           input: classes.inputInput,
         }}
         inputProps={{ 'aria-label': 'search' }}
+        ref={ref}
       />
     </div>
   );
-};
+});
+SearchBox.displayName = 'SearchBox';
 
-export const AccountButton: React.FC = () => {
+export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -146,13 +152,15 @@ export const AccountButton: React.FC = () => {
         aria-haspopup="true"
         onClick={handleProfileMenuOpen}
         color="inherit"
+        ref={ref}
       >
         <AccountCircle />
       </IconButton>
       {renderMenu}
     </React.Fragment>
   );
-};
+});
+AccountButton.displayName = 'AccountButton';
 
 export const AppBar: React.FC<AppBarProps> = (props) => {
   const { children, ...passThroughProps } = props;
