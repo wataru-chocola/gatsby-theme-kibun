@@ -1,15 +1,14 @@
-import React from "react";
-import { CssBaseline, Toolbar } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core";
-import { Container } from "@material-ui/core";
-import { Hidden } from "@material-ui/core";
+import React from 'react';
+import { CssBaseline, Toolbar } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Container } from '@material-ui/core';
+import { Hidden } from '@material-ui/core';
 
-import Seo from "../components/seo";
+import Seo from '../components/seo';
 
-import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from "../components/appbar";
-import { SideBarDrawer, MobileDrawer, DrawerContent } from "../components/sidebar";
-import PathBreadcrumbs from "../components/breadcrumbs";
-
+import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from '../components/appbar';
+import { SideBarDrawer, MobileDrawer, DrawerContent } from '../components/sidebar';
+import PathBreadcrumbs from '../components/breadcrumbs';
 
 const drawerWidth = 240;
 
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.up('sm')]: {
-      display: "none",
+      display: 'none',
     },
   },
   grow: {
@@ -41,15 +40,13 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-  }
+  },
 }));
-
 
 interface LayoutProps {
   pageTitle: string;
   window?: () => Window;
 }
-
 
 const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
   const classes = useStyles();
@@ -64,8 +61,8 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
     <div className={classes.root}>
       <CssBaseline />
       <Seo title={pageTitle} />
-      <AppBar className={classes.appBar} >
-        <MenuButton className={classes.menuButton} onClick={handleDrawerToggle}/>
+      <AppBar className={classes.appBar}>
+        <MenuButton className={classes.menuButton} onClick={handleDrawerToggle} />
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
@@ -74,20 +71,25 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
 
       <nav aria-label="sidemenu">
         <Hidden smUp implementation="css">
-          <MobileDrawer container={container}
+          <MobileDrawer
+            container={container}
             classes={{
               paper: classes.drawerPaper,
             }}
-            open={mobileDrawerOpen} onClose={handleDrawerToggle}
+            open={mobileDrawerOpen}
+            onClose={handleDrawerToggle}
           >
             <DrawerContent />
           </MobileDrawer>
         </Hidden>
 
         <Hidden xsDown implementation="css">
-          <SideBarDrawer className={classes.drawer} classes={{
-            paper: classes.drawerPaper,
-          }}>
+          <SideBarDrawer
+            className={classes.drawer}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+          >
             <DrawerContent />
           </SideBarDrawer>
         </Hidden>
@@ -96,12 +98,17 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
       <main className={classes.content}>
         <Toolbar />
         <Container maxWidth="md">
-          <PathBreadcrumbs crumbs={[{path: 'dummy', title: 'Dummy'}, {path: 'cc', title: 'dd'}]} />
+          <PathBreadcrumbs
+            crumbs={[
+              { path: 'dummy', title: 'Dummy' },
+              { path: 'cc', title: 'dd' },
+            ]}
+          />
           {children}
         </Container>
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default Layout;
