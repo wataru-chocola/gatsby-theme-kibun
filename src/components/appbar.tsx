@@ -11,7 +11,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 
 
-export const SiteTitle = () => {
+export const SiteTitle: React.FC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
     graphql`
     query SiteTitle {
@@ -38,7 +38,7 @@ interface MenuButtonProps {
   className: string;
 }
 
-export const MenuButton = ({ onClick, className }: MenuButtonProps) => {
+export const MenuButton: React.FC<MenuButtonProps> = ({ onClick, className }) => {
   return (
     <IconButton
       color="inherit"
@@ -92,7 +92,7 @@ const useSearchStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SearchBox = () => {
+export const SearchBox: React.FC = () => {
   const classes = useSearchStyles();
   return (
     <div className={classes.search}>
@@ -111,7 +111,7 @@ export const SearchBox = () => {
 };
 
 
-export const AccountButton = () => {
+export const AccountButton: React.FC = () => {
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);

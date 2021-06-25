@@ -7,7 +7,8 @@ import { renderAst } from "../utils/rehype";
 import * as css from "./page.module.scss";
 
 
-export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
+//export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
+const Page: React.FC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const pageinfo = props.data.markdownRemark;
   if (pageinfo == null) {
     return null;
@@ -22,6 +23,8 @@ export default function Page(props: PageProps<GatsbyTypes.PageMarkdownQuery>) {
     </Layout>
   )
 };
+
+export default Page;
 
 export const query = graphql`
   query PageMarkdown ($slug: String!) {
