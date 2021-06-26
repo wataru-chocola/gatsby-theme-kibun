@@ -95,6 +95,11 @@ module.exports = {
     },
 
     `gatsby-plugin-material-ui`,
-    `gatsby-plugin-sass`,
+    {
+      resolve: `gatsby-plugin-sass`,
+      options: {
+        postCssPlugins: [require('tailwindcss')],
+      },
+    },
   ],
 };
