@@ -2,7 +2,8 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline, Toolbar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container } from '@material-ui/core';
+import { Container, ContainerProps } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
 import Seo from './seo';
@@ -10,7 +11,6 @@ import theme from '../theme';
 
 import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
 import { SideBarDrawer, MobileDrawer, DrawerContent } from './sidebar';
-import PathBreadcrumbs from './breadcrumbs';
 
 const drawerWidth = 240;
 
@@ -41,14 +41,13 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
   },
 }));
 
-interface LayoutProps {
+type LayoutProps = {
   pageTitle: string;
   window?: () => Window;
-}
+} & Pick<ContainerProps, 'children'>;
 
 const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
   const classes = useStyles();
@@ -103,13 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
           <main className={classes.content}>
             <Toolbar />
             <Container maxWidth="md">
-              <PathBreadcrumbs
-                crumbs={[
-                  { path: 'dummy', title: 'Dummy' },
-                  { path: 'cc', title: 'dd' },
-                ]}
-              />
-              {children}
+              <Paper>{children}</Paper>
             </Container>
           </main>
         </div>
