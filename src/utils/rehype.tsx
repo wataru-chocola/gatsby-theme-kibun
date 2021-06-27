@@ -11,23 +11,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const H1 = (props: any) => <Typography variant="h3" component="h2" {...props}></Typography>;
+const H1 = (props: any) => <Typography variant="h1" component="h2" {...props}></Typography>;
 
-const H2 = (props: any) => <Typography variant="h4" component="h2" {...props}></Typography>;
+const H2 = (props: any) => <Typography variant="h2" component="h2" {...props}></Typography>;
 
 const H3 = (props: any) => (
-  <Box mt={4} mb={2} py={1} px={2} borderLeft={4} borderColor="primary.500">
-    <Typography variant="h5" component="h3" {...props}></Typography>
+  <Box mt={4} mb={2} py={0.5} px={1} borderLeft={4} borderColor="primary.500">
+    <Typography variant="h3" component="h3" {...props}></Typography>
   </Box>
 );
 
 const H4 = (props: any) => (
-  <Box mt={4} mb={2} py={1} px={1} borderBottom={1} borderColor="primary.500">
-    <Typography variant="h5" component="h4" {...props}></Typography>
+  <Box mt={4} mb={2} py={0.5} borderBottom={1} borderColor="primary.500">
+    <Typography variant="h4" component="h4" {...props}></Typography>
   </Box>
 );
 
-const H5 = (props: any) => <Typography variant="h6" component="h5" {...props}></Typography>;
+const H5 = (props: any) => <Typography variant="h5" component="h5" {...props}></Typography>;
 
 const H6 = (props: any) => {
   const classes = useStyles();
@@ -36,7 +36,7 @@ const H6 = (props: any) => {
 
 const P = (props: any) => (
   <Typography
-    variant="body2"
+    variant="body1"
     component="p"
     style={{ marginTop: `1rem`, marginBottom: `1rem`, lineHeight: 1.8 }}
     {...props}
