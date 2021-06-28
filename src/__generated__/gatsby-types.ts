@@ -3508,7 +3508,7 @@ type PageMarkdownQueryVariables = Exact<{
 
 type PageMarkdownQuery = { readonly markdownRemark: Maybe<(
     Pick<MarkdownRemark, 'htmlAst' | 'tableOfContents'>
-    & { readonly frontmatter: Maybe<Pick<MarkdownRemarkFrontmatter, 'title'>> }
+    & { readonly frontmatter: Maybe<Pick<MarkdownRemarkFrontmatter, 'title'>>, readonly parent: Maybe<{ readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> }> }
   )> };
 
 type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
