@@ -1,4 +1,4 @@
-import { CreatePagesArgs, CreateNodeArgs } from 'gatsby';
+import { CreatePagesArgs, CreateNodeArgs, CreateWebpackConfigArgs } from 'gatsby';
 import * as path from 'path';
 import { createFilePath } from 'gatsby-source-filesystem';
 
@@ -58,5 +58,21 @@ exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) =>
         slug: slug,
       },
     });
+  });
+};
+
+exports.onCreateWebpackConfig = ({
+  stage,
+  rules,
+  loaders,
+  plugins,
+  actions,
+}: CreateWebpackConfigArgs) => {
+  actions.setWebpackConfig({
+    plugins: [
+      plugins.provide({
+        Buffer: ['buffer', 'Buffer'],
+      }),
+    ],
   });
 };
