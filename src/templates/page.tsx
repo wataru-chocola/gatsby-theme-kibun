@@ -7,8 +7,10 @@ import PathBreadcrumbs from '../components/breadcrumbs';
 import { Button, Typography, TextField } from '@material-ui/core';
 import { Box, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { renderAst } from '../utils/rehype';
 import * as css from './page.module.scss';
+
+import { markdownProcessor, splitFrontmatter } from '../utils/markdownParser';
+import { renderAst } from '../utils/rehype';
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -19,10 +21,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface EditBoxProps {
   closeEditmode: () => void;
   saveMarkdown: (markdown: string) => void;
+  renderMarkdown: (markdown: string) => void;
   md?: string;
 }
 
-const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, md }) => {
+const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, renderMarkdown, md }) => {
   const inputEl = React.useRef<null | HTMLDivElement>(null);
   const [markdown, setMarkdown] = React.useState(md || '');
   React.useEffect(() => {
@@ -35,33 +38,41 @@ const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, md }) =
     });
   });
 
-  const saveMarkdownWrapper = React.useCallback(() => {
+  const saveEditing = React.useCallback(() => {
     saveMarkdown(markdown);
+    renderMarkdown(markdown);
     closeEditmode();
-  }, [saveMarkdown, closeEditmode, markdown]);
+  }, [saveMarkdown, closeEditmode, renderMarkdown, markdown]);
+  const cancelEditing = React.useCallback(() => {
+    renderMarkdown(md || '');
+    closeEditmode();
+  }, [closeEditmode, renderMarkdown, md]);
   const updateMarkdown = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setMarkdown(e.target.value);
     },
     [setMarkdown],
   );
+  const previewRenderedHTML = () => {
+    renderMarkdown(markdown);
+  };
 
   return (
     <Box p={4}>
       <Box pb={1}>
         <Grid container justify="flex-end" spacing={1}>
           <Grid item>
-            <Button variant="contained" color="secondary" onClick={closeEditmode}>
+            <Button variant="contained" color="secondary" onClick={cancelEditing}>
               Cancel
             </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained" onClick={saveMarkdownWrapper}>
+            <Button variant="contained" onClick={previewRenderedHTML}>
               Preview
             </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" onClick={saveMarkdownWrapper}>
+            <Button variant="contained" color="primary" onClick={saveEditing}>
               Save
             </Button>
           </Grid>
@@ -82,11 +93,11 @@ const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, md }) =
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const pageinfo = props.data.markdownRemark;
+  const content = splitFrontmatter(props.data.markdownRemark!.parent!.internal.content!);
   const classes = useStyles();
   const [editmode, setEditmode] = React.useState(false);
-  const [markdown, setMarkdown] = React.useState(
-    props.data.markdownRemark?.parent?.internal.content,
-  );
+  const [markdown, setMarkdown] = React.useState(content[1]);
+  const [html, setHTML] = React.useState(renderAst(props.data.markdownRemark!.htmlAst!));
 
   const openEditmode = React.useCallback(() => {
     setEditmode(true);
@@ -94,6 +105,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const closeEditmode = React.useCallback(() => {
     setEditmode(false);
   }, [setEditmode]);
+  const renderMarkdown = (md: string) => {
+    setHTML(markdownProcessor.processSync(md).contents);
+  };
 
   if (pageinfo == null) {
     return null;
@@ -117,12 +131,17 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
       </Box>
 
       {editmode && (
-        <EditBox closeEditmode={closeEditmode} saveMarkdown={setMarkdown} md={markdown}></EditBox>
+        <EditBox
+          closeEditmode={closeEditmode}
+          saveMarkdown={setMarkdown}
+          renderMarkdown={renderMarkdown}
+          md={markdown}
+        ></EditBox>
       )}
 
       <Box p={4} onDoubleClick={openEditmode}>
         <div className={css.toc} dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
-        <div className={css.md}>{renderAst(pageinfo.htmlAst!)}</div>
+        <div className={css.md}>{html}</div>
       </Box>
 
       <Box mt={4} pt={1} pb={2} px={2} bgcolor="primary.light" color="primary.contrastText">
