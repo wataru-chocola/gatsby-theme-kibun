@@ -98,6 +98,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const [editmode, setEditmode] = React.useState(false);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [html, setHTML] = React.useState(renderAst(props.data.markdownRemark!.htmlAst!));
+  //const [html, setHTML] = React.useState(markdownProcessor.processSync(markdown).contents);
 
   const openEditmode = React.useCallback(() => {
     setEditmode(true);

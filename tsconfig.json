@@ -1,8 +1,7 @@
 {
   "include": [
     "./src/**/*.ts",
-    "./src/**/*.tsx",
-    "./src/templates/page.module.scss.d.ts"
+    "./src/**/*.tsx"
   ],
   "compilerOptions": {
     "target": "esnext",
