@@ -31,10 +31,15 @@ const codeRefractor: Plugin<Options[]> = (options: Options) => {
 
     let result;
     try {
-      const parent_classes = (parent.properties?.className || []) as string[];
-      parent.properties = {
-        className: parent_classes.concat(['language-' + lang]),
-      };
+      const langClass = 'language-' + lang;
+      if (parent.properties != null) {
+        const parent_classes = (parent.properties?.className || []) as string[];
+        parent.properties.className = parent_classes.concat(langClass);
+      } else {
+        parent.properties = {
+          className: [langClass],
+        };
+      }
       result = refractor.highlight(nodeToString(node), lang);
     } catch (err) {
       if (options.ignoreMissing && /Unknown language/.test(err.message)) {
