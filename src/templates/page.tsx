@@ -4,11 +4,12 @@ import { PageProps, graphql } from 'gatsby';
 import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
 
-import { Button, Typography, TextField } from '@material-ui/core';
-import { Box, Grid } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
 
+import EditBox from '../components/editbox';
 import { markdownProcessor, splitFrontmatter } from '../utils/markdownParser';
 import { renderAst } from '../utils/rehype';
 
@@ -17,79 +18,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: theme.typography.h4.fontSize,
   },
 }));
-
-interface EditBoxProps {
-  closeEditmode: () => void;
-  saveMarkdown: (markdown: string) => void;
-  renderMarkdown: (markdown: string) => void;
-  md?: string;
-}
-
-const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, renderMarkdown, md }) => {
-  const inputEl = React.useRef<null | HTMLDivElement>(null);
-  const [markdown, setMarkdown] = React.useState(md || '');
-  React.useEffect(() => {
-    const elOffset = inputEl!.current!.offsetTop;
-    const target = Math.min(elOffset - 200, 0);
-    window.scroll({
-      left: 0,
-      top: target,
-      behavior: 'smooth',
-    });
-  });
-
-  const saveEditing = React.useCallback(() => {
-    saveMarkdown(markdown);
-    renderMarkdown(markdown);
-    closeEditmode();
-  }, [saveMarkdown, closeEditmode, renderMarkdown, markdown]);
-  const cancelEditing = React.useCallback(() => {
-    renderMarkdown(md || '');
-    closeEditmode();
-  }, [closeEditmode, renderMarkdown, md]);
-  const updateMarkdown = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMarkdown(e.target.value);
-    },
-    [setMarkdown],
-  );
-  const previewRenderedHTML = () => {
-    renderMarkdown(markdown);
-  };
-
-  return (
-    <Box p={4}>
-      <Box pb={1}>
-        <Grid container justify="flex-end" spacing={1}>
-          <Grid item>
-            <Button variant="contained" color="secondary" onClick={cancelEditing}>
-              Cancel
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={previewRenderedHTML}>
-              Preview
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="primary" onClick={saveEditing}>
-              Save
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      <TextField
-        variant="outlined"
-        multiline
-        fullWidth
-        rows={15}
-        ref={inputEl}
-        value={markdown}
-        onChange={updateMarkdown}
-      ></TextField>
-    </Box>
-  );
-};
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const pageinfo = props.data.markdownRemark;
@@ -117,6 +45,15 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
+      {editmode && (
+        <EditBox
+          closeEditmode={closeEditmode}
+          saveMarkdown={setMarkdown}
+          renderMarkdown={renderMarkdown}
+          md={markdown}
+        ></EditBox>
+      )}
+
       <Box pt={2} pb={0.5} px={2}>
         <PathBreadcrumbs
           crumbs={[
@@ -130,15 +67,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
           {title}
         </Typography>
       </Box>
-
-      {editmode && (
-        <EditBox
-          closeEditmode={closeEditmode}
-          saveMarkdown={setMarkdown}
-          renderMarkdown={renderMarkdown}
-          md={markdown}
-        ></EditBox>
-      )}
 
       <Box p={4} onDoubleClick={openEditmode}>
         <div className={css.toc} dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />

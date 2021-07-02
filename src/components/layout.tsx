@@ -101,7 +101,7 @@ const Layout: React.FC<LayoutProps> = ({ window, pageTitle, children }) => {
 
           <main className={classes.content}>
             <Toolbar />
-            <Container maxWidth="md">
+            <Container maxWidth="md" fixed disableGutters>
               <Paper>{children}</Paper>
             </Container>
           </main>
