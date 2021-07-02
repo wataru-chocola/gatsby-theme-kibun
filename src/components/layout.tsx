@@ -12,6 +12,8 @@ import theme from '../theme';
 import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
 import { SideBarDrawer, MobileDrawer, DrawerContent } from './sidebar';
 
+import './layout.css';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({

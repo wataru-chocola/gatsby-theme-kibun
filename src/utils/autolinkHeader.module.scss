@@ -1,8 +1,6 @@
 .headers {
-  & .after {
-    display: inline-block;
-    padding-left: 4px;
-  }
+  display: inline-block;
+  padding-left: 4px;
 
   h1 & svg,
   h2 & svg,
