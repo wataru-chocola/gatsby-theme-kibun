@@ -3,6 +3,7 @@ import unified from 'unified';
 import remarkParser from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import codeRefractor from './syntaxHighlighter';
+import autolinkHeader from './autolinkHeader';
 import rehypeReact from 'rehype-react';
 import * as matter from 'gray-matter';
 import { componentMapping } from './rehype';
@@ -15,6 +16,7 @@ export const markdownProcessor = unified()
       sh: 'bash',
     },
   })
+  .use(autolinkHeader)
   .use(rehypeReact, {
     createElement: React.createElement,
     components: componentMapping,

@@ -84,7 +84,7 @@ const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, renderM
 
   return (
     <Paper className={classes.editBox} square elevation={4}>
-      <Box p={0}>
+      <Box p={0} pt={2}>
         <Grid container spacing={0}>
           <Grid item xs={12} md>
             <TextField
