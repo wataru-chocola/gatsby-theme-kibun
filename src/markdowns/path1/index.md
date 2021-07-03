@@ -31,12 +31,26 @@ Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac fa
 
 # hello
 
+<u>this is test</u>
+
+<p>test</p>
+
 ```python
 import sys
 sys.stdout.write("hello, world")
 ```
 
+relative path image
+
 ![](./test.png)
+
+absolute path image
+
+![](/test.png)
+
+relative path image (HTML)
+
+<img src="./test.png" />
 
 
 ## hoge(a)fuge
