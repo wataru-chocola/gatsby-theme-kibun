@@ -1,6 +1,7 @@
 import React from 'react';
 import rehypeReact from 'rehype-react';
 import unified from 'unified';
+import { Node } from 'unist';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MuiGatsbyLink } from './link';
@@ -71,7 +72,11 @@ export const componentMapping = {
   a: A,
 };
 
-export const renderAst = unified().use(rehypeReact, {
-  createElement: React.createElement,
-  components: componentMapping,
-}).stringify;
+export const renderAst: (tree: Node) => React.ReactElement = (tree) => {
+  return (unified()
+    .use(rehypeReact, {
+      createElement: React.createElement,
+      components: componentMapping,
+    })
+    .stringify(tree) as unknown) as React.ReactElement;
+};

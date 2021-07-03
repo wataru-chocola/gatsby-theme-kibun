@@ -10,7 +10,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
 
 import EditBox from '../components/editbox';
-import { markdownProcessor, splitFrontmatter } from '../utils/markdownParser';
+import { splitFrontmatter, md2react, md2toc } from '../utils/markdownParser';
 import { renderAst } from '../utils/rehype';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,7 +25,10 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const classes = useStyles();
   const [editmode, setEditmode] = React.useState(false);
   const [markdown, setMarkdown] = React.useState(content[1]);
-  const [html, setHTML] = React.useState(renderAst(props.data.markdownRemark!.htmlAst!));
+  const [html, setHTML] = React.useState<React.ReactElement | null>(
+    renderAst(props.data.markdownRemark!.htmlAst!),
+  );
+  const [toc, setTOC] = React.useState<React.ReactElement | null>(null);
   //const [html, setHTML] = React.useState(markdownProcessor.processSync(markdown).contents);
 
   const openEditmode = React.useCallback(() => {
@@ -35,7 +38,8 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
     setEditmode(false);
   }, [setEditmode]);
   const renderMarkdown = (md: string) => {
-    setHTML(markdownProcessor.processSync(md).contents);
+    setHTML(md2react(md));
+    setTOC(md2toc(md));
   };
 
   if (pageinfo == null) {
@@ -69,7 +73,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
       </Box>
 
       <Box p={4} onDoubleClick={openEditmode}>
-        <div className={css.toc} dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
+        {toc && <div className={css.toc}>{toc}</div>}
         <div className={css.md}>{html}</div>
       </Box>
 
@@ -86,7 +90,6 @@ export const query = graphql`
   query PageMarkdown($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
       htmlAst
-      tableOfContents
       frontmatter {
         title
       }
