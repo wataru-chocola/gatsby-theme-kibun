@@ -14,10 +14,10 @@ const svgIcon = s(
   {
     ariaHidden: 'true',
     focusable: false,
-    height: 16,
     version: '1.1',
     viewBox: '0 0 16 16',
-    width: 16,
+    width: 20,
+    height: 20,
   },
   s('path', {
     fillRule: 'evenodd',
@@ -46,7 +46,7 @@ const autolinkHeader: Plugin = () => {
         id: headerId,
       };
     }
-    const link = h('a', { href: `#${headerId}`, class: `${css.headers} after` }, svgIcon);
+    const link = h('a', { href: `#${headerId}`, class: `${css.headers}` }, svgIcon);
     node.children.push(link);
   };
 
