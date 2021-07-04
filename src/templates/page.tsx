@@ -5,7 +5,7 @@ import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
 
 import { Typography } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Box, Slide } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
 
@@ -49,14 +49,14 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
-      {editmode && (
+      <Slide in={editmode} mountOnEnter unmountOnExit>
         <EditBox
           closeEditmode={closeEditmode}
           saveMarkdown={setMarkdown}
           renderMarkdown={renderMarkdown}
           md={markdown}
         ></EditBox>
-      )}
+      </Slide>
 
       <Box pt={2} pb={0.5} px={2}>
         <PathBreadcrumbs

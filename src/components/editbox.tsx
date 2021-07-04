@@ -40,75 +40,90 @@ interface EditBoxProps {
   md?: string;
 }
 
-const EditBox: React.VFC<EditBoxProps> = ({ closeEditmode, saveMarkdown, renderMarkdown, md }) => {
-  const inputEl = React.useRef<null | HTMLDivElement>(null);
-  const [markdown, setMarkdown] = React.useState(md || '');
-  const classes = useStyles();
+const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
+  ({ closeEditmode, saveMarkdown, renderMarkdown, md }, forwardedRef) => {
+    const inputEl = React.useRef<null | HTMLDivElement>(null);
+    const [markdown, setMarkdown] = React.useState(md || '');
+    const classes = useStyles();
+    const innerRef = React.useRef<HTMLDivElement>();
 
-  const saveEditing = React.useCallback(() => {
-    saveMarkdown(markdown);
-    renderMarkdown(markdown);
-    closeEditmode();
-  }, [saveMarkdown, closeEditmode, renderMarkdown, markdown]);
-  const cancelEditing = React.useCallback(() => {
-    renderMarkdown(md || '');
-    closeEditmode();
-  }, [closeEditmode, renderMarkdown, md]);
-  const updateMarkdown = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setMarkdown(e.target.value);
-    },
-    [setMarkdown],
-  );
-  const previewRenderedHTML = () => {
-    renderMarkdown(markdown);
-  };
+    React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
-  const buttons = [
-    <Tooltip title="cancel" aria-label="cancel" key="cancel">
-      <IconButton color="secondary" onClick={cancelEditing}>
-        <CloseIcon />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip title="preview" aria-label="preview" key="preview">
-      <IconButton color="primary" onClick={previewRenderedHTML}>
-        <PlayArrow />
-      </IconButton>
-    </Tooltip>,
-    <Tooltip title="save" aria-label="save" key="save">
-      <IconButton color="primary" onClick={saveEditing}>
-        <SaveAltIcon />
-      </IconButton>
-    </Tooltip>,
-  ];
+    React.useLayoutEffect(() => {
+      const editBoxHeight = innerRef?.current?.scrollHeight;
+      if (editBoxHeight != null) {
+        window.scrollBy(0, editBoxHeight);
+      }
+      return () => {
+        editBoxHeight && window.scrollBy(0, -editBoxHeight);
+      };
+    }, []);
+    const saveEditing = React.useCallback(() => {
+      saveMarkdown(markdown);
+      renderMarkdown(markdown);
+      closeEditmode();
+    }, [saveMarkdown, closeEditmode, renderMarkdown, markdown]);
+    const cancelEditing = React.useCallback(() => {
+      renderMarkdown(md || '');
+      closeEditmode();
+    }, [closeEditmode, renderMarkdown, md]);
+    const updateMarkdown = React.useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMarkdown(e.target.value);
+      },
+      [setMarkdown],
+    );
+    const previewRenderedHTML = () => {
+      renderMarkdown(markdown);
+    };
 
-  return (
-    <Paper className={classes.editBox} square elevation={4}>
-      <Box p={0} pt={2}>
-        <Grid container spacing={0}>
-          <Grid item xs={12} md>
-            <TextField
-              className={classes.editInputField}
-              variant="outlined"
-              multiline
-              fullWidth
-              rows={10}
-              ref={inputEl}
-              value={markdown}
-              onChange={updateMarkdown}
-            ></TextField>
+    const buttons = [
+      <Tooltip title="cancel" aria-label="cancel" key="cancel">
+        <IconButton color="secondary" onClick={cancelEditing}>
+          <CloseIcon />
+        </IconButton>
+      </Tooltip>,
+      <Tooltip title="preview" aria-label="preview" key="preview">
+        <IconButton color="primary" onClick={previewRenderedHTML}>
+          <PlayArrow />
+        </IconButton>
+      </Tooltip>,
+      <Tooltip title="save" aria-label="save" key="save">
+        <IconButton color="primary" onClick={saveEditing}>
+          <SaveAltIcon />
+        </IconButton>
+      </Tooltip>,
+    ];
+
+    return (
+      <Paper className={classes.editBox} square elevation={4} ref={innerRef}>
+        <Box p={0} pt={2}>
+          <Grid container spacing={0}>
+            <Grid item xs={12} md>
+              <TextField
+                className={classes.editInputField}
+                variant="outlined"
+                multiline
+                fullWidth
+                rows={10}
+                ref={inputEl}
+                value={markdown}
+                onChange={updateMarkdown}
+              ></TextField>
+            </Grid>
+            <Grid container item md={1} className={classes.editButtons}>
+              {buttons.map((e, i) => (
+                <Grid item key={i}>
+                  {e}
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
-          <Grid container item md={1} className={classes.editButtons}>
-            {buttons.map((e, i) => (
-              <Grid item key={i}>
-                {e}
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-      </Box>
-    </Paper>
-  );
-};
+        </Box>
+      </Paper>
+    );
+  },
+);
+EditBox.displayName = 'EditBox';
 
 export default EditBox;
