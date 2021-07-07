@@ -1,64 +1,39 @@
-import { CreatePagesArgs, CreateNodeArgs, CreateWebpackConfigArgs } from 'gatsby';
+import {
+  CreatePagesArgs,
+  CreateNodeArgs,
+  CreateSchemaCustomizationArgs,
+  CreateWebpackConfigArgs,
+} from 'gatsby';
 import * as path from 'path';
-import { createFilePath } from 'gatsby-source-filesystem';
+import { transformFileToMarkdown, modifyMarkdownSchema } from './createMarkdownNodes';
+import { createMarkdownPages } from './createMarkdownPages';
 
-exports.onCreateNode = ({ node, getNode, actions }: CreateNodeArgs) => {
-  const { createNodeField } = actions;
-  if (node.internal.type === `MarkdownRemark`) {
-    const slug = createFilePath({ node, getNode, basePath: `src/markdowns` });
+exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
+  modifyMarkdownSchema(args);
+};
+
+exports.onCreateNode = async (args: CreateNodeArgs) => {
+  const { createNodeField } = args.actions;
+  if (args.node.internal.type === `ImageSharp`) {
+    const parentFile = args.getNode(args.node.parent!);
+    const imagePath = path.join('/', parentFile.relativePath as string);
     createNodeField({
-      node,
-      name: `slug`,
-      value: slug,
+      node: args.node,
+      name: `imagePath`,
+      value: imagePath,
     });
+  }
+
+  if (
+    args.node.internal.mediaType === 'text/markdown' ||
+    args.node.internal.mediaType === 'text/x-markdown'
+  ) {
+    return await transformFileToMarkdown(args);
   }
 };
 
-interface MarkdownPathQuery {
-  allMarkdownRemark: {
-    edges: Array<{
-      node: {
-        fields: {
-          slug: string;
-        };
-      };
-    }>;
-  };
-}
-
-exports.createPages = async ({ graphql, actions, reporter }: CreatePagesArgs) => {
-  const { createPage } = actions;
-  const result = await graphql<MarkdownPathQuery>(
-    `
-      query MarkdownPath {
-        allMarkdownRemark {
-          edges {
-            node {
-              fields {
-                slug
-              }
-            }
-          }
-        }
-      }
-    `,
-  );
-
-  if (result.errors) {
-    reporter.panicOnBuild(`Error while running GraphQL query.`);
-    return;
-  }
-
-  result.data?.allMarkdownRemark.edges.forEach(({ node }) => {
-    const slug = node.fields.slug;
-    createPage({
-      path: slug,
-      component: path.resolve('./src/templates/page.tsx'),
-      context: {
-        slug: slug,
-      },
-    });
-  });
+exports.createPages = async (args: CreatePagesArgs) => {
+  await createMarkdownPages(args);
 };
 
 exports.onCreateWebpackConfig = ({
@@ -74,5 +49,10 @@ exports.onCreateWebpackConfig = ({
         Buffer: ['buffer', 'Buffer'],
       }),
     ],
+    resolve: {
+      fallback: {
+        path: require.resolve('path-browserify'),
+      },
+    },
   });
 };

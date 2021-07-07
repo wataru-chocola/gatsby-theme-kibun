@@ -11,7 +11,7 @@ import * as css from './page.module.scss';
 
 import EditBox from '../components/editbox';
 import { splitFrontmatter, md2react, md2toc } from '../utils/markdownParser';
-import { renderAst } from '../utils/rehype';
+import { ImageDataCollection } from '../utils/rehype';
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -19,17 +19,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
-  const pageinfo = props.data.markdownRemark;
-  const content = splitFrontmatter(props.data.markdownRemark!.parent!.internal.content!);
+interface PageSlugContext {
+  slug: string;
+}
+
+const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>> = (props) => {
+  const pageinfo = props.data.markdown!;
+  const slug = props.pageContext.slug! as string;
+  const imageDataCollection: ImageDataCollection = {};
+  props.data.markdown!.fields?.images?.forEach((image) => {
+    if (image != null) {
+      imageDataCollection[image.fields!.imagePath!] = image.gatsbyImageData;
+    }
+  });
+  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
+
   const classes = useStyles();
   const [editmode, setEditmode] = React.useState(false);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [html, setHTML] = React.useState<React.ReactElement | null>(
-    renderAst(props.data.markdownRemark!.htmlAst!),
+    md2react(markdown, slug, imageDataCollection),
   );
-  const [toc, setTOC] = React.useState<React.ReactElement | null>(null);
-  //const [html, setHTML] = React.useState(markdownProcessor.processSync(markdown).contents);
+  const [toc, setTOC] = React.useState<React.ReactElement | null>(md2toc(markdown));
 
   const openEditmode = React.useCallback(() => {
     setEditmode(true);
@@ -38,13 +49,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
     setEditmode(false);
   }, [setEditmode]);
   const renderMarkdown = (md: string) => {
-    setHTML(md2react(md));
+    setHTML(md2react(md, slug, imageDataCollection));
     setTOC(md2toc(md));
   };
-
-  if (pageinfo == null) {
-    return null;
-  }
 
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
@@ -88,14 +95,21 @@ export default Page;
 
 export const query = graphql`
   query PageMarkdown($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      htmlAst
+    markdown(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
       }
       parent {
         internal {
           content
+        }
+      }
+      fields {
+        images {
+          fields {
+            imagePath
+          }
+          gatsbyImageData
         }
       }
     }

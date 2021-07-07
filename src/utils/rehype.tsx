@@ -5,6 +5,8 @@ import { Node } from 'unist';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MuiGatsbyLink } from './link';
+import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
+import path from 'path';
 
 const useStyles = makeStyles((theme: Theme) => ({
   h6: {
@@ -61,18 +63,42 @@ const A: React.FC = (props: any) => {
   return link;
 };
 
-export const componentMapping = {
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  h4: H4,
-  h5: H5,
-  h6: H6,
-  p: P,
-  a: A,
-};
+export interface ImageDataCollection {
+  [key: string]: ImageDataLike;
+}
 
-export const renderAst: (tree: Node) => React.ReactElement = (tree) => {
+export const renderAst: (
+  tree: Node,
+  slug?: string,
+  imgdataCollection?: ImageDataCollection,
+) => React.ReactElement = (tree, slug = '/', imgdataCollection = {}) => {
+  const IMG: React.VFC = ({ alt, ...props }: JSX.IntrinsicElements['img']) => {
+    const altText = alt || '(no alt image)';
+    if (props.src != null) {
+      const src = path.isAbsolute(props.src) ? props.src : path.join(slug, props.src);
+      const imgdata = imgdataCollection[src];
+      if (imgdata != null) {
+        const image = getImage(imgdata);
+        if (image != null) {
+          return <GatsbyImage alt={altText} image={image} />;
+        }
+      }
+    }
+    return <img alt={altText} {...props} />;
+  };
+
+  const componentMapping = {
+    h1: H1,
+    h2: H2,
+    h3: H3,
+    h4: H4,
+    h5: H5,
+    h6: H6,
+    p: P,
+    a: A,
+    img: IMG,
+  };
+
   return (unified()
     .use(rehypeReact, {
       createElement: React.createElement,
