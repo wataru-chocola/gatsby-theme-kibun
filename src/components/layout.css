@@ -1,0 +1,4 @@
+html {
+  /* jump offset to skip fixed top bar */
+  scroll-padding-top: 100px;
+}

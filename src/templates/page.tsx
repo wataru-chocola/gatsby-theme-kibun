@@ -5,10 +5,13 @@ import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
 
 import { Typography } from '@material-ui/core';
-import { Box } from '@material-ui/core';
+import { Box, Slide } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { renderAst } from '../utils/rehype';
 import * as css from './page.module.scss';
+
+import EditBox from '../components/editbox';
+import { splitFrontmatter, md2react, md2toc } from '../utils/markdownParser';
+import { ImageDataCollection } from '../utils/rehype';
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -16,16 +19,52 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Page: React.FC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
-  const pageinfo = props.data.markdownRemark;
-  const classes = useStyles();
+interface PageSlugContext {
+  slug: string;
+}
 
-  if (pageinfo == null) {
-    return null;
-  }
+const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>> = (props) => {
+  const pageinfo = props.data.markdown!;
+  const slug = props.pageContext.slug! as string;
+  const imageDataCollection: ImageDataCollection = {};
+  props.data.markdown!.fields?.images?.forEach((image) => {
+    if (image != null) {
+      imageDataCollection[image.fields!.imagePath!] = image.gatsbyImageData;
+    }
+  });
+  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
+
+  const classes = useStyles();
+  const [editmode, setEditmode] = React.useState(false);
+  const [markdown, setMarkdown] = React.useState(content[1]);
+  const [html, setHTML] = React.useState<React.ReactElement | null>(
+    md2react(markdown, slug, imageDataCollection),
+  );
+  const [toc, setTOC] = React.useState<React.ReactElement | null>(md2toc(markdown));
+
+  const openEditmode = React.useCallback(() => {
+    setEditmode(true);
+  }, [setEditmode]);
+  const closeEditmode = React.useCallback(() => {
+    setEditmode(false);
+  }, [setEditmode]);
+  const renderMarkdown = (md: string) => {
+    setHTML(md2react(md, slug, imageDataCollection));
+    setTOC(md2toc(md));
+  };
+
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
+      <Slide in={editmode} mountOnEnter unmountOnExit>
+        <EditBox
+          closeEditmode={closeEditmode}
+          saveMarkdown={setMarkdown}
+          renderMarkdown={renderMarkdown}
+          md={markdown}
+        ></EditBox>
+      </Slide>
+
       <Box pt={2} pb={0.5} px={2}>
         <PathBreadcrumbs
           crumbs={[
@@ -40,9 +79,9 @@ const Page: React.FC<PageProps<GatsbyTypes.PageMarkdownQuery>> = (props) => {
         </Typography>
       </Box>
 
-      <Box p={4}>
-        <div className={css.toc} dangerouslySetInnerHTML={{ __html: pageinfo.tableOfContents! }} />
-        <div className={css.md}>{renderAst(pageinfo.htmlAst!)}</div>
+      <Box p={4} onDoubleClick={openEditmode}>
+        {toc && <div className={css.toc}>{toc}</div>}
+        <div className={css.md}>{html}</div>
       </Box>
 
       <Box mt={4} pt={1} pb={2} px={2} bgcolor="primary.light" color="primary.contrastText">
@@ -56,11 +95,22 @@ export default Page;
 
 export const query = graphql`
   query PageMarkdown($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      htmlAst
-      tableOfContents
+    markdown(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
+      }
+      parent {
+        internal {
+          content
+        }
+      }
+      fields {
+        images {
+          fields {
+            imagePath
+          }
+          gatsbyImageData
+        }
       }
     }
   }
