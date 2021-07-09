@@ -3,14 +3,15 @@ import {
   CreateNodeArgs,
   CreateSchemaCustomizationArgs,
   CreateWebpackConfigArgs,
+  CreateResolversArgs,
 } from 'gatsby';
 import * as path from 'path';
-import { transformFileToMarkdown, modifyMarkdownSchema } from './createMarkdownNodes';
+import {
+  transformFileToMarkdown,
+  modifyMarkdownSchema,
+  createMarkdownResolvers,
+} from './createMarkdownNodes';
 import { createMarkdownPages } from './createMarkdownPages';
-
-exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
-  modifyMarkdownSchema(args);
-};
 
 exports.onCreateNode = async (args: CreateNodeArgs) => {
   const { createNodeField } = args.actions;
@@ -30,6 +31,14 @@ exports.onCreateNode = async (args: CreateNodeArgs) => {
   ) {
     return await transformFileToMarkdown(args);
   }
+};
+
+exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
+  modifyMarkdownSchema(args);
+};
+
+exports.createResolvers = (args: CreateResolversArgs) => {
+  createMarkdownResolvers(args);
 };
 
 exports.createPages = async (args: CreatePagesArgs) => {

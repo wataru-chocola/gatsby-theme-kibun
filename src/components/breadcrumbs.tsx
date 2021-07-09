@@ -4,8 +4,8 @@ import { Typography } from '@material-ui/core';
 import { MuiGatsbyLink } from '../utils/link';
 
 interface PathBreadcrumb {
-  title: string;
   path: string;
+  title?: string;
 }
 
 interface PathBreadcrumbsProps extends BreadcrumbsProps {
@@ -13,18 +13,34 @@ interface PathBreadcrumbsProps extends BreadcrumbsProps {
 }
 
 const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
-  const items = props.crumbs.map((crum, i) =>
-    i !== props.crumbs.length - 1 ? (
-      <MuiGatsbyLink color="inherit" to={crum.path} key={i} style={{ fontSize: 13 }}>
-        {crum.title}
+  const items = props.crumbs.map((crumb, i) => {
+    let slug = crumb.path;
+    if (slug.endsWith('/')) {
+      slug = slug.slice(0, -1);
+    }
+    const pathElem = slug.split('/').slice(-1)[0];
+    const title: string = crumb.title || pathElem || '';
+
+    return i !== props.crumbs.length - 1 ? (
+      <MuiGatsbyLink to={crumb.path} key={i} style={{ fontSize: 'sm' }}>
+        {title}
       </MuiGatsbyLink>
     ) : (
-      <Typography color="textPrimary" key={i} style={{ fontSize: 13 }}>
-        {crum.title}
+      <Typography color="textPrimary" key={i} style={{ fontSize: 'sm' }}>
+        {title}
       </Typography>
-    ),
+    );
+  });
+  return (
+    <Breadcrumbs
+      aria-label="breadcrumb"
+      maxItems={4}
+      itemsBeforeCollapse={1}
+      itemsAfterCollapse={2}
+    >
+      {items}
+    </Breadcrumbs>
   );
-  return <Breadcrumbs aria-label="breadcrumb">{items}</Breadcrumbs>;
 };
 
 export default PathBreadcrumbs;

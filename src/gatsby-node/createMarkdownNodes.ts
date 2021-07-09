@@ -1,4 +1,10 @@
-import { CreateNodeArgs, CreateSchemaCustomizationArgs, Node, NodeInput } from 'gatsby';
+import {
+  CreateNodeArgs,
+  CreateSchemaCustomizationArgs,
+  CreateResolversArgs,
+  Node,
+  NodeInput,
+} from 'gatsby';
 import { createFilePath } from 'gatsby-source-filesystem';
 
 import * as _ from 'lodash';
@@ -95,7 +101,63 @@ export function modifyMarkdownSchema({ actions, schema }: CreateSchemaCustomizat
     type MarkdownFields {
       images: [ImageSharp] @link(by: "fields.imagePath")
     }
+    type BreadCrumb {
+      slug: String!
+      title: String
+    }
     `,
   ];
   createTypes(typeDefs);
+}
+
+const makeSubPaths: (slug: string) => string[] = (slug) => {
+  if (slug.endsWith('/')) {
+    slug = slug.slice(0, -1);
+  }
+  const pathElems = slug.split('/');
+  const subPaths: string[] = [];
+  if (pathElems.length >= 1) {
+    for (let i = 0; i < pathElems.length; i++) {
+      subPaths.push(pathElems.slice(0, i + 1).join('/') + '/');
+    }
+  }
+  return subPaths;
+};
+
+interface MarkdownNode {
+  frontmatter: {
+    title: string;
+  };
+  fields: {
+    slug: string;
+  };
+}
+
+interface nodeContext {
+  nodeModel: {
+    getAllNodes: (arg1: any, arg2: any) => MarkdownNode[];
+  };
+}
+
+export function createMarkdownResolvers({ createResolvers }: CreateResolversArgs): void {
+  const resolvers = {
+    Markdown: {
+      breadcrumbs: {
+        type: [`BreadCrumb`],
+        resolve(source: MarkdownNode, _args: any, context: nodeContext, _info: any) {
+          const subPaths = makeSubPaths(source.fields.slug);
+          return subPaths.map((subPath) => {
+            const tmpNode = context.nodeModel
+              .getAllNodes({ type: 'Markdown' }, { conneciton: 'Markdown' })
+              .find((markdown: MarkdownNode) => markdown.fields.slug === subPath);
+            return {
+              slug: subPath,
+              title: tmpNode?.frontmatter?.title,
+            };
+          });
+        },
+      },
+    },
+  };
+  createResolvers(resolvers);
 }

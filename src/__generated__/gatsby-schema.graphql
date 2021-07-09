@@ -665,6 +665,7 @@ type Markdown implements Node {
   parent: Node
   children: [Node!]!
   internal: Internal!
+  breadcrumbs: [BreadCrumb]
 }
 
 type MarkdownFrontmatter {
@@ -687,6 +688,11 @@ type MarkdownFrontmatter {
 type MarkdownFields {
   images: [ImageSharp]
   slug: String
+}
+
+type BreadCrumb {
+  slug: String!
+  title: String
 }
 
 type SitePlugin implements Node {
