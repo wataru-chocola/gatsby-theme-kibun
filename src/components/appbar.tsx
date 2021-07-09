@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles, alpha } from '@material-ui/core/styles';
 import { AppBar as MUIAppBar, AppBarProps, Toolbar } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import { InputBase } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -9,6 +8,22 @@ import { useStaticQuery, graphql } from 'gatsby';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+
+import { MuiGatsbyLink } from '../utils/link';
+
+const useSiteTitleStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: '1em',
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.primary.light,
+    },
+  },
+}));
 
 export const SiteTitle: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
@@ -24,11 +39,19 @@ export const SiteTitle: React.VFC = () => {
   );
 
   const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`;
+  const classes = useSiteTitleStyles();
 
   return (
-    <Typography variant="h6" noWrap>
+    <MuiGatsbyLink
+      color="inherit"
+      variant="h6"
+      to="/"
+      noWrap
+      underline="none"
+      className={classes.root}
+    >
       {siteTitle}
-    </Typography>
+    </MuiGatsbyLink>
   );
 };
 
