@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import { jaJP } from '@material-ui/core/locale';
 import { indigo } from '@material-ui/core/colors';
 
@@ -12,7 +12,7 @@ const fontFamily = [
   'sans-serif',
 ];
 
-const theme = createMuiTheme(
+const theme = createTheme(
   {
     palette: {
       primary: {

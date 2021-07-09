@@ -53,10 +53,7 @@ export async function getImagePaths(md: string, dir?: string): Promise<string[]>
   const imagePaths = ([] as string[]).concat(
     markdownImageNodes
       .map((node) => {
-        if (
-          !Object.prototype.hasOwnProperty.call(node, 'url') &&
-          !Object.prototype.hasOwnProperty.call(node, 'identifier')
-        ) {
+        if (node.type === 'imageReference') {
           const defNode = definition(node.identifier as string);
           if (defNode == null) {
             return null;
