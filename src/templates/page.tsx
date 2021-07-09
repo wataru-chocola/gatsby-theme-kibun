@@ -26,6 +26,10 @@ interface PageSlugContext {
 const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>> = (props) => {
   const pageinfo = props.data.markdown!;
   const slug = props.pageContext.slug! as string;
+  const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
+    path: crumb!.slug,
+    title: crumb!.title,
+  }));
   const imageDataCollection: ImageDataCollection = {};
   props.data.markdown!.fields?.images?.forEach((image) => {
     if (image != null) {
@@ -66,12 +70,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
       </Slide>
 
       <Box pt={2} pb={0.5} px={2}>
-        <PathBreadcrumbs
-          crumbs={[
-            { path: 'dummy', title: 'Dummy' },
-            { path: 'cc', title: 'dd' },
-          ]}
-        />
+        <PathBreadcrumbs crumbs={crumbs} />
       </Box>
       <Box bgcolor="primary.light" color="primary.contrastText" px={2} py={1}>
         <Typography variant="h1" className={classes.title}>
@@ -97,6 +96,10 @@ export const query = graphql`
   query PageMarkdown($slug: String!) {
     markdown(fields: { slug: { eq: $slug } }) {
       frontmatter {
+        title
+      }
+      breadcrumbs {
+        slug
         title
       }
       parent {

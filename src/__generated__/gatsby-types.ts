@@ -583,6 +583,7 @@ type Markdown = Node & {
   readonly parent: Maybe<Node>;
   readonly children: ReadonlyArray<Node>;
   readonly internal: Internal;
+  readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<BreadCrumb>>>;
 };
 
 type MarkdownFrontmatter = {
@@ -601,6 +602,11 @@ type MarkdownFrontmatter_dateArgs = {
 type MarkdownFields = {
   readonly images: Maybe<ReadonlyArray<Maybe<ImageSharp>>>;
   readonly slug: Maybe<Scalars['String']>;
+};
+
+type BreadCrumb = {
+  readonly slug: Scalars['String'];
+  readonly title: Maybe<Scalars['String']>;
 };
 
 type SitePlugin = Node & {
@@ -3243,7 +3249,7 @@ type PageMarkdownQueryVariables = Exact<{
 }>;
 
 
-type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly parent: Maybe<{ readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> }>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
+type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<{ readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> }>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
         Pick<ImageSharp, 'gatsbyImageData'>
         & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
       )>>> }> }> };
