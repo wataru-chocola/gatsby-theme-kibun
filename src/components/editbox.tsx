@@ -10,7 +10,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
     position: 'sticky',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       top: theme.mixins.toolbar.minHeight as number,
     },
     [theme.breakpoints.up('md')]: {

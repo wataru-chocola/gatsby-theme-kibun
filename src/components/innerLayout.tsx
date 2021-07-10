@@ -6,7 +6,8 @@ import { Paper } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
 import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
-import { SideBarDrawer, MobileDrawer, DrawerContent } from './sidebar';
+import { SideBarDrawer, MobileDrawer } from './sidebar';
+import { SectionNavigationList } from './sectionNavigationList';
 import ErrorBoundary from './errorboundary';
 
 const drawerWidth = 240;
@@ -68,13 +69,14 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
         <Hidden smUp implementation="css">
           <MobileDrawer
             container={container}
+            className={classes.drawer}
             classes={{
               paper: classes.drawerPaper,
             }}
             open={mobileDrawerOpen}
             onClose={handleDrawerToggle}
           >
-            <DrawerContent />
+            <SectionNavigationList />
           </MobileDrawer>
         </Hidden>
 
@@ -85,7 +87,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
               paper: classes.drawerPaper,
             }}
           >
-            <DrawerContent />
+            <SectionNavigationList />
           </SideBarDrawer>
         </Hidden>
       </nav>
