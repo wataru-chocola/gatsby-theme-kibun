@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, GatsbyLinkProps } from 'gatsby';
+import { Link, GatsbyLinkProps as OriginalGatsbyLinkProps } from 'gatsby';
 import MuiLink, { LinkProps } from '@material-ui/core/Link';
 
-interface ALinkProps extends Omit<GatsbyLinkProps<any>, 'to'> {
+interface ALinkProps extends Omit<OriginalGatsbyLinkProps<any>, 'to'> {
   href: string;
 }
 
@@ -13,7 +13,7 @@ const ALink: React.FC<ALinkProps> = ({ href, children, innerRef, ...other }) => 
 );
 
 export const GatsbyLink = React.forwardRef(
-  (props: Omit<GatsbyLinkProps<unknown>, 'ref'>, ref: React.Ref<HTMLAnchorElement>) => {
+  (props: Omit<OriginalGatsbyLinkProps<unknown>, 'ref'>, ref: React.Ref<HTMLAnchorElement>) => {
     const { to, activeClassName, partiallyActive, ...other } = props;
     const internal = /^\/(?!\/)/.test(to);
 
@@ -38,6 +38,8 @@ export const GatsbyLink = React.forwardRef(
   },
 );
 GatsbyLink.displayName = 'GatsbyLink';
+
+export type GatsbyLinkProps = Parameters<typeof GatsbyLink>[0];
 
 export const MuiGatsbyLink = React.forwardRef<HTMLAnchorElement, LinkProps & { to?: string }>(
   (props, ref) => {

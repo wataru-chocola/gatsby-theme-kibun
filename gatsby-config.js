@@ -3,6 +3,10 @@ module.exports = {
     title: `My Testsite`,
     description: `My testsite here`,
     siteUrl: `https://mytest.exmaple.com/`,
+    sectionMenu: [
+      { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
+      { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
+    ],
   },
   plugins: [
     {
