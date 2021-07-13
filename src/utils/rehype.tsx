@@ -99,10 +99,10 @@ export const renderAst: (
     img: IMG,
   };
 
-  return (unified()
+  return unified()
     .use(rehypeReact, {
       createElement: React.createElement,
       components: componentMapping,
     })
-    .stringify(tree) as unknown) as React.ReactElement;
+    .stringify(tree) as unknown as React.ReactElement;
 };

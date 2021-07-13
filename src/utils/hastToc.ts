@@ -1,6 +1,6 @@
-import visit, { Visitor } from 'unist-util-visit';
+import { visit, Visitor } from 'unist-util-visit';
 import toString from 'hast-util-to-string';
-import h from 'hastscript';
+import { h } from 'hastscript';
 import { Element } from 'hast';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
