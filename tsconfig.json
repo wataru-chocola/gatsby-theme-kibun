@@ -10,6 +10,7 @@
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "moduleResolution": "node"
   }
 }

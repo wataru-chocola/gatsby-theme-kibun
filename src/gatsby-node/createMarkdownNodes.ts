@@ -9,7 +9,7 @@ import { createFilePath } from 'gatsby-source-filesystem';
 
 import * as _ from 'lodash';
 import { getImagePaths } from './getImagePaths';
-import * as matter from 'gray-matter';
+import matter from 'gray-matter';
 
 export async function transformFileToMarkdown({
   node,

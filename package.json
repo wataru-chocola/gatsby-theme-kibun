@@ -12,6 +12,7 @@
     "autoprefixer": "^10.3.0",
     "buffer": "^6.0.3",
     "cheerio": "^1.0.0-rc.10",
+    "esm": "github:agoric-labs/esm#Agoric-built",
     "gatsby": "^3.9.1",
     "gatsby-plugin-image": "^1.9.0",
     "gatsby-plugin-manifest": "^3.9.0",

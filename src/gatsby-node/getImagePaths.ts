@@ -1,4 +1,4 @@
-import * as unified from 'unified';
+import unified from 'unified';
 import {
   Image as MdastImage,
   ImageReference as MdastImageReference,
@@ -7,7 +7,7 @@ import {
 } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { definitions as getDefinitions } from 'mdast-util-definitions';
-import * as remarkParser from 'remark-parse';
+import remarkParser from 'remark-parse';
 import * as path from 'path';
 import * as cheerio from 'cheerio';
 
