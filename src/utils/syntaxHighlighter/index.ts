@@ -1,4 +1,4 @@
-import visit, { Visitor } from 'unist-util-visit';
+import { visit, Visitor } from 'unist-util-visit';
 import nodeToString from 'hast-util-to-string';
 import { refractor } from './commonRefractor';
 import { Element } from 'hast';

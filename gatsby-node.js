@@ -10,13 +10,15 @@ require('ts-node').register({
 
 require('./src/__generated__/gatsby-types');
 
+const requireESM = require('esm')(module);
+
 const {
   createPages,
   onCreateNode,
   onCreateWebpackConfig,
   createSchemaCustomization,
   createResolvers,
-} = require('./src/gatsby-node/index');
+} = requireESM('./src/gatsby-node/index');
 
 exports.createPages = createPages;
 exports.onCreateNode = onCreateNode;

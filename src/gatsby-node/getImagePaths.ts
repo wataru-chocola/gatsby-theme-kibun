@@ -1,18 +1,15 @@
-import * as unified from 'unified';
+import unified from 'unified';
 import {
   Image as MdastImage,
   ImageReference as MdastImageReference,
   Definition as MdastDefinition,
   HTML as MdastHTML,
 } from 'mdast';
-//import remarkParser from 'remark-parse';
-//import visit from 'unist-util-visit';
-import * as visit from 'unist-util-visit';
-//import getDefinitions from 'mdast-util-definitions';
-import * as getDefinitions from 'mdast-util-definitions';
+import { visit } from 'unist-util-visit';
+import { definitions as getDefinitions } from 'mdast-util-definitions';
+import remarkParser from 'remark-parse';
 import * as path from 'path';
 import * as cheerio from 'cheerio';
-const remarkParser = require('remark-parse');
 
 const markdownParser = unified().use(remarkParser);
 
@@ -61,7 +58,7 @@ export async function getImagePaths(md: string, dir?: string): Promise<string[]>
             node = defNode;
           }
         }
-        return getImageCanonicalPath(node.url as string, dir);
+        return getImageCanonicalPath((node as MdastImage | MdastDefinition).url as string, dir);
       })
       .filter((path) => path != null) as string[],
     flatten<string>(
@@ -89,5 +86,5 @@ export async function getImagePaths(md: string, dir?: string): Promise<string[]>
   // TODO absolute path
   // TODO external path
 
-  return [...new Set(imagePaths)];
+  return [...Array.from(new Set(imagePaths))];
 }
