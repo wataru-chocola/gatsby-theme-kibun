@@ -10,7 +10,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
 
 import EditBox from '../components/editbox';
-import { splitFrontmatter, md2react, md2toc } from '../utils/markdownParser';
+import { splitFrontmatter, mdParse, mdast2react, mdast2toc } from '../utils/markdownParser';
 import { ImageDataCollection } from '../utils/rehype';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,21 +30,43 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
     path: crumb!.slug,
     title: crumb!.title,
   }));
-  const imageDataCollection: ImageDataCollection = {};
-  props.data.markdown!.fields?.images?.forEach((image) => {
-    if (image != null) {
-      imageDataCollection[image.fields!.imagePath!] = image.gatsbyImageData;
-    }
-  });
-  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
 
+  const imageData = props.data.markdown!.fields?.images;
+  const imageDataCollection = React.useMemo<ImageDataCollection>(() => {
+    const tmp_imageDataCollection: ImageDataCollection = {};
+    imageData?.forEach((image) => {
+      if (image != null) {
+        tmp_imageDataCollection[image.fields!.imagePath!] = image.gatsbyImageData;
+      }
+    });
+    return tmp_imageDataCollection;
+  }, [imageData]);
+
+  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
   const classes = useStyles();
+
   const [editmode, setEditmode] = React.useState(false);
+
   const [markdown, setMarkdown] = React.useState(content[1]);
-  const [html, setHTML] = React.useState<React.ReactElement | null>(
-    md2react(markdown, slug, imageDataCollection),
+  const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
+
+  const mdast = React.useMemo(() => mdParse(currentMarkdown), [currentMarkdown]);
+  const html = React.useMemo<React.ReactElement | null>(
+    () => mdast2react(mdast, slug, imageDataCollection),
+    [mdast, slug, imageDataCollection],
   );
-  const [toc, setTOC] = React.useState<React.ReactElement | null>(md2toc(markdown));
+  const toc = React.useMemo<React.ReactElement | null>(() => mdast2toc(mdast), [mdast]);
+
+  const saveMarkdown = React.useCallback(
+    (md: string) => {
+      setMarkdown(md);
+      setCurrentMarkdown(md);
+    },
+    [setMarkdown, setCurrentMarkdown],
+  );
+  const resetMarkdown = React.useCallback(() => {
+    setCurrentMarkdown(markdown);
+  }, [markdown]);
 
   const openEditmode = React.useCallback(() => {
     setEditmode(true);
@@ -52,10 +74,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
   const closeEditmode = React.useCallback(() => {
     setEditmode(false);
   }, [setEditmode]);
-  const renderMarkdown = (md: string) => {
-    setHTML(md2react(md, slug, imageDataCollection));
-    setTOC(md2toc(md));
-  };
 
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
@@ -63,8 +81,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
       <Slide in={editmode} mountOnEnter unmountOnExit>
         <EditBox
           closeEditmode={closeEditmode}
-          saveMarkdown={setMarkdown}
-          renderMarkdown={renderMarkdown}
+          saveMarkdown={saveMarkdown}
+          renderMarkdown={setCurrentMarkdown}
+          resetMarkdown={resetMarkdown}
           md={markdown}
         ></EditBox>
       </Slide>

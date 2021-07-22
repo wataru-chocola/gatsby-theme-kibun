@@ -75,9 +75,14 @@ export const SectionNavigationList: React.VFC = () => {
   const classes = useStyles();
 
   const naviListItems: React.ReactElement[] = [];
-  naviData.forEach((naviCategory, _i) => {
+  naviData.forEach((naviCategory, i) => {
     naviListItems.push(
-      <ListSubheader component="div" disableSticky classes={{ root: classes.subheader }}>
+      <ListSubheader
+        key={`header-${i}`}
+        component="div"
+        disableSticky
+        classes={{ root: classes.subheader }}
+      >
         {naviCategory.category}
       </ListSubheader>,
     );
@@ -110,7 +115,7 @@ export const SectionNavigationList: React.VFC = () => {
         );
       }
     });
-    naviListItems.push(<List>{nestedListItems}</List>);
+    naviListItems.push(<List key={`list-${i}`}>{nestedListItems}</List>);
   });
 
   return <List>{naviListItems}</List>;

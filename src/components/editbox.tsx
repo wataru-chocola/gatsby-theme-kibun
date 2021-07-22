@@ -38,11 +38,12 @@ interface EditBoxProps {
   closeEditmode: () => void;
   saveMarkdown: (markdown: string) => void;
   renderMarkdown: (markdown: string) => void;
+  resetMarkdown: () => void;
   md?: string;
 }
 
 const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
-  ({ closeEditmode, saveMarkdown, renderMarkdown, md }, forwardedRef) => {
+  ({ closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, md }, forwardedRef) => {
     const inputEl = React.useRef<null | HTMLDivElement>(null);
     const [markdown, setMarkdown] = React.useState(md || '');
     const classes = useStyles();
@@ -59,15 +60,16 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         editBoxHeight && window.scrollBy(0, -editBoxHeight);
       };
     }, []);
+
     const saveEditing = React.useCallback(() => {
       saveMarkdown(markdown);
-      renderMarkdown(markdown);
       closeEditmode();
-    }, [saveMarkdown, closeEditmode, renderMarkdown, markdown]);
+    }, [saveMarkdown, closeEditmode, markdown]);
     const cancelEditing = React.useCallback(() => {
-      renderMarkdown(md || '');
+      resetMarkdown();
       closeEditmode();
-    }, [closeEditmode, renderMarkdown, md]);
+    }, [closeEditmode, resetMarkdown]);
+
     const updateMarkdown = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         setMarkdown(e.target.value);
