@@ -1,5 +1,6 @@
 import React from 'react';
 import unified from 'unified';
+import { Node as UnistNode } from 'unist';
 import { Element } from 'hast';
 import { Paragraph } from 'mdast';
 import * as mdast2hast from 'mdast-util-to-hast';
@@ -49,19 +50,22 @@ export function splitFrontmatter(md: string): [string, string] {
   return [mdfile.matter, mdcontent];
 }
 
-export function md2react(
-  md: string,
+export function mdParse(md: string): UnistNode {
+  const mdast = markdownHastProcessor.parse(md);
+  return mdast;
+}
+
+export function mdast2react(
+  mdast: UnistNode,
   pageSlug: string,
   imgdataCollection: ImageDataCollection = {},
 ): React.ReactElement | null {
-  const mdast = markdownHastProcessor.parse(md);
   const hast = markdownHastProcessor.runSync(mdast) as unknown as Element;
   const result = renderAst(hast, pageSlug, imgdataCollection);
   return result;
 }
 
-export function md2toc(md: string): React.ReactElement | null {
-  const mdast = markdownHastBasicProcessor.parse(md);
+export function mdast2toc(mdast: UnistNode): React.ReactElement | null {
   const hast = markdownHastBasicProcessor.runSync(mdast) as unknown as Element;
   const toc = hastToc(hast);
   if (toc == null) {
