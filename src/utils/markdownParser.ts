@@ -21,6 +21,14 @@ const mdastParagraph2hast: mdast2hast.Handler = (h, tmp_node) => {
   return h(node, 'p', all(h, node));
 };
 
+const markdownHastBasicProcessor = unified()
+  .use(remarkParser)
+  .use(remarkRehype, undefined, {
+    allowDangerousHtml: true,
+    handlers: { paragraph: mdastParagraph2hast },
+  })
+  .use(autolinkHeader);
+
 const markdownHastProcessor = unified()
   .use(remarkParser)
   .use(remarkRehype, undefined, {
@@ -48,12 +56,13 @@ export function md2react(
 ): React.ReactElement | null {
   const mdast = markdownHastProcessor.parse(md);
   const hast = markdownHastProcessor.runSync(mdast) as unknown as Element;
-  return renderAst(hast, pageSlug, imgdataCollection);
+  const result = renderAst(hast, pageSlug, imgdataCollection);
+  return result;
 }
 
 export function md2toc(md: string): React.ReactElement | null {
-  const mdast = markdownHastProcessor.parse(md);
-  const hast = markdownHastProcessor.runSync(mdast) as unknown as Element;
+  const mdast = markdownHastBasicProcessor.parse(md);
+  const hast = markdownHastBasicProcessor.runSync(mdast) as unknown as Element;
   const toc = hastToc(hast);
   if (toc == null) {
     return null;
