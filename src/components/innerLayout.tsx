@@ -5,7 +5,9 @@ import { Container, ContainerProps } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
-import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
+import { AppBar, SiteTitle, MenuButton, SearchBox } from './appbar';
+import { AccountButton } from './accountButton';
+import { SignInButton } from './signInButton';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
 import ErrorBoundary from './errorboundary';
@@ -49,6 +51,7 @@ export type InnerLayoutProps = {
 const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   const classes = useStyles();
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
   const container = window !== undefined ? () => window().document.body : undefined;
 
   const handleDrawerToggle = () => {
@@ -62,7 +65,11 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
-        <AccountButton />
+        {isLoggedIn ? (
+          <AccountButton setIsLoggedIn={setIsLoggedIn} />
+        ) : (
+          <SignInButton setIsLoggedIn={setIsLoggedIn} />
+        )}
       </AppBar>
 
       <nav aria-label="sidemenu">
