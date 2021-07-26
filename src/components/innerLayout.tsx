@@ -12,6 +12,9 @@ import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
 import ErrorBoundary from './errorboundary';
 
+import { useAppSelector } from '../state/hooks';
+import { selectIsLoggedIn } from '../state/loginSelector';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -51,8 +54,8 @@ export type InnerLayoutProps = {
 const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   const classes = useStyles();
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
   const container = window !== undefined ? () => window().document.body : undefined;
+  const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
 
   const handleDrawerToggle = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
@@ -65,11 +68,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
-        {isLoggedIn ? (
-          <AccountButton setIsLoggedIn={setIsLoggedIn} />
-        ) : (
-          <SignInButton setIsLoggedIn={setIsLoggedIn} />
-        )}
+        {isLoggedIn ? <AccountButton /> : <SignInButton />}
       </AppBar>
 
       <nav aria-label="sidemenu">
