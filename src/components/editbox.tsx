@@ -7,6 +7,12 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { Box, Paper, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
+import { useAppSelector } from '../state/hooks';
+import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
+
+import { splitFrontmatter } from '../utils/markdownParser';
+import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
+
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
     position: 'sticky',
@@ -48,6 +54,9 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const [markdown, setMarkdown] = React.useState(md || '');
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
+    const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
+    const token = useAppSelector((state) => selectToken(state));
+    const repoInfo = useGithubRepositoryInfo();
 
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
@@ -60,6 +69,25 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         editBoxHeight && window.scrollBy(0, -editBoxHeight);
       };
     }, []);
+
+    React.useEffect(() => {
+      if (isLoggedIn) {
+        const github = new githubRepoOperator(
+          {
+            project: repoInfo.project,
+            branch: repoInfo.branch,
+            basePath: repoInfo.rootDir,
+          },
+          { token: token as string },
+        );
+        github.getFileContent('path1/index.md').then((content) => {
+          const tmpContent = splitFrontmatter(content);
+          if (tmpContent[1] !== markdown) {
+            console.log('detect diff');
+          }
+        });
+      }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const saveEditing = React.useCallback(() => {
       saveMarkdown(markdown);

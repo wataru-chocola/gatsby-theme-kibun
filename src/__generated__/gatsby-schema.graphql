@@ -366,6 +366,7 @@ type SiteSiteMetadataSectionMenuMenu {
 
 type SiteSiteMetadataGithubRepository {
   project: String
+  branch: String
   rootDir: String
 }
 
@@ -1669,6 +1670,7 @@ input SiteSiteMetadataSectionMenuMenuFilterInput {
 
 input SiteSiteMetadataGithubRepositoryFilterInput {
   project: StringQueryOperatorInput
+  branch: StringQueryOperatorInput
   rootDir: StringQueryOperatorInput
 }
 
@@ -1701,6 +1703,7 @@ enum SiteFieldsEnum {
   siteMetadata___sectionMenu___menu___text
   siteMetadata___sectionMenu___menu___to
   siteMetadata___githubRepository___project
+  siteMetadata___githubRepository___branch
   siteMetadata___githubRepository___rootDir
   port
   host

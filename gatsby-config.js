@@ -9,6 +9,7 @@ module.exports = {
     ],
     githubRepository: {
       project: 'wataru-chocola/test-sitemd',
+      branch: 'main',
       rootDir: 'markdowns/',
     },
   },

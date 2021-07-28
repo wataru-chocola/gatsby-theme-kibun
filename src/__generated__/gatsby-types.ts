@@ -299,6 +299,7 @@ type SiteSiteMetadataSectionMenuMenu = {
 
 type SiteSiteMetadataGithubRepository = {
   readonly project: Maybe<Scalars['String']>;
+  readonly branch: Maybe<Scalars['String']>;
   readonly rootDir: Maybe<Scalars['String']>;
 };
 
@@ -1887,6 +1888,7 @@ type SiteSiteMetadataSectionMenuMenuFilterInput = {
 
 type SiteSiteMetadataGithubRepositoryFilterInput = {
   readonly project: Maybe<StringQueryOperatorInput>;
+  readonly branch: Maybe<StringQueryOperatorInput>;
   readonly rootDir: Maybe<StringQueryOperatorInput>;
 };
 
@@ -1946,6 +1948,7 @@ type SiteFieldsEnum =
   | 'siteMetadata.sectionMenu.menu.text'
   | 'siteMetadata.sectionMenu.menu.to'
   | 'siteMetadata.githubRepository.project'
+  | 'siteMetadata.githubRepository.branch'
   | 'siteMetadata.githubRepository.rootDir'
   | 'port'
   | 'host'
@@ -3312,6 +3315,11 @@ type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<{ readonly githubRepository: Maybe<Pick<SiteSiteMetadataGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
