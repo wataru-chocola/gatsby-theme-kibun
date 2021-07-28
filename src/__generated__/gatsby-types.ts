@@ -3301,7 +3301,10 @@ type PageMarkdownQueryVariables = Exact<{
 }>;
 
 
-type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<{ readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> }>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
+type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<(
+      Pick<File, 'relativePath'>
+      & { readonly internal: Pick<Internal, 'content'> }
+    )>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
         Pick<ImageSharp, 'gatsbyImageData'>
         & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
       )>>> }> }> };

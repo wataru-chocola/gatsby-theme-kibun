@@ -85,6 +85,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
           renderMarkdown={setCurrentMarkdown}
           resetMarkdown={resetMarkdown}
           md={markdown}
+          srcPath={pageinfo.parent?.relativePath || ''}
         ></EditBox>
       </Slide>
 
@@ -122,8 +123,11 @@ export const query = graphql`
         title
       }
       parent {
-        internal {
-          content
+        ... on File {
+          relativePath
+          internal {
+            content
+          }
         }
       }
       fields {

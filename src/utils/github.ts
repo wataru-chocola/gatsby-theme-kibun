@@ -18,6 +18,14 @@ interface authInfo {
   token: string;
 }
 
+function b64_atob(content: string): string {
+  return decodeURIComponent(escape(window.atob(content)));
+}
+
+function b64_btoa(data: string): string {
+  return window.btoa(unescape(encodeURIComponent(data)));
+}
+
 export class githubRepoOperator {
   private readonly owner: string;
   private readonly repo: string;
@@ -57,7 +65,6 @@ export class githubRepoOperator {
       repo: this.repo,
       ref: `heads/${this.mainBranch}`,
     });
-
     const commit = await this.octokit.rest.git.getCommit({
       owner: this.owner,
       repo: this.repo,
@@ -79,11 +86,83 @@ export class githubRepoOperator {
       file_sha: blobNode.sha!,
     });
 
-    return decodeURIComponent(escape(window.atob(blob.data.content)));
+    return b64_atob(blob.data.content);
   }
 
-  async updateMarkdown(content: string, path: string): Promise<null> {
+  async updateMarkdown(path: string, content: string): Promise<null> {
+    const newBlob = await this.octokit.rest.git.createBlob({
+      owner: this.owner,
+      repo: this.repo,
+      content: b64_btoa(content),
+      encoding: 'base64',
+    });
+    const ref = await this.octokit.rest.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${this.mainBranch}`,
+    });
+    const commit = await this.octokit.rest.git.getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      commit_sha: ref.data.object.sha,
+    });
+
+    const tmpPaths = path.split('/');
+
+    const paths = this.basePath.split('/').concat(tmpPaths);
+    const filepath = paths.join('/');
+    const updatedTree = await this.octokit.rest.git.createTree({
+      owner: this.owner,
+      repo: this.repo,
+      base_tree: commit.data.tree.sha,
+      tree: [{ path: filepath, mode: '100644', type: 'blob', sha: newBlob.data.sha }],
+    });
+
+    const newCommit = await this.octokit.rest.git.createCommit({
+      owner: this.owner,
+      repo: this.repo,
+      message: 'update markdown',
+      parents: [commit.data.sha],
+      tree: updatedTree.data.sha,
+    });
+
+    const topicBranchName = this.createTopicBranchName();
+    await this.octokit.rest.git.createRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `refs/heads/${topicBranchName}`,
+      sha: newCommit.data.sha,
+    });
+
+    const pullReq = await this.octokit.rest.pulls.create({
+      owner: this.owner,
+      repo: this.repo,
+      title: `update ${filepath}`,
+      head: topicBranchName,
+      base: this.mainBranch,
+    });
+    await this.octokit.rest.pulls.merge({
+      owner: this.owner,
+      repo: this.repo,
+      pull_number: pullReq.data.number,
+    });
+
+    await this.octokit.rest.git.deleteRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${topicBranchName}`,
+    });
+
     return null;
+  }
+
+  private createTopicBranchName(): string {
+    const now = new Date();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const randomName = [...Array(16).keys()]
+      .map((i) => chars.charAt(Math.floor(Math.random() * chars.length)))
+      .join('');
+    return `update-${now.getFullYear()}${now.getMonth()}${now.getDate()}-${randomName}`;
   }
 
   private async getTree(

@@ -45,11 +45,12 @@ interface EditBoxProps {
   saveMarkdown: (markdown: string) => void;
   renderMarkdown: (markdown: string) => void;
   resetMarkdown: () => void;
+  srcPath: string;
   md?: string;
 }
 
 const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
-  ({ closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, md }, forwardedRef) => {
+  ({ closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md }, forwardedRef) => {
     const inputEl = React.useRef<null | HTMLDivElement>(null);
     const [markdown, setMarkdown] = React.useState(md || '');
     const classes = useStyles();
@@ -57,6 +58,18 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const token = useAppSelector((state) => selectToken(state));
     const repoInfo = useGithubRepositoryInfo();
+    const github = React.useMemo(
+      () =>
+        new githubRepoOperator(
+          {
+            project: repoInfo.project,
+            branch: repoInfo.branch,
+            basePath: repoInfo.rootDir,
+          },
+          { token: token as string },
+        ),
+      [repoInfo, token],
+    );
 
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
@@ -72,14 +85,6 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     React.useEffect(() => {
       if (isLoggedIn) {
-        const github = new githubRepoOperator(
-          {
-            project: repoInfo.project,
-            branch: repoInfo.branch,
-            basePath: repoInfo.rootDir,
-          },
-          { token: token as string },
-        );
         github.getFileContent('path1/index.md').then((content) => {
           const tmpContent = splitFrontmatter(content);
           if (tmpContent[1] !== markdown) {
@@ -90,9 +95,15 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const saveEditing = React.useCallback(() => {
+      if (markdown !== md && isLoggedIn) {
+        github.updateMarkdown(srcPath, markdown).then(() => {
+          console.log('update markdown');
+        });
+      }
+
       saveMarkdown(markdown);
       closeEditmode();
-    }, [saveMarkdown, closeEditmode, markdown]);
+    }, [saveMarkdown, closeEditmode, markdown, github, isLoggedIn, md, srcPath]);
     const cancelEditing = React.useCallback(() => {
       resetMarkdown();
       closeEditmode();
