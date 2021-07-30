@@ -666,6 +666,8 @@ type SitePluginPluginOptions = {
 type SitePluginPluginOptionsOptions = {
   readonly emitWarning: Maybe<Scalars['Boolean']>;
   readonly failOnError: Maybe<Scalars['Boolean']>;
+  readonly extensions: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 type SitePluginPluginOptionsEmitSchema = {
@@ -2279,6 +2281,8 @@ type SitePluginPluginOptionsFilterInput = {
 type SitePluginPluginOptionsOptionsFilterInput = {
   readonly emitWarning: Maybe<BooleanQueryOperatorInput>;
   readonly failOnError: Maybe<BooleanQueryOperatorInput>;
+  readonly extensions: Maybe<StringQueryOperatorInput>;
+  readonly exclude: Maybe<StringQueryOperatorInput>;
 };
 
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
@@ -2507,6 +2511,8 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.stages'
   | 'pluginCreator.pluginOptions.options.emitWarning'
   | 'pluginCreator.pluginOptions.options.failOnError'
+  | 'pluginCreator.pluginOptions.options.extensions'
+  | 'pluginCreator.pluginOptions.options.exclude'
   | 'pluginCreator.pluginOptions.output'
   | 'pluginCreator.pluginOptions.createLinkInHead'
   | 'pluginCreator.pluginOptions.entryLimit'
@@ -3091,6 +3097,8 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.stages'
   | 'pluginOptions.options.emitWarning'
   | 'pluginOptions.options.failOnError'
+  | 'pluginOptions.options.extensions'
+  | 'pluginOptions.options.exclude'
   | 'pluginOptions.output'
   | 'pluginOptions.createLinkInHead'
   | 'pluginOptions.entryLimit'
@@ -3319,10 +3327,10 @@ type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
 type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
 
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type githubRepositryQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<{ readonly githubRepository: Maybe<Pick<SiteSiteMetadataGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
 
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3335,10 +3343,10 @@ type SiteSectionMenuQuery = { readonly site: Maybe<{ readonly siteMetadata: Mayb
       )>>> }
     )> }> };
 
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+type githubRepositryQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<{ readonly githubRepository: Maybe<Pick<SiteSiteMetadataGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 

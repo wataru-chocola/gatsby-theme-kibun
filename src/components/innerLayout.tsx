@@ -10,6 +10,7 @@ import { AccountButton } from './accountButton';
 import { SignInButton } from './signInButton';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
+import { SnackMessage } from './snackMessage';
 import ErrorBoundary from './errorboundary';
 
 import { useAppSelector } from '../state/hooks';
@@ -63,6 +64,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
 
   return (
     <div className={classes.root}>
+      <SnackMessage />
       <AppBar className={classes.appBar}>
         <MenuButton className={classes.menuButton} onClick={handleDrawerToggle} />
         <SiteTitle />

@@ -7,8 +7,9 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { Box, Paper, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import { useAppSelector } from '../state/hooks';
+import { useAppSelector, useAppDispatch } from '../state/hooks';
 import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
+import { snackMessageActions } from '../state/snackMessageSlice';
 
 import { splitFrontmatter } from '../utils/markdownParser';
 import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
@@ -57,6 +58,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const innerRef = React.useRef<HTMLDivElement>();
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const token = useAppSelector((state) => selectToken(state));
+    const dispatch = useAppDispatch();
     const repoInfo = useGithubRepositoryInfo();
     const github = React.useMemo(
       () =>
@@ -85,7 +87,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     React.useEffect(() => {
       if (isLoggedIn) {
-        github.getFileContent('path1/index.md').then((content) => {
+        github.getFileContent(srcPath).then((content) => {
           const tmpContent = splitFrontmatter(content);
           if (tmpContent[1] !== markdown) {
             console.log('detect diff');
@@ -96,14 +98,28 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     const saveEditing = React.useCallback(() => {
       if (markdown !== md && isLoggedIn) {
-        github.updateMarkdown(srcPath, markdown).then(() => {
-          console.log('update markdown');
-        });
+        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
+        github
+          .updateMarkdown(srcPath, markdown)
+          .then(() => {
+            console.log('update markdown');
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(snackMessageActions.setMessage({ message: 'success!', severity: 'success' }));
+          })
+          .catch((e) => {
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(
+              snackMessageActions.setMessage({
+                message: `error: ${e.message}!`,
+                severity: 'error',
+              }),
+            );
+          });
       }
 
       saveMarkdown(markdown);
       closeEditmode();
-    }, [saveMarkdown, closeEditmode, markdown, github, isLoggedIn, md, srcPath]);
+    }, [saveMarkdown, closeEditmode, markdown, github, isLoggedIn, md, srcPath, dispatch]);
     const cancelEditing = React.useCallback(() => {
       resetMarkdown();
       closeEditmode();
