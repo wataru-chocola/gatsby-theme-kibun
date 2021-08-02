@@ -5,10 +5,16 @@ import { Container, ContainerProps } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
-import { AppBar, SiteTitle, MenuButton, SearchBox, AccountButton } from './appbar';
+import { AppBar, SiteTitle, MenuButton, SearchBox } from './appbar';
+import { AccountButton } from './accountButton';
+import { SignInButton } from './signInButton';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
+import { SnackMessage } from './snackMessage';
 import ErrorBoundary from './errorboundary';
+
+import { useAppSelector } from '../state/hooks';
+import { selectIsLoggedIn } from '../state/loginSelector';
 
 const drawerWidth = 240;
 
@@ -50,6 +56,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   const classes = useStyles();
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
   const container = window !== undefined ? () => window().document.body : undefined;
+  const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
 
   const handleDrawerToggle = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
@@ -57,12 +64,13 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
 
   return (
     <div className={classes.root}>
+      <SnackMessage />
       <AppBar className={classes.appBar}>
         <MenuButton className={classes.menuButton} onClick={handleDrawerToggle} />
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
-        <AccountButton />
+        {isLoggedIn ? <AccountButton /> : <SignInButton />}
       </AppBar>
 
       <nav aria-label="sidemenu">

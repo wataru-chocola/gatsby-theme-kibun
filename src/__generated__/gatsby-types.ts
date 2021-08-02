@@ -284,6 +284,7 @@ type SiteSiteMetadata = {
   readonly description: Maybe<Scalars['String']>;
   readonly siteUrl: Maybe<Scalars['String']>;
   readonly sectionMenu: Maybe<ReadonlyArray<Maybe<SiteSiteMetadataSectionMenu>>>;
+  readonly githubRepository: Maybe<SiteSiteMetadataGithubRepository>;
 };
 
 type SiteSiteMetadataSectionMenu = {
@@ -294,6 +295,12 @@ type SiteSiteMetadataSectionMenu = {
 type SiteSiteMetadataSectionMenuMenu = {
   readonly text: Maybe<Scalars['String']>;
   readonly to: Maybe<Scalars['String']>;
+};
+
+type SiteSiteMetadataGithubRepository = {
+  readonly project: Maybe<Scalars['String']>;
+  readonly branch: Maybe<Scalars['String']>;
+  readonly rootDir: Maybe<Scalars['String']>;
 };
 
 type SiteFunction = Node & {
@@ -659,6 +666,8 @@ type SitePluginPluginOptions = {
 type SitePluginPluginOptionsOptions = {
   readonly emitWarning: Maybe<Scalars['Boolean']>;
   readonly failOnError: Maybe<Scalars['Boolean']>;
+  readonly extensions: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 type SitePluginPluginOptionsEmitSchema = {
@@ -1858,6 +1867,7 @@ type SiteSiteMetadataFilterInput = {
   readonly description: Maybe<StringQueryOperatorInput>;
   readonly siteUrl: Maybe<StringQueryOperatorInput>;
   readonly sectionMenu: Maybe<SiteSiteMetadataSectionMenuFilterListInput>;
+  readonly githubRepository: Maybe<SiteSiteMetadataGithubRepositoryFilterInput>;
 };
 
 type SiteSiteMetadataSectionMenuFilterListInput = {
@@ -1876,6 +1886,12 @@ type SiteSiteMetadataSectionMenuMenuFilterListInput = {
 type SiteSiteMetadataSectionMenuMenuFilterInput = {
   readonly text: Maybe<StringQueryOperatorInput>;
   readonly to: Maybe<StringQueryOperatorInput>;
+};
+
+type SiteSiteMetadataGithubRepositoryFilterInput = {
+  readonly project: Maybe<StringQueryOperatorInput>;
+  readonly branch: Maybe<StringQueryOperatorInput>;
+  readonly rootDir: Maybe<StringQueryOperatorInput>;
 };
 
 type SiteConnection = {
@@ -1933,6 +1949,9 @@ type SiteFieldsEnum =
   | 'siteMetadata.sectionMenu.menu'
   | 'siteMetadata.sectionMenu.menu.text'
   | 'siteMetadata.sectionMenu.menu.to'
+  | 'siteMetadata.githubRepository.project'
+  | 'siteMetadata.githubRepository.branch'
+  | 'siteMetadata.githubRepository.rootDir'
   | 'port'
   | 'host'
   | 'polyfill'
@@ -2262,6 +2281,8 @@ type SitePluginPluginOptionsFilterInput = {
 type SitePluginPluginOptionsOptionsFilterInput = {
   readonly emitWarning: Maybe<BooleanQueryOperatorInput>;
   readonly failOnError: Maybe<BooleanQueryOperatorInput>;
+  readonly extensions: Maybe<StringQueryOperatorInput>;
+  readonly exclude: Maybe<StringQueryOperatorInput>;
 };
 
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
@@ -2490,6 +2511,8 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.stages'
   | 'pluginCreator.pluginOptions.options.emitWarning'
   | 'pluginCreator.pluginOptions.options.failOnError'
+  | 'pluginCreator.pluginOptions.options.extensions'
+  | 'pluginCreator.pluginOptions.options.exclude'
   | 'pluginCreator.pluginOptions.output'
   | 'pluginCreator.pluginOptions.createLinkInHead'
   | 'pluginCreator.pluginOptions.entryLimit'
@@ -3074,6 +3097,8 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.stages'
   | 'pluginOptions.options.emitWarning'
   | 'pluginOptions.options.failOnError'
+  | 'pluginOptions.options.extensions'
+  | 'pluginOptions.options.exclude'
   | 'pluginOptions.output'
   | 'pluginOptions.createLinkInHead'
   | 'pluginOptions.entryLimit'
@@ -3279,15 +3304,38 @@ type SiteBuildMetadataSortInput = {
   readonly order: Maybe<ReadonlyArray<Maybe<SortOrderEnum>>>;
 };
 
-type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+type PageMarkdownQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
 
 
-type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<(
+      Pick<File, 'relativePath'>
+      & { readonly internal: Pick<Internal, 'content'> }
+    )>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
+        Pick<ImageSharp, 'gatsbyImageData'>
+        & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
+      )>>> }> }> };
+
+type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
 
 type SEOQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+
+type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<{ readonly githubRepository: Maybe<Pick<SiteSiteMetadataGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 
@@ -3314,21 +3362,6 @@ type GatsbyImageSharpFluid_withWebp_tracedSVGFragment = Pick<ImageSharpFluid, 't
 type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'sizes'>;
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
-
-type PageMarkdownQueryVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<{ readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> } | { readonly internal: Pick<Internal, 'content'> }>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
-        Pick<ImageSharp, 'gatsbyImageData'>
-        & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
-      )>>> }> }> };
-
-type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
 
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 

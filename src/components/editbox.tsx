@@ -7,6 +7,15 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { Box, Paper, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
+import { useAppSelector, useAppDispatch } from '../state/hooks';
+import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
+import { selectIsSaving } from '../state/isSavingSelector';
+import { isSavingActions } from '../state/isSavingSlice';
+import { snackMessageActions } from '../state/snackMessageSlice';
+
+import { splitFrontmatter } from '../utils/markdownParser';
+import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
+
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
     position: 'sticky',
@@ -39,15 +48,38 @@ interface EditBoxProps {
   saveMarkdown: (markdown: string) => void;
   renderMarkdown: (markdown: string) => void;
   resetMarkdown: () => void;
+  srcPath: string;
   md?: string;
+  frontmatter?: string;
 }
 
 const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
-  ({ closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, md }, forwardedRef) => {
+  (
+    { closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md, frontmatter },
+    forwardedRef,
+  ) => {
     const inputEl = React.useRef<null | HTMLDivElement>(null);
     const [markdown, setMarkdown] = React.useState(md || '');
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
+
+    const isSaving = useAppSelector((state) => selectIsSaving(state));
+    const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
+    const token = useAppSelector((state) => selectToken(state));
+    const dispatch = useAppDispatch();
+    const repoInfo = useGithubRepositoryInfo();
+    const github = React.useMemo(
+      () =>
+        new githubRepoOperator(
+          {
+            project: repoInfo.project,
+            branch: repoInfo.branch,
+            basePath: repoInfo.rootDir,
+          },
+          { token: token as string },
+        ),
+      [repoInfo, token],
+    );
 
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
@@ -61,10 +93,63 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
       };
     }, []);
 
+    React.useEffect(() => {
+      if (isLoggedIn) {
+        github.getFileContent(srcPath).then((content) => {
+          const tmpContent = splitFrontmatter(content);
+          if (tmpContent[1] !== markdown) {
+            console.log('detect diff');
+          }
+        });
+      }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const saveEditing = React.useCallback(() => {
+      dispatch(isSavingActions.startSaving({}));
+      if (markdown !== md && isLoggedIn) {
+        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
+        const newContent = '---\n' + frontmatter + '\n---\n' + markdown;
+        github
+          .updateMarkdown(srcPath, newContent)
+          .then(() => {
+            console.log('update markdown');
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(
+              snackMessageActions.setMessage({
+                message: 'success!',
+                severity: 'success',
+                autoHideDuration: 2000,
+              }),
+            );
+          })
+          .catch((e) => {
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(
+              snackMessageActions.setMessage({
+                message: `error: ${e.message}!`,
+                severity: 'error',
+                autoHideDuration: 2000,
+              }),
+            );
+          })
+          .finally(() => {
+            dispatch(isSavingActions.doneSaving({}));
+          });
+      }
+
       saveMarkdown(markdown);
       closeEditmode();
-    }, [saveMarkdown, closeEditmode, markdown]);
+    }, [
+      saveMarkdown,
+      closeEditmode,
+      markdown,
+      frontmatter,
+      github,
+      isLoggedIn,
+      md,
+      srcPath,
+      dispatch,
+    ]);
     const cancelEditing = React.useCallback(() => {
       resetMarkdown();
       closeEditmode();
@@ -92,7 +177,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         </IconButton>
       </Tooltip>,
       <Tooltip title="save" aria-label="save" key="save">
-        <IconButton color="primary" onClick={saveEditing}>
+        <IconButton color="primary" onClick={saveEditing} disabled={isSaving}>
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
