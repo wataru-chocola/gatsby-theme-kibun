@@ -9,6 +9,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
 import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
+import { selectIsSaving } from '../state/isSavingSelector';
+import { isSavingActions } from '../state/isSavingSlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
 import { splitFrontmatter } from '../utils/markdownParser';
@@ -61,6 +63,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
 
+    const isSaving = useAppSelector((state) => selectIsSaving(state));
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const token = useAppSelector((state) => selectToken(state));
     const dispatch = useAppDispatch();
@@ -102,6 +105,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const saveEditing = React.useCallback(() => {
+      dispatch(isSavingActions.startSaving({}));
       if (markdown !== md && isLoggedIn) {
         dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
         const newContent = '---\n' + frontmatter + '\n---\n' + markdown;
@@ -120,6 +124,9 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
                 severity: 'error',
               }),
             );
+          })
+          .finally(() => {
+            dispatch(isSavingActions.doneSaving({}));
           });
       }
 
@@ -163,7 +170,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         </IconButton>
       </Tooltip>,
       <Tooltip title="save" aria-label="save" key="save">
-        <IconButton color="primary" onClick={saveEditing}>
+        <IconButton color="primary" onClick={saveEditing} disabled={isSaving}>
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
