@@ -31,7 +31,7 @@ export const SnackMessage: React.VFC<Record<string, never>> = () => {
     <Snackbar
       open={msg.on}
       onClose={handleClose}
-      autoHideDuration={2000}
+      autoHideDuration={msg.autoHideDuration}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <Alert className={classes.alert} variant="filled" severity={msg.severity}>

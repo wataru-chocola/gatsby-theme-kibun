@@ -114,7 +114,13 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
           .then(() => {
             console.log('update markdown');
             dispatch(snackMessageActions.hideMessage({}));
-            dispatch(snackMessageActions.setMessage({ message: 'success!', severity: 'success' }));
+            dispatch(
+              snackMessageActions.setMessage({
+                message: 'success!',
+                severity: 'success',
+                autoHideDuration: 2000,
+              }),
+            );
           })
           .catch((e) => {
             dispatch(snackMessageActions.hideMessage({}));
@@ -122,6 +128,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
               snackMessageActions.setMessage({
                 message: `error: ${e.message}!`,
                 severity: 'error',
+                autoHideDuration: 2000,
               }),
             );
           })
