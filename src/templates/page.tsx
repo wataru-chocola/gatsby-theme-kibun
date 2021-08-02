@@ -47,6 +47,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 
   const [editmode, setEditmode] = React.useState(false);
 
+  const [frontmatter, setFrontmatter] = React.useState(content[0]);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
 
@@ -85,6 +86,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
           renderMarkdown={setCurrentMarkdown}
           resetMarkdown={resetMarkdown}
           md={markdown}
+          frontmatter={frontmatter}
           srcPath={pageinfo.parent?.relativePath || ''}
         ></EditBox>
       </Slide>

@@ -48,14 +48,19 @@ interface EditBoxProps {
   resetMarkdown: () => void;
   srcPath: string;
   md?: string;
+  frontmatter?: string;
 }
 
 const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
-  ({ closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md }, forwardedRef) => {
+  (
+    { closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md, frontmatter },
+    forwardedRef,
+  ) => {
     const inputEl = React.useRef<null | HTMLDivElement>(null);
     const [markdown, setMarkdown] = React.useState(md || '');
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
+
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const token = useAppSelector((state) => selectToken(state));
     const dispatch = useAppDispatch();
@@ -99,8 +104,9 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const saveEditing = React.useCallback(() => {
       if (markdown !== md && isLoggedIn) {
         dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
+        const newContent = '---\n' + frontmatter + '\n---\n' + markdown;
         github
-          .updateMarkdown(srcPath, markdown)
+          .updateMarkdown(srcPath, newContent)
           .then(() => {
             console.log('update markdown');
             dispatch(snackMessageActions.hideMessage({}));
@@ -119,7 +125,17 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
       saveMarkdown(markdown);
       closeEditmode();
-    }, [saveMarkdown, closeEditmode, markdown, github, isLoggedIn, md, srcPath, dispatch]);
+    }, [
+      saveMarkdown,
+      closeEditmode,
+      markdown,
+      frontmatter,
+      github,
+      isLoggedIn,
+      md,
+      srcPath,
+      dispatch,
+    ]);
     const cancelEditing = React.useCallback(() => {
       resetMarkdown();
       closeEditmode();
