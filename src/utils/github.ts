@@ -4,7 +4,17 @@ import {
   RestEndpointMethodTypes,
 } from '@octokit/plugin-rest-endpoint-methods';
 
+import _ from 'lodash';
 import { useStaticQuery, graphql } from 'gatsby';
+
+const fetchNoCache: typeof fetch = (url, options) => {
+  let newOptions = _.cloneDeep(options);
+  if (newOptions == null) {
+    newOptions = {};
+  }
+  newOptions.cache = 'no-cache';
+  return fetch(url, newOptions);
+};
 
 const MyOctokit = Octokit.plugin(restEndpointMethods);
 
@@ -52,7 +62,12 @@ export class githubRepoOperator {
     }
     this.auth = auth;
 
-    const options: Record<string, any> = { auth: auth.token };
+    const options: Record<string, any> = {
+      auth: auth.token,
+      request: {
+        fetch: fetchNoCache,
+      },
+    };
     if (repo.githubUrl != null) {
       options['baseUrl'] = new URL('/api/v3', repo.githubUrl).toString();
     }
@@ -60,22 +75,14 @@ export class githubRepoOperator {
   }
 
   async getFileContent(path: string): Promise<string> {
-    const ref = await this.octokit.rest.git.getRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${this.mainBranch}`,
-    });
-    const commit = await this.octokit.rest.git.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      commit_sha: ref.data.object.sha,
-    });
+    const ref = await this.getMainRef();
+    const commit = await this.getCommit(ref.data.object.sha);
 
-    const tmpPaths = path.split('/');
-    const paths = this.basePath.split('/').concat(tmpPaths.slice(0, tmpPaths.length - 1));
-    const filename = tmpPaths[tmpPaths.length - 1];
+    const pagePathElements = this.getPathElements(path);
+    const dirPathElements = pagePathElements.slice(0, pagePathElements.length - 1);
+    const tree = await this.getTree(commit.data.tree.sha, dirPathElements);
 
-    const tree = await this.getTree(commit.data.tree.sha, paths);
+    const filename = pagePathElements[pagePathElements.length - 1];
     const blobNode = tree.data.tree.find((node) => node.type === 'blob' && node.path === filename);
     if (blobNode == null) {
       throw Error(`cannot find blob object: filename=${filename}`);
@@ -96,56 +103,94 @@ export class githubRepoOperator {
       content: b64_btoa(content),
       encoding: 'base64',
     });
-    const ref = await this.octokit.rest.git.getRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${this.mainBranch}`,
-    });
-    const commit = await this.octokit.rest.git.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      commit_sha: ref.data.object.sha,
-    });
-
-    const tmpPaths = path.split('/');
-
-    const paths = this.basePath.split('/').concat(tmpPaths);
-    const filepath = paths.join('/');
-    const updatedTree = await this.octokit.rest.git.createTree({
-      owner: this.owner,
-      repo: this.repo,
-      base_tree: commit.data.tree.sha,
-      tree: [{ path: filepath, mode: '100644', type: 'blob', sha: newBlob.data.sha }],
-    });
-
-    const newCommit = await this.octokit.rest.git.createCommit({
-      owner: this.owner,
-      repo: this.repo,
-      message: 'update markdown',
-      parents: [commit.data.sha],
-      tree: updatedTree.data.sha,
-    });
 
     const topicBranchName = this.createTopicBranchName();
-    await this.octokit.rest.git.createRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `refs/heads/${topicBranchName}`,
-      sha: newCommit.data.sha,
-    });
+    let previousRefSha: string | undefined;
+    let pullNumber: number | undefined;
+    let merged = false;
+    let error = undefined;
+    for (let i = 0; i <= 3; i++) {
+      const ref = await this.getMainRef();
+      if (previousRefSha != null && previousRefSha === ref.data.object.sha) {
+        error = Error('sha1 not changed');
+        await sleepAsync(2000);
+        continue;
+      }
+      previousRefSha = ref.data.object.sha;
+      const commit = await this.getCommit(ref.data.object.sha);
 
-    const pullReq = await this.octokit.rest.pulls.create({
-      owner: this.owner,
-      repo: this.repo,
-      title: `update ${filepath}`,
-      head: topicBranchName,
-      base: this.mainBranch,
-    });
-    await this.octokit.rest.pulls.merge({
-      owner: this.owner,
-      repo: this.repo,
-      pull_number: pullReq.data.number,
-    });
+      const pagePathElements = this.getPathElements(path);
+      const filepath = pagePathElements.join('/');
+      const updatedTree = await this.octokit.rest.git.createTree({
+        owner: this.owner,
+        repo: this.repo,
+        base_tree: commit.data.tree.sha,
+        tree: [{ path: filepath, mode: '100644', type: 'blob', sha: newBlob.data.sha }],
+      });
+
+      const newCommit = await this.octokit.rest.git.createCommit({
+        owner: this.owner,
+        repo: this.repo,
+        message: 'update markdown',
+        parents: [commit.data.sha],
+        tree: updatedTree.data.sha,
+      });
+
+      if (i === 0) {
+        await this.octokit.rest.git.createRef({
+          owner: this.owner,
+          repo: this.repo,
+          ref: `refs/heads/${topicBranchName}`,
+          sha: newCommit.data.sha,
+        });
+      } else {
+        await this.octokit.rest.git.updateRef({
+          owner: this.owner,
+          repo: this.repo,
+          ref: `heads/${topicBranchName}`,
+          sha: newCommit.data.sha,
+          force: true,
+        });
+      }
+
+      if (pullNumber == null) {
+        const pullReq = await this.octokit.rest.pulls.create({
+          owner: this.owner,
+          repo: this.repo,
+          title: `update ${filepath}`,
+          head: topicBranchName,
+          base: this.mainBranch,
+        });
+        pullNumber = pullReq.data.number;
+      }
+
+      const isMergeable = await this.isPullMergenable(pullNumber);
+      if (!isMergeable) {
+        error = Error('pull request is not mergeable');
+        await sleepAsync(2000);
+        continue;
+      }
+
+      try {
+        await this.octokit.rest.pulls.merge({
+          owner: this.owner,
+          repo: this.repo,
+          pull_number: pullNumber,
+        });
+        merged = true;
+        break;
+      } catch (e) {
+        if (e.status != null && (e.status === 409 || e.status === 405)) {
+          error = e;
+          await sleepAsync(2000);
+          continue;
+        }
+        throw e;
+      }
+    }
+    if (!merged) {
+      throw Error(error);
+    }
 
     await this.octokit.rest.git.deleteRef({
       owner: this.owner,
@@ -163,6 +208,29 @@ export class githubRepoOperator {
       .map((i) => chars.charAt(Math.floor(Math.random() * chars.length)))
       .join('');
     return `update-${now.getFullYear()}${now.getMonth()}${now.getDate()}-${randomName}`;
+  }
+
+  private getPathElements(page_path: string): Array<string> {
+    return this.basePath.split('/').concat(page_path.split('/'));
+  }
+
+  private async getMainRef(): Promise<RestEndpointMethodTypes['git']['getRef']['response']> {
+    return await this.octokit.rest.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${this.mainBranch}`,
+    });
+  }
+
+  private async getCommit(
+    commit_sha: string,
+  ): Promise<RestEndpointMethodTypes['git']['getCommit']['response']> {
+    const commit = await this.octokit.rest.git.getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      commit_sha: commit_sha,
+    });
+    return commit;
   }
 
   private async getTree(
@@ -187,6 +255,24 @@ export class githubRepoOperator {
       });
     }
     return tmpTree;
+  }
+
+  private async isPullMergenable(pullNumber: number): Promise<boolean> {
+    const retries = 5;
+    const interval_ms = 1000;
+    for (let i = 0; i <= retries; i++) {
+      const pull = await this.octokit.rest.pulls.get({
+        owner: this.owner,
+        repo: this.repo,
+        pull_number: pullNumber,
+      });
+      if (pull.data.mergeable != null) {
+        return pull.data.mergeable;
+      }
+      sleepAsync(interval_ms);
+    }
+
+    throw Error('cannot get mergeable property');
   }
 }
 
@@ -222,4 +308,12 @@ export function useGithubRepositoryInfo(): githubRepositoryInfo {
     branch: data.site?.siteMetadata?.githubRepository?.branch || 'main',
     rootDir: data.site?.siteMetadata?.githubRepository?.rootDir || '',
   };
+}
+
+async function sleepAsync(ms: number): Promise<null> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve(null);
+    }, ms);
+  });
 }
