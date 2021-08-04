@@ -7,11 +7,6 @@ module.exports = {
       { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
       { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
     ],
-    githubRepository: {
-      project: 'wataru-chocola/test-sitemd',
-      branch: 'main',
-      rootDir: 'markdowns/',
-    },
   },
   plugins: [
     {
@@ -22,11 +17,11 @@ module.exports = {
         //  { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
         //  { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
         //],
-        //githubRepository: {
-        //  project: 'wataru-chocola/test-sitemd',
-        //  branch: 'main',
-        //  rootDir: 'markdowns/',
-        //},
+        githubRepository: {
+          project: 'wataru-chocola/test-sitemd',
+          branch: 'main',
+          rootDir: 'markdowns/',
+        },
       },
     },
     //{
