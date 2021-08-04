@@ -1,18 +1,4 @@
-module.exports = {
-  siteMetadata: {
-    title: `My Testsite`,
-    description: `My testsite here`,
-    siteUrl: `https://mytest.exmaple.com/`,
-    sectionMenu: [
-      { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-      { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-    ],
-    githubRepository: {
-      project: 'wataru-chocola/test-sitemd',
-      branch: 'main',
-      rootDir: 'markdowns/',
-    },
-  },
+module.exports = (options) => ({
   plugins: [
     {
       resolve: 'gatsby-plugin-eslint',
@@ -38,18 +24,6 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-image`,
-    //{
-    //  resolve: `gatsby-plugin-manifest`,
-    //  options: {
-    //    name: `gatsby-starter-default`,
-    //    short_name: `starter`,
-    //    start_url: `/`,
-    //    background_color: `#663399`,
-    //    theme_color: `#663399`,
-    //    display: `minimal-ui`,
-    //    icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
-    //  },
-    //},
     `gatsby-plugin-typescript`,
     {
       resolve: `gatsby-plugin-typegen`,
@@ -63,7 +37,7 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `markdowns`,
-        path: `${__dirname}/src/markdowns`,
+        path: options.markdownDir,
       },
     },
 
@@ -75,4 +49,4 @@ module.exports = {
       },
     },
   ],
-};
+});

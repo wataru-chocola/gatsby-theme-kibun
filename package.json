@@ -7,8 +7,6 @@
     "gatsby-theme-kibun",
     "example"
   ],
-  "dependencies": {
-  },
   "devDependencies": {
     "npm-check-updates": "^11.8.2"
   }
