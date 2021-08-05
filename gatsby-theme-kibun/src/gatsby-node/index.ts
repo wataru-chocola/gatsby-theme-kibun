@@ -5,8 +5,6 @@ import {
   CreateWebpackConfigArgs,
   CreateResolversArgs,
   ParentSpanPluginArgs,
-  PluginOptions,
-  PluginOptionsSchemaArgs,
 } from 'gatsby';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -17,6 +15,7 @@ import {
   createMarkdownResolvers,
 } from './createMarkdownNodes';
 import { createMarkdownPages } from './createMarkdownPages';
+import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
 
 const defaultIndexContent = `
 ---
@@ -27,18 +26,12 @@ date: ${new Date().toISOString()}
 Welcome to gatsby-theme-kibun Wiki!
 `;
 
-exports.pluginOptionsSchema = ({ Joi }: PluginOptionsSchemaArgs) => {
-  return Joi.object({
-    markdownDir: Joi.string()
-      .default(`src/markdowns`)
-      .description(`Directory containing markdown src`),
-  });
-};
-type PluginOptionType = {
-  markdownDir: string;
-} & PluginOptions;
+exports.pluginOptionsSchema = pluginOptionsSchema;
 
-exports.onPreBootstrap = ({ store, reporter }: ParentSpanPluginArgs, options: PluginOptionType) => {
+exports.onPreBootstrap = (
+  { store, reporter }: ParentSpanPluginArgs,
+  options: PluginOptionsType,
+) => {
   const { program } = store.getState();
   const mdDir = path.resolve(program.directory, options.markdownDir);
 
