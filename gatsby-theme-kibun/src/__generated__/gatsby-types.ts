@@ -283,24 +283,6 @@ type SiteSiteMetadata = {
   readonly title: Maybe<Scalars['String']>;
   readonly description: Maybe<Scalars['String']>;
   readonly siteUrl: Maybe<Scalars['String']>;
-  readonly sectionMenu: Maybe<ReadonlyArray<Maybe<SiteSiteMetadataSectionMenu>>>;
-  readonly githubRepository: Maybe<SiteSiteMetadataGithubRepository>;
-};
-
-type SiteSiteMetadataSectionMenu = {
-  readonly category: Maybe<Scalars['String']>;
-  readonly menu: Maybe<ReadonlyArray<Maybe<SiteSiteMetadataSectionMenuMenu>>>;
-};
-
-type SiteSiteMetadataSectionMenuMenu = {
-  readonly text: Maybe<Scalars['String']>;
-  readonly to: Maybe<Scalars['String']>;
-};
-
-type SiteSiteMetadataGithubRepository = {
-  readonly project: Maybe<Scalars['String']>;
-  readonly branch: Maybe<Scalars['String']>;
-  readonly rootDir: Maybe<Scalars['String']>;
 };
 
 type SiteFunction = Node & {
@@ -627,6 +609,20 @@ type BreadCrumb = {
   readonly title: Maybe<Scalars['String']>;
 };
 
+type SectionMenuCategory = Node & {
+  readonly category: Scalars['String'];
+  readonly menu: ReadonlyArray<SectionMenuItem>;
+  readonly id: Scalars['ID'];
+  readonly parent: Maybe<Node>;
+  readonly children: ReadonlyArray<Node>;
+  readonly internal: Internal;
+};
+
+type SectionMenuItem = {
+  readonly text: Scalars['String'];
+  readonly to: Maybe<Scalars['String']>;
+};
+
 type SitePlugin = Node & {
   readonly id: Scalars['ID'];
   readonly parent: Maybe<Node>;
@@ -650,8 +646,6 @@ type SitePluginPluginOptions = {
   readonly createLinkInHead: Maybe<Scalars['Boolean']>;
   readonly entryLimit: Maybe<Scalars['Int']>;
   readonly query: Maybe<Scalars['String']>;
-  readonly name: Maybe<Scalars['String']>;
-  readonly path: Maybe<Scalars['String']>;
   readonly base64Width: Maybe<Scalars['Int']>;
   readonly stripMetadata: Maybe<Scalars['Boolean']>;
   readonly defaultQuality: Maybe<Scalars['Int']>;
@@ -659,8 +653,13 @@ type SitePluginPluginOptions = {
   readonly isTSX: Maybe<Scalars['Boolean']>;
   readonly jsxPragma: Maybe<Scalars['String']>;
   readonly allExtensions: Maybe<Scalars['Boolean']>;
-  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchema>;
+  readonly name: Maybe<Scalars['String']>;
+  readonly path: Maybe<Scalars['String']>;
+  readonly markdownDir: Maybe<Scalars['String']>;
+  readonly githubRepository: Maybe<SitePluginPluginOptionsGithubRepository>;
   readonly pathCheck: Maybe<Scalars['Boolean']>;
+  readonly outputPath: Maybe<Scalars['String']>;
+  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchema>;
 };
 
 type SitePluginPluginOptionsOptions = {
@@ -670,8 +669,14 @@ type SitePluginPluginOptionsOptions = {
   readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
+type SitePluginPluginOptionsGithubRepository = {
+  readonly project: Maybe<Scalars['String']>;
+  readonly branch: Maybe<Scalars['String']>;
+  readonly rootDir: Maybe<Scalars['String']>;
+};
+
 type SitePluginPluginOptionsEmitSchema = {
-  readonly src___generated___gatsby_schema_graphql: Maybe<Scalars['Boolean']>;
+  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<Scalars['Boolean']>;
 };
 
 type SitePluginPackageJson = {
@@ -732,6 +737,8 @@ type Query = {
   readonly allImageSharp: ImageSharpConnection;
   readonly markdown: Maybe<Markdown>;
   readonly allMarkdown: MarkdownConnection;
+  readonly sectionMenuCategory: Maybe<SectionMenuCategory>;
+  readonly allSectionMenuCategory: SectionMenuCategoryConnection;
   readonly sitePlugin: Maybe<SitePlugin>;
   readonly allSitePlugin: SitePluginConnection;
   readonly siteBuildMetadata: Maybe<SiteBuildMetadata>;
@@ -949,6 +956,24 @@ type Query_markdownArgs = {
 type Query_allMarkdownArgs = {
   filter: Maybe<MarkdownFilterInput>;
   sort: Maybe<MarkdownSortInput>;
+  skip: Maybe<Scalars['Int']>;
+  limit: Maybe<Scalars['Int']>;
+};
+
+
+type Query_sectionMenuCategoryArgs = {
+  category: Maybe<StringQueryOperatorInput>;
+  menu: Maybe<SectionMenuItemFilterListInput>;
+  id: Maybe<StringQueryOperatorInput>;
+  parent: Maybe<NodeFilterInput>;
+  children: Maybe<NodeFilterListInput>;
+  internal: Maybe<InternalFilterInput>;
+};
+
+
+type Query_allSectionMenuCategoryArgs = {
+  filter: Maybe<SectionMenuCategoryFilterInput>;
+  sort: Maybe<SectionMenuCategorySortInput>;
   skip: Maybe<Scalars['Int']>;
   limit: Maybe<Scalars['Int']>;
 };
@@ -1866,32 +1891,6 @@ type SiteSiteMetadataFilterInput = {
   readonly title: Maybe<StringQueryOperatorInput>;
   readonly description: Maybe<StringQueryOperatorInput>;
   readonly siteUrl: Maybe<StringQueryOperatorInput>;
-  readonly sectionMenu: Maybe<SiteSiteMetadataSectionMenuFilterListInput>;
-  readonly githubRepository: Maybe<SiteSiteMetadataGithubRepositoryFilterInput>;
-};
-
-type SiteSiteMetadataSectionMenuFilterListInput = {
-  readonly elemMatch: Maybe<SiteSiteMetadataSectionMenuFilterInput>;
-};
-
-type SiteSiteMetadataSectionMenuFilterInput = {
-  readonly category: Maybe<StringQueryOperatorInput>;
-  readonly menu: Maybe<SiteSiteMetadataSectionMenuMenuFilterListInput>;
-};
-
-type SiteSiteMetadataSectionMenuMenuFilterListInput = {
-  readonly elemMatch: Maybe<SiteSiteMetadataSectionMenuMenuFilterInput>;
-};
-
-type SiteSiteMetadataSectionMenuMenuFilterInput = {
-  readonly text: Maybe<StringQueryOperatorInput>;
-  readonly to: Maybe<StringQueryOperatorInput>;
-};
-
-type SiteSiteMetadataGithubRepositoryFilterInput = {
-  readonly project: Maybe<StringQueryOperatorInput>;
-  readonly branch: Maybe<StringQueryOperatorInput>;
-  readonly rootDir: Maybe<StringQueryOperatorInput>;
 };
 
 type SiteConnection = {
@@ -1944,14 +1943,6 @@ type SiteFieldsEnum =
   | 'siteMetadata.title'
   | 'siteMetadata.description'
   | 'siteMetadata.siteUrl'
-  | 'siteMetadata.sectionMenu'
-  | 'siteMetadata.sectionMenu.category'
-  | 'siteMetadata.sectionMenu.menu'
-  | 'siteMetadata.sectionMenu.menu.text'
-  | 'siteMetadata.sectionMenu.menu.to'
-  | 'siteMetadata.githubRepository.project'
-  | 'siteMetadata.githubRepository.branch'
-  | 'siteMetadata.githubRepository.rootDir'
   | 'port'
   | 'host'
   | 'polyfill'
@@ -2265,8 +2256,6 @@ type SitePluginPluginOptionsFilterInput = {
   readonly createLinkInHead: Maybe<BooleanQueryOperatorInput>;
   readonly entryLimit: Maybe<IntQueryOperatorInput>;
   readonly query: Maybe<StringQueryOperatorInput>;
-  readonly name: Maybe<StringQueryOperatorInput>;
-  readonly path: Maybe<StringQueryOperatorInput>;
   readonly base64Width: Maybe<IntQueryOperatorInput>;
   readonly stripMetadata: Maybe<BooleanQueryOperatorInput>;
   readonly defaultQuality: Maybe<IntQueryOperatorInput>;
@@ -2274,8 +2263,13 @@ type SitePluginPluginOptionsFilterInput = {
   readonly isTSX: Maybe<BooleanQueryOperatorInput>;
   readonly jsxPragma: Maybe<StringQueryOperatorInput>;
   readonly allExtensions: Maybe<BooleanQueryOperatorInput>;
-  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchemaFilterInput>;
+  readonly name: Maybe<StringQueryOperatorInput>;
+  readonly path: Maybe<StringQueryOperatorInput>;
+  readonly markdownDir: Maybe<StringQueryOperatorInput>;
+  readonly githubRepository: Maybe<SitePluginPluginOptionsGithubRepositoryFilterInput>;
   readonly pathCheck: Maybe<BooleanQueryOperatorInput>;
+  readonly outputPath: Maybe<StringQueryOperatorInput>;
+  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchemaFilterInput>;
 };
 
 type SitePluginPluginOptionsOptionsFilterInput = {
@@ -2285,8 +2279,14 @@ type SitePluginPluginOptionsOptionsFilterInput = {
   readonly exclude: Maybe<StringQueryOperatorInput>;
 };
 
+type SitePluginPluginOptionsGithubRepositoryFilterInput = {
+  readonly project: Maybe<StringQueryOperatorInput>;
+  readonly branch: Maybe<StringQueryOperatorInput>;
+  readonly rootDir: Maybe<StringQueryOperatorInput>;
+};
+
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
-  readonly src___generated___gatsby_schema_graphql: Maybe<BooleanQueryOperatorInput>;
+  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<BooleanQueryOperatorInput>;
 };
 
 type SitePluginPackageJsonFilterInput = {
@@ -2517,8 +2517,6 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.createLinkInHead'
   | 'pluginCreator.pluginOptions.entryLimit'
   | 'pluginCreator.pluginOptions.query'
-  | 'pluginCreator.pluginOptions.name'
-  | 'pluginCreator.pluginOptions.path'
   | 'pluginCreator.pluginOptions.base64Width'
   | 'pluginCreator.pluginOptions.stripMetadata'
   | 'pluginCreator.pluginOptions.defaultQuality'
@@ -2526,8 +2524,15 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.isTSX'
   | 'pluginCreator.pluginOptions.jsxPragma'
   | 'pluginCreator.pluginOptions.allExtensions'
-  | 'pluginCreator.pluginOptions.emitSchema.src___generated___gatsby_schema_graphql'
+  | 'pluginCreator.pluginOptions.name'
+  | 'pluginCreator.pluginOptions.path'
+  | 'pluginCreator.pluginOptions.markdownDir'
+  | 'pluginCreator.pluginOptions.githubRepository.project'
+  | 'pluginCreator.pluginOptions.githubRepository.branch'
+  | 'pluginCreator.pluginOptions.githubRepository.rootDir'
   | 'pluginCreator.pluginOptions.pathCheck'
+  | 'pluginCreator.pluginOptions.outputPath'
+  | 'pluginCreator.pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'pluginCreator.nodeAPIs'
   | 'pluginCreator.browserAPIs'
   | 'pluginCreator.ssrAPIs'
@@ -2959,6 +2964,175 @@ type MarkdownSortInput = {
   readonly order: Maybe<ReadonlyArray<Maybe<SortOrderEnum>>>;
 };
 
+type SectionMenuItemFilterListInput = {
+  readonly elemMatch: Maybe<SectionMenuItemFilterInput>;
+};
+
+type SectionMenuItemFilterInput = {
+  readonly text: Maybe<StringQueryOperatorInput>;
+  readonly to: Maybe<StringQueryOperatorInput>;
+};
+
+type SectionMenuCategoryConnection = {
+  readonly totalCount: Scalars['Int'];
+  readonly edges: ReadonlyArray<SectionMenuCategoryEdge>;
+  readonly nodes: ReadonlyArray<SectionMenuCategory>;
+  readonly pageInfo: PageInfo;
+  readonly distinct: ReadonlyArray<Scalars['String']>;
+  readonly max: Maybe<Scalars['Float']>;
+  readonly min: Maybe<Scalars['Float']>;
+  readonly sum: Maybe<Scalars['Float']>;
+  readonly group: ReadonlyArray<SectionMenuCategoryGroupConnection>;
+};
+
+
+type SectionMenuCategoryConnection_distinctArgs = {
+  field: SectionMenuCategoryFieldsEnum;
+};
+
+
+type SectionMenuCategoryConnection_maxArgs = {
+  field: SectionMenuCategoryFieldsEnum;
+};
+
+
+type SectionMenuCategoryConnection_minArgs = {
+  field: SectionMenuCategoryFieldsEnum;
+};
+
+
+type SectionMenuCategoryConnection_sumArgs = {
+  field: SectionMenuCategoryFieldsEnum;
+};
+
+
+type SectionMenuCategoryConnection_groupArgs = {
+  skip: Maybe<Scalars['Int']>;
+  limit: Maybe<Scalars['Int']>;
+  field: SectionMenuCategoryFieldsEnum;
+};
+
+type SectionMenuCategoryEdge = {
+  readonly next: Maybe<SectionMenuCategory>;
+  readonly node: SectionMenuCategory;
+  readonly previous: Maybe<SectionMenuCategory>;
+};
+
+type SectionMenuCategoryFieldsEnum =
+  | 'category'
+  | 'menu'
+  | 'menu.text'
+  | 'menu.to'
+  | 'id'
+  | 'parent.id'
+  | 'parent.parent.id'
+  | 'parent.parent.parent.id'
+  | 'parent.parent.parent.children'
+  | 'parent.parent.children'
+  | 'parent.parent.children.id'
+  | 'parent.parent.children.children'
+  | 'parent.parent.internal.content'
+  | 'parent.parent.internal.contentDigest'
+  | 'parent.parent.internal.description'
+  | 'parent.parent.internal.fieldOwners'
+  | 'parent.parent.internal.ignoreType'
+  | 'parent.parent.internal.mediaType'
+  | 'parent.parent.internal.owner'
+  | 'parent.parent.internal.type'
+  | 'parent.children'
+  | 'parent.children.id'
+  | 'parent.children.parent.id'
+  | 'parent.children.parent.children'
+  | 'parent.children.children'
+  | 'parent.children.children.id'
+  | 'parent.children.children.children'
+  | 'parent.children.internal.content'
+  | 'parent.children.internal.contentDigest'
+  | 'parent.children.internal.description'
+  | 'parent.children.internal.fieldOwners'
+  | 'parent.children.internal.ignoreType'
+  | 'parent.children.internal.mediaType'
+  | 'parent.children.internal.owner'
+  | 'parent.children.internal.type'
+  | 'parent.internal.content'
+  | 'parent.internal.contentDigest'
+  | 'parent.internal.description'
+  | 'parent.internal.fieldOwners'
+  | 'parent.internal.ignoreType'
+  | 'parent.internal.mediaType'
+  | 'parent.internal.owner'
+  | 'parent.internal.type'
+  | 'children'
+  | 'children.id'
+  | 'children.parent.id'
+  | 'children.parent.parent.id'
+  | 'children.parent.parent.children'
+  | 'children.parent.children'
+  | 'children.parent.children.id'
+  | 'children.parent.children.children'
+  | 'children.parent.internal.content'
+  | 'children.parent.internal.contentDigest'
+  | 'children.parent.internal.description'
+  | 'children.parent.internal.fieldOwners'
+  | 'children.parent.internal.ignoreType'
+  | 'children.parent.internal.mediaType'
+  | 'children.parent.internal.owner'
+  | 'children.parent.internal.type'
+  | 'children.children'
+  | 'children.children.id'
+  | 'children.children.parent.id'
+  | 'children.children.parent.children'
+  | 'children.children.children'
+  | 'children.children.children.id'
+  | 'children.children.children.children'
+  | 'children.children.internal.content'
+  | 'children.children.internal.contentDigest'
+  | 'children.children.internal.description'
+  | 'children.children.internal.fieldOwners'
+  | 'children.children.internal.ignoreType'
+  | 'children.children.internal.mediaType'
+  | 'children.children.internal.owner'
+  | 'children.children.internal.type'
+  | 'children.internal.content'
+  | 'children.internal.contentDigest'
+  | 'children.internal.description'
+  | 'children.internal.fieldOwners'
+  | 'children.internal.ignoreType'
+  | 'children.internal.mediaType'
+  | 'children.internal.owner'
+  | 'children.internal.type'
+  | 'internal.content'
+  | 'internal.contentDigest'
+  | 'internal.description'
+  | 'internal.fieldOwners'
+  | 'internal.ignoreType'
+  | 'internal.mediaType'
+  | 'internal.owner'
+  | 'internal.type';
+
+type SectionMenuCategoryGroupConnection = {
+  readonly totalCount: Scalars['Int'];
+  readonly edges: ReadonlyArray<SectionMenuCategoryEdge>;
+  readonly nodes: ReadonlyArray<SectionMenuCategory>;
+  readonly pageInfo: PageInfo;
+  readonly field: Scalars['String'];
+  readonly fieldValue: Maybe<Scalars['String']>;
+};
+
+type SectionMenuCategoryFilterInput = {
+  readonly category: Maybe<StringQueryOperatorInput>;
+  readonly menu: Maybe<SectionMenuItemFilterListInput>;
+  readonly id: Maybe<StringQueryOperatorInput>;
+  readonly parent: Maybe<NodeFilterInput>;
+  readonly children: Maybe<NodeFilterListInput>;
+  readonly internal: Maybe<InternalFilterInput>;
+};
+
+type SectionMenuCategorySortInput = {
+  readonly fields: Maybe<ReadonlyArray<Maybe<SectionMenuCategoryFieldsEnum>>>;
+  readonly order: Maybe<ReadonlyArray<Maybe<SortOrderEnum>>>;
+};
+
 type SitePluginConnection = {
   readonly totalCount: Scalars['Int'];
   readonly edges: ReadonlyArray<SitePluginEdge>;
@@ -3103,8 +3277,6 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.createLinkInHead'
   | 'pluginOptions.entryLimit'
   | 'pluginOptions.query'
-  | 'pluginOptions.name'
-  | 'pluginOptions.path'
   | 'pluginOptions.base64Width'
   | 'pluginOptions.stripMetadata'
   | 'pluginOptions.defaultQuality'
@@ -3112,8 +3284,15 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.isTSX'
   | 'pluginOptions.jsxPragma'
   | 'pluginOptions.allExtensions'
-  | 'pluginOptions.emitSchema.src___generated___gatsby_schema_graphql'
+  | 'pluginOptions.name'
+  | 'pluginOptions.path'
+  | 'pluginOptions.markdownDir'
+  | 'pluginOptions.githubRepository.project'
+  | 'pluginOptions.githubRepository.branch'
+  | 'pluginOptions.githubRepository.rootDir'
   | 'pluginOptions.pathCheck'
+  | 'pluginOptions.outputPath'
+  | 'pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'nodeAPIs'
   | 'browserAPIs'
   | 'ssrAPIs'
@@ -3322,21 +3501,6 @@ type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
 
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
-
-type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
-
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type githubRepositryQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<{ readonly githubRepository: Maybe<Pick<SiteSiteMetadataGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
-
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 
 type GatsbyImageSharpFixed_tracedSVGFragment = Pick<ImageSharpFixed, 'tracedSVG' | 'width' | 'height' | 'src' | 'srcSet'>;
@@ -3366,12 +3530,24 @@ type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'as
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type SiteSectionMenuQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<(
-      Pick<SiteSiteMetadata, 'description' | 'siteUrl' | 'title'>
-      & { readonly sectionMenu: Maybe<ReadonlyArray<Maybe<(
-        Pick<SiteSiteMetadataSectionMenu, 'category'>
-        & { readonly menu: Maybe<ReadonlyArray<Maybe<Pick<SiteSiteMetadataSectionMenuMenu, 'text' | 'to'>>>> }
-      )>>> }
-    )> }> };
+type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
+        Pick<SectionMenuCategory, 'category'>
+        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
+      ) }> } };
+
+type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 }

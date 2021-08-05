@@ -21,8 +21,9 @@ module.exports = (options) => ({
     {
       resolve: `gatsby-plugin-typegen`,
       options: {
+        outputPath: `${__dirname}/src/__generated__/gatsby-types.ts`,
         emitSchema: {
-          'src/__generated__/gatsby-schema.graphql': true,
+          [`${__dirname}/src/__generated__/gatsby-schema.graphql`]: true,
         },
       },
     },

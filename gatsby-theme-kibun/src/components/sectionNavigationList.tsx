@@ -48,7 +48,7 @@ type NaviCategoryType = {
   menu: NaviItemType[];
 };
 
-type NaviDataType = readonly NaviCategoryType[];
+type NaviDataType = NaviCategoryType[];
 
 export const SectionNavigationList: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteSectionMenuQuery>(
