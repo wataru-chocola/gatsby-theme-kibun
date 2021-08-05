@@ -5,6 +5,7 @@ import {
   CreateWebpackConfigArgs,
   CreateResolversArgs,
   ParentSpanPluginArgs,
+  SourceNodesArgs,
 } from 'gatsby';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -15,6 +16,7 @@ import {
   createMarkdownResolvers,
 } from './createMarkdownNodes';
 import { createMarkdownPages } from './createMarkdownPages';
+import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionMenuNodes';
 import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
 
 const defaultIndexContent = `
@@ -45,6 +47,10 @@ exports.onPreBootstrap = (
   }
 };
 
+exports.sourceNodes = (args: SourceNodesArgs, options: PluginOptionsType) => {
+  sourceSectionMenuYaml(args, options);
+};
+
 exports.onCreateNode = async (args: CreateNodeArgs) => {
   const { createNodeField } = args.actions;
   if (args.node.internal.type === `ImageSharp`) {
@@ -67,6 +73,7 @@ exports.onCreateNode = async (args: CreateNodeArgs) => {
 
 exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
   modifyMarkdownSchema(args);
+  createSectionMenuSchema(args);
 };
 
 exports.createResolvers = (args: CreateResolversArgs) => {

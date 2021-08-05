@@ -3,20 +3,12 @@ module.exports = {
     siteUrl: `https://mytest.exmaple.com/`,
     title: `My Testsite`,
     description: `My testsite here`,
-    sectionMenu: [
-      { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-      { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-    ],
   },
   plugins: [
     {
       resolve: `gatsby-theme-kibun`,
       options: {
         markdownDir: `${__dirname}/src/markdowns`,
-        //sectionMenu: [
-        //  { category: 'Category', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-        //  { category: 'Category2', menu: [{ text: 'Item1' }, { text: 'link', to: '/path1/' }] },
-        //],
         githubRepository: {
           project: 'wataru-chocola/test-sitemd',
           branch: 'main',

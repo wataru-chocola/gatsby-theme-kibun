@@ -18,11 +18,13 @@ const {
   onCreateWebpackConfig,
   createSchemaCustomization,
   createResolvers,
+  sourceNodes,
 } = requireESM('./src/gatsby-node/index');
 
 exports.pluginOptionsSchema = pluginOptionsSchema;
 exports.onPreBootstrap = onPreBootstrap;
 
+exports.sourceNodes = sourceNodes;
 exports.createPages = createPages;
 exports.onCreateNode = onCreateNode;
 exports.onCreateWebpackConfig = onCreateWebpackConfig;

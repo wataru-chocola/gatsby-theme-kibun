@@ -1,0 +1,10 @@
+- category: Category
+  menu:
+    - text: Item1
+    - text: link
+      to: /path1/
+- category: Category2
+  menu:
+    - text: Item2
+    - text: link2
+      to: /path1-1/
