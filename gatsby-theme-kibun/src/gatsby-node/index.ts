@@ -4,14 +4,52 @@ import {
   CreateSchemaCustomizationArgs,
   CreateWebpackConfigArgs,
   CreateResolversArgs,
+  ParentSpanPluginArgs,
+  SourceNodesArgs,
 } from 'gatsby';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as mkdirp from 'mkdirp';
 import {
   transformFileToMarkdown,
   modifyMarkdownSchema,
   createMarkdownResolvers,
 } from './createMarkdownNodes';
 import { createMarkdownPages } from './createMarkdownPages';
+import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionMenuNodes';
+import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
+
+const defaultIndexContent = `
+---
+title: "Top page"
+date: ${new Date().toISOString()}
+---
+
+Welcome to gatsby-theme-kibun Wiki!
+`;
+
+exports.pluginOptionsSchema = pluginOptionsSchema;
+
+exports.onPreBootstrap = (
+  { store, reporter }: ParentSpanPluginArgs,
+  options: PluginOptionsType,
+) => {
+  const { program } = store.getState();
+  const mdDir = path.resolve(program.directory, options.markdownDir);
+
+  if (!fs.existsSync(mdDir)) {
+    reporter.log(`the ${mdDir} directory not found`);
+    reporter.log(`initializing the ${mdDir} directory`);
+    mkdirp.sync(mdDir);
+
+    const indexFile = path.resolve(mdDir, 'index.md');
+    fs.writeFileSync(indexFile, defaultIndexContent);
+  }
+};
+
+exports.sourceNodes = (args: SourceNodesArgs, options: PluginOptionsType) => {
+  sourceSectionMenuYaml(args, options);
+};
 
 exports.onCreateNode = async (args: CreateNodeArgs) => {
   const { createNodeField } = args.actions;
@@ -35,6 +73,7 @@ exports.onCreateNode = async (args: CreateNodeArgs) => {
 
 exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
   modifyMarkdownSchema(args);
+  createSectionMenuSchema(args);
 };
 
 exports.createResolvers = (args: CreateResolversArgs) => {

@@ -48,18 +48,15 @@ type NaviCategoryType = {
   menu: NaviItemType[];
 };
 
-type NaviDataType = readonly NaviCategoryType[];
+type NaviDataType = NaviCategoryType[];
 
 export const SectionNavigationList: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteSectionMenuQuery>(
     graphql`
       query SiteSectionMenu {
-        site {
-          siteMetadata {
-            description
-            siteUrl
-            title
-            sectionMenu {
+        allSectionMenuCategory {
+          edges {
+            node {
               category
               menu {
                 text
@@ -71,7 +68,8 @@ export const SectionNavigationList: React.VFC = () => {
       }
     `,
   );
-  const naviData: NaviDataType = (data.site?.siteMetadata?.sectionMenu as NaviDataType) || [];
+  const naviData: NaviDataType =
+    (data.allSectionMenuCategory?.edges.map((edge) => edge.node) as NaviDataType) || [];
   const classes = useStyles();
 
   const naviListItems: React.ReactElement[] = [];

@@ -96,7 +96,7 @@ export function modifyMarkdownSchema({ actions, schema }: CreateSchemaCustomizat
   const typeDefs = [
     `
     type Markdown implements Node {
-        fields: MarkdownFields
+      fields: MarkdownFields
     }
     type MarkdownFields {
       images: [ImageSharp] @link(by: "fields.imagePath")

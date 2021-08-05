@@ -1,5 +1,4 @@
 import { CreatePagesArgs } from 'gatsby';
-import * as path from 'path';
 
 interface MarkdownPathQuery {
   allMarkdown: {
@@ -44,7 +43,7 @@ export async function createMarkdownPages({
     const slug = node.fields.slug;
     createPage({
       path: slug,
-      component: path.resolve('./src/templates/page.tsx'),
+      component: require.resolve('../templates/page.tsx'),
       context: {
         slug: slug,
       },

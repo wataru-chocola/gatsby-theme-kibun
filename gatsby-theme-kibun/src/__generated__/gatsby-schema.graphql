@@ -350,24 +350,6 @@ type SiteSiteMetadata {
   title: String
   description: String
   siteUrl: String
-  sectionMenu: [SiteSiteMetadataSectionMenu]
-  githubRepository: SiteSiteMetadataGithubRepository
-}
-
-type SiteSiteMetadataSectionMenu {
-  category: String
-  menu: [SiteSiteMetadataSectionMenuMenu]
-}
-
-type SiteSiteMetadataSectionMenuMenu {
-  text: String
-  to: String
-}
-
-type SiteSiteMetadataGithubRepository {
-  project: String
-  branch: String
-  rootDir: String
 }
 
 type SiteFunction implements Node {
@@ -713,6 +695,20 @@ type BreadCrumb {
   title: String
 }
 
+type SectionMenuCategory implements Node {
+  category: String!
+  menu: [SectionMenuItem!]!
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type SectionMenuItem {
+  text: String!
+  to: String
+}
+
 type SitePlugin implements Node {
   id: ID!
   parent: Node
@@ -732,12 +728,6 @@ type SitePlugin implements Node {
 type SitePluginPluginOptions {
   stages: [String]
   options: SitePluginPluginOptionsOptions
-  output: String
-  createLinkInHead: Boolean
-  entryLimit: Int
-  query: String
-  name: String
-  path: String
   base64Width: Int
   stripMetadata: Boolean
   defaultQuality: Int
@@ -745,19 +735,32 @@ type SitePluginPluginOptions {
   isTSX: Boolean
   jsxPragma: String
   allExtensions: Boolean
+  outputPath: String
   emitSchema: SitePluginPluginOptionsEmitSchema
+  name: String
+  path: String
+  markdownDir: String
+  githubRepository: SitePluginPluginOptionsGithubRepository
+  output: String
+  createLinkInHead: Boolean
+  entryLimit: Int
+  query: String
   pathCheck: Boolean
 }
 
 type SitePluginPluginOptionsOptions {
   emitWarning: Boolean
   failOnError: Boolean
-  extensions: [String]
-  exclude: [String]
 }
 
 type SitePluginPluginOptionsEmitSchema {
-  src___generated___gatsby_schema_graphql: Boolean
+  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Boolean
+}
+
+type SitePluginPluginOptionsGithubRepository {
+  project: String
+  branch: String
+  rootDir: String
 }
 
 type SitePluginPackageJson {
@@ -822,6 +825,8 @@ type Query {
   allImageSharp(filter: ImageSharpFilterInput, sort: ImageSharpSortInput, skip: Int, limit: Int): ImageSharpConnection!
   markdown(fields: MarkdownFieldsFilterInput, frontmatter: MarkdownFrontmatterFilterInput, rawMarkdownBody: StringQueryOperatorInput, fileAbsolutePath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Markdown
   allMarkdown(filter: MarkdownFilterInput, sort: MarkdownSortInput, skip: Int, limit: Int): MarkdownConnection!
+  sectionMenuCategory(category: StringQueryOperatorInput, menu: SectionMenuItemFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): SectionMenuCategory
+  allSectionMenuCategory(filter: SectionMenuCategoryFilterInput, sort: SectionMenuCategorySortInput, skip: Int, limit: Int): SectionMenuCategoryConnection!
   sitePlugin(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, resolve: StringQueryOperatorInput, name: StringQueryOperatorInput, version: StringQueryOperatorInput, pluginOptions: SitePluginPluginOptionsFilterInput, nodeAPIs: StringQueryOperatorInput, browserAPIs: StringQueryOperatorInput, ssrAPIs: StringQueryOperatorInput, pluginFilepath: StringQueryOperatorInput, packageJson: SitePluginPackageJsonFilterInput): SitePlugin
   allSitePlugin(filter: SitePluginFilterInput, sort: SitePluginSortInput, skip: Int, limit: Int): SitePluginConnection!
   siteBuildMetadata(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, buildTime: DateQueryOperatorInput): SiteBuildMetadata
@@ -1648,32 +1653,6 @@ input SiteSiteMetadataFilterInput {
   title: StringQueryOperatorInput
   description: StringQueryOperatorInput
   siteUrl: StringQueryOperatorInput
-  sectionMenu: SiteSiteMetadataSectionMenuFilterListInput
-  githubRepository: SiteSiteMetadataGithubRepositoryFilterInput
-}
-
-input SiteSiteMetadataSectionMenuFilterListInput {
-  elemMatch: SiteSiteMetadataSectionMenuFilterInput
-}
-
-input SiteSiteMetadataSectionMenuFilterInput {
-  category: StringQueryOperatorInput
-  menu: SiteSiteMetadataSectionMenuMenuFilterListInput
-}
-
-input SiteSiteMetadataSectionMenuMenuFilterListInput {
-  elemMatch: SiteSiteMetadataSectionMenuMenuFilterInput
-}
-
-input SiteSiteMetadataSectionMenuMenuFilterInput {
-  text: StringQueryOperatorInput
-  to: StringQueryOperatorInput
-}
-
-input SiteSiteMetadataGithubRepositoryFilterInput {
-  project: StringQueryOperatorInput
-  branch: StringQueryOperatorInput
-  rootDir: StringQueryOperatorInput
 }
 
 type SiteConnection {
@@ -1699,14 +1678,6 @@ enum SiteFieldsEnum {
   siteMetadata___title
   siteMetadata___description
   siteMetadata___siteUrl
-  siteMetadata___sectionMenu
-  siteMetadata___sectionMenu___category
-  siteMetadata___sectionMenu___menu
-  siteMetadata___sectionMenu___menu___text
-  siteMetadata___sectionMenu___menu___to
-  siteMetadata___githubRepository___project
-  siteMetadata___githubRepository___branch
-  siteMetadata___githubRepository___rootDir
   port
   host
   polyfill
@@ -1991,12 +1962,6 @@ input SitePluginFilterInput {
 input SitePluginPluginOptionsFilterInput {
   stages: StringQueryOperatorInput
   options: SitePluginPluginOptionsOptionsFilterInput
-  output: StringQueryOperatorInput
-  createLinkInHead: BooleanQueryOperatorInput
-  entryLimit: IntQueryOperatorInput
-  query: StringQueryOperatorInput
-  name: StringQueryOperatorInput
-  path: StringQueryOperatorInput
   base64Width: IntQueryOperatorInput
   stripMetadata: BooleanQueryOperatorInput
   defaultQuality: IntQueryOperatorInput
@@ -2004,19 +1969,32 @@ input SitePluginPluginOptionsFilterInput {
   isTSX: BooleanQueryOperatorInput
   jsxPragma: StringQueryOperatorInput
   allExtensions: BooleanQueryOperatorInput
+  outputPath: StringQueryOperatorInput
   emitSchema: SitePluginPluginOptionsEmitSchemaFilterInput
+  name: StringQueryOperatorInput
+  path: StringQueryOperatorInput
+  markdownDir: StringQueryOperatorInput
+  githubRepository: SitePluginPluginOptionsGithubRepositoryFilterInput
+  output: StringQueryOperatorInput
+  createLinkInHead: BooleanQueryOperatorInput
+  entryLimit: IntQueryOperatorInput
+  query: StringQueryOperatorInput
   pathCheck: BooleanQueryOperatorInput
 }
 
 input SitePluginPluginOptionsOptionsFilterInput {
   emitWarning: BooleanQueryOperatorInput
   failOnError: BooleanQueryOperatorInput
-  extensions: StringQueryOperatorInput
-  exclude: StringQueryOperatorInput
 }
 
 input SitePluginPluginOptionsEmitSchemaFilterInput {
-  src___generated___gatsby_schema_graphql: BooleanQueryOperatorInput
+  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: BooleanQueryOperatorInput
+}
+
+input SitePluginPluginOptionsGithubRepositoryFilterInput {
+  project: StringQueryOperatorInput
+  branch: StringQueryOperatorInput
+  rootDir: StringQueryOperatorInput
 }
 
 input SitePluginPackageJsonFilterInput {
@@ -2214,14 +2192,6 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___stages
   pluginCreator___pluginOptions___options___emitWarning
   pluginCreator___pluginOptions___options___failOnError
-  pluginCreator___pluginOptions___options___extensions
-  pluginCreator___pluginOptions___options___exclude
-  pluginCreator___pluginOptions___output
-  pluginCreator___pluginOptions___createLinkInHead
-  pluginCreator___pluginOptions___entryLimit
-  pluginCreator___pluginOptions___query
-  pluginCreator___pluginOptions___name
-  pluginCreator___pluginOptions___path
   pluginCreator___pluginOptions___base64Width
   pluginCreator___pluginOptions___stripMetadata
   pluginCreator___pluginOptions___defaultQuality
@@ -2229,7 +2199,18 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___isTSX
   pluginCreator___pluginOptions___jsxPragma
   pluginCreator___pluginOptions___allExtensions
-  pluginCreator___pluginOptions___emitSchema___src___generated___gatsby_schema_graphql
+  pluginCreator___pluginOptions___outputPath
+  pluginCreator___pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
+  pluginCreator___pluginOptions___name
+  pluginCreator___pluginOptions___path
+  pluginCreator___pluginOptions___markdownDir
+  pluginCreator___pluginOptions___githubRepository___project
+  pluginCreator___pluginOptions___githubRepository___branch
+  pluginCreator___pluginOptions___githubRepository___rootDir
+  pluginCreator___pluginOptions___output
+  pluginCreator___pluginOptions___createLinkInHead
+  pluginCreator___pluginOptions___entryLimit
+  pluginCreator___pluginOptions___query
   pluginCreator___pluginOptions___pathCheck
   pluginCreator___nodeAPIs
   pluginCreator___browserAPIs
@@ -2611,6 +2592,149 @@ input MarkdownSortInput {
   order: [SortOrderEnum] = [ASC]
 }
 
+input SectionMenuItemFilterListInput {
+  elemMatch: SectionMenuItemFilterInput
+}
+
+input SectionMenuItemFilterInput {
+  text: StringQueryOperatorInput
+  to: StringQueryOperatorInput
+}
+
+type SectionMenuCategoryConnection {
+  totalCount: Int!
+  edges: [SectionMenuCategoryEdge!]!
+  nodes: [SectionMenuCategory!]!
+  pageInfo: PageInfo!
+  distinct(field: SectionMenuCategoryFieldsEnum!): [String!]!
+  max(field: SectionMenuCategoryFieldsEnum!): Float
+  min(field: SectionMenuCategoryFieldsEnum!): Float
+  sum(field: SectionMenuCategoryFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: SectionMenuCategoryFieldsEnum!): [SectionMenuCategoryGroupConnection!]!
+}
+
+type SectionMenuCategoryEdge {
+  next: SectionMenuCategory
+  node: SectionMenuCategory!
+  previous: SectionMenuCategory
+}
+
+enum SectionMenuCategoryFieldsEnum {
+  category
+  menu
+  menu___text
+  menu___to
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type SectionMenuCategoryGroupConnection {
+  totalCount: Int!
+  edges: [SectionMenuCategoryEdge!]!
+  nodes: [SectionMenuCategory!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input SectionMenuCategoryFilterInput {
+  category: StringQueryOperatorInput
+  menu: SectionMenuItemFilterListInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input SectionMenuCategorySortInput {
+  fields: [SectionMenuCategoryFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
 type SitePluginConnection {
   totalCount: Int!
   edges: [SitePluginEdge!]!
@@ -2722,14 +2846,6 @@ enum SitePluginFieldsEnum {
   pluginOptions___stages
   pluginOptions___options___emitWarning
   pluginOptions___options___failOnError
-  pluginOptions___options___extensions
-  pluginOptions___options___exclude
-  pluginOptions___output
-  pluginOptions___createLinkInHead
-  pluginOptions___entryLimit
-  pluginOptions___query
-  pluginOptions___name
-  pluginOptions___path
   pluginOptions___base64Width
   pluginOptions___stripMetadata
   pluginOptions___defaultQuality
@@ -2737,7 +2853,18 @@ enum SitePluginFieldsEnum {
   pluginOptions___isTSX
   pluginOptions___jsxPragma
   pluginOptions___allExtensions
-  pluginOptions___emitSchema___src___generated___gatsby_schema_graphql
+  pluginOptions___outputPath
+  pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
+  pluginOptions___name
+  pluginOptions___path
+  pluginOptions___markdownDir
+  pluginOptions___githubRepository___project
+  pluginOptions___githubRepository___branch
+  pluginOptions___githubRepository___rootDir
+  pluginOptions___output
+  pluginOptions___createLinkInHead
+  pluginOptions___entryLimit
+  pluginOptions___query
   pluginOptions___pathCheck
   nodeAPIs
   browserAPIs

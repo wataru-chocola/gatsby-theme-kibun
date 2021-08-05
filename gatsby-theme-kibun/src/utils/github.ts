@@ -286,8 +286,8 @@ export function useGithubRepositoryInfo(): githubRepositoryInfo {
   const data = useStaticQuery<GatsbyTypes.githubRepositryQuery>(
     graphql`
       query githubRepositry {
-        site {
-          siteMetadata {
+        sitePlugin(name: { eq: "gatsby-theme-kibun" }) {
+          pluginOptions {
             githubRepository {
               project
               branch
@@ -298,15 +298,15 @@ export function useGithubRepositoryInfo(): githubRepositoryInfo {
       }
     `,
   );
-  const project = data.site?.siteMetadata?.githubRepository?.project;
+  const project = data.sitePlugin?.pluginOptions?.githubRepository?.project;
   if (project == null) {
     throw Error('must specify githubRepositry.project in your config');
   }
 
   return {
     project: project,
-    branch: data.site?.siteMetadata?.githubRepository?.branch || 'main',
-    rootDir: data.site?.siteMetadata?.githubRepository?.rootDir || '',
+    branch: data.sitePlugin?.pluginOptions?.githubRepository?.branch || 'main',
+    rootDir: data.sitePlugin?.pluginOptions?.githubRepository?.rootDir || '',
   };
 }
 
