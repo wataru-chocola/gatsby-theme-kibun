@@ -13,7 +13,6 @@ module.exports = (options) => ({
       },
     },
     `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-sitemap`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-image`,

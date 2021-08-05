@@ -728,10 +728,6 @@ type SitePlugin implements Node {
 type SitePluginPluginOptions {
   stages: [String]
   options: SitePluginPluginOptionsOptions
-  output: String
-  createLinkInHead: Boolean
-  entryLimit: Int
-  query: String
   base64Width: Int
   stripMetadata: Boolean
   defaultQuality: Int
@@ -739,30 +735,32 @@ type SitePluginPluginOptions {
   isTSX: Boolean
   jsxPragma: String
   allExtensions: Boolean
+  outputPath: String
+  emitSchema: SitePluginPluginOptionsEmitSchema
   name: String
   path: String
   markdownDir: String
   githubRepository: SitePluginPluginOptionsGithubRepository
+  output: String
+  createLinkInHead: Boolean
+  entryLimit: Int
+  query: String
   pathCheck: Boolean
-  outputPath: String
-  emitSchema: SitePluginPluginOptionsEmitSchema
 }
 
 type SitePluginPluginOptionsOptions {
   emitWarning: Boolean
   failOnError: Boolean
-  extensions: [String]
-  exclude: [String]
+}
+
+type SitePluginPluginOptionsEmitSchema {
+  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Boolean
 }
 
 type SitePluginPluginOptionsGithubRepository {
   project: String
   branch: String
   rootDir: String
-}
-
-type SitePluginPluginOptionsEmitSchema {
-  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Boolean
 }
 
 type SitePluginPackageJson {
@@ -1964,10 +1962,6 @@ input SitePluginFilterInput {
 input SitePluginPluginOptionsFilterInput {
   stages: StringQueryOperatorInput
   options: SitePluginPluginOptionsOptionsFilterInput
-  output: StringQueryOperatorInput
-  createLinkInHead: BooleanQueryOperatorInput
-  entryLimit: IntQueryOperatorInput
-  query: StringQueryOperatorInput
   base64Width: IntQueryOperatorInput
   stripMetadata: BooleanQueryOperatorInput
   defaultQuality: IntQueryOperatorInput
@@ -1975,30 +1969,32 @@ input SitePluginPluginOptionsFilterInput {
   isTSX: BooleanQueryOperatorInput
   jsxPragma: StringQueryOperatorInput
   allExtensions: BooleanQueryOperatorInput
+  outputPath: StringQueryOperatorInput
+  emitSchema: SitePluginPluginOptionsEmitSchemaFilterInput
   name: StringQueryOperatorInput
   path: StringQueryOperatorInput
   markdownDir: StringQueryOperatorInput
   githubRepository: SitePluginPluginOptionsGithubRepositoryFilterInput
+  output: StringQueryOperatorInput
+  createLinkInHead: BooleanQueryOperatorInput
+  entryLimit: IntQueryOperatorInput
+  query: StringQueryOperatorInput
   pathCheck: BooleanQueryOperatorInput
-  outputPath: StringQueryOperatorInput
-  emitSchema: SitePluginPluginOptionsEmitSchemaFilterInput
 }
 
 input SitePluginPluginOptionsOptionsFilterInput {
   emitWarning: BooleanQueryOperatorInput
   failOnError: BooleanQueryOperatorInput
-  extensions: StringQueryOperatorInput
-  exclude: StringQueryOperatorInput
+}
+
+input SitePluginPluginOptionsEmitSchemaFilterInput {
+  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: BooleanQueryOperatorInput
 }
 
 input SitePluginPluginOptionsGithubRepositoryFilterInput {
   project: StringQueryOperatorInput
   branch: StringQueryOperatorInput
   rootDir: StringQueryOperatorInput
-}
-
-input SitePluginPluginOptionsEmitSchemaFilterInput {
-  _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: BooleanQueryOperatorInput
 }
 
 input SitePluginPackageJsonFilterInput {
@@ -2196,12 +2192,6 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___stages
   pluginCreator___pluginOptions___options___emitWarning
   pluginCreator___pluginOptions___options___failOnError
-  pluginCreator___pluginOptions___options___extensions
-  pluginCreator___pluginOptions___options___exclude
-  pluginCreator___pluginOptions___output
-  pluginCreator___pluginOptions___createLinkInHead
-  pluginCreator___pluginOptions___entryLimit
-  pluginCreator___pluginOptions___query
   pluginCreator___pluginOptions___base64Width
   pluginCreator___pluginOptions___stripMetadata
   pluginCreator___pluginOptions___defaultQuality
@@ -2209,15 +2199,19 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___isTSX
   pluginCreator___pluginOptions___jsxPragma
   pluginCreator___pluginOptions___allExtensions
+  pluginCreator___pluginOptions___outputPath
+  pluginCreator___pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
   pluginCreator___pluginOptions___name
   pluginCreator___pluginOptions___path
   pluginCreator___pluginOptions___markdownDir
   pluginCreator___pluginOptions___githubRepository___project
   pluginCreator___pluginOptions___githubRepository___branch
   pluginCreator___pluginOptions___githubRepository___rootDir
+  pluginCreator___pluginOptions___output
+  pluginCreator___pluginOptions___createLinkInHead
+  pluginCreator___pluginOptions___entryLimit
+  pluginCreator___pluginOptions___query
   pluginCreator___pluginOptions___pathCheck
-  pluginCreator___pluginOptions___outputPath
-  pluginCreator___pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
   pluginCreator___nodeAPIs
   pluginCreator___browserAPIs
   pluginCreator___ssrAPIs
@@ -2852,12 +2846,6 @@ enum SitePluginFieldsEnum {
   pluginOptions___stages
   pluginOptions___options___emitWarning
   pluginOptions___options___failOnError
-  pluginOptions___options___extensions
-  pluginOptions___options___exclude
-  pluginOptions___output
-  pluginOptions___createLinkInHead
-  pluginOptions___entryLimit
-  pluginOptions___query
   pluginOptions___base64Width
   pluginOptions___stripMetadata
   pluginOptions___defaultQuality
@@ -2865,15 +2853,19 @@ enum SitePluginFieldsEnum {
   pluginOptions___isTSX
   pluginOptions___jsxPragma
   pluginOptions___allExtensions
+  pluginOptions___outputPath
+  pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
   pluginOptions___name
   pluginOptions___path
   pluginOptions___markdownDir
   pluginOptions___githubRepository___project
   pluginOptions___githubRepository___branch
   pluginOptions___githubRepository___rootDir
+  pluginOptions___output
+  pluginOptions___createLinkInHead
+  pluginOptions___entryLimit
+  pluginOptions___query
   pluginOptions___pathCheck
-  pluginOptions___outputPath
-  pluginOptions___emitSchema____home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql
   nodeAPIs
   browserAPIs
   ssrAPIs

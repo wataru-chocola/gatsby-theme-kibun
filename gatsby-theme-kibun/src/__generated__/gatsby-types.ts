@@ -642,10 +642,6 @@ type SitePlugin = Node & {
 type SitePluginPluginOptions = {
   readonly stages: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly options: Maybe<SitePluginPluginOptionsOptions>;
-  readonly output: Maybe<Scalars['String']>;
-  readonly createLinkInHead: Maybe<Scalars['Boolean']>;
-  readonly entryLimit: Maybe<Scalars['Int']>;
-  readonly query: Maybe<Scalars['String']>;
   readonly base64Width: Maybe<Scalars['Int']>;
   readonly stripMetadata: Maybe<Scalars['Boolean']>;
   readonly defaultQuality: Maybe<Scalars['Int']>;
@@ -653,30 +649,32 @@ type SitePluginPluginOptions = {
   readonly isTSX: Maybe<Scalars['Boolean']>;
   readonly jsxPragma: Maybe<Scalars['String']>;
   readonly allExtensions: Maybe<Scalars['Boolean']>;
+  readonly outputPath: Maybe<Scalars['String']>;
+  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchema>;
   readonly name: Maybe<Scalars['String']>;
   readonly path: Maybe<Scalars['String']>;
   readonly markdownDir: Maybe<Scalars['String']>;
   readonly githubRepository: Maybe<SitePluginPluginOptionsGithubRepository>;
+  readonly output: Maybe<Scalars['String']>;
+  readonly createLinkInHead: Maybe<Scalars['Boolean']>;
+  readonly entryLimit: Maybe<Scalars['Int']>;
+  readonly query: Maybe<Scalars['String']>;
   readonly pathCheck: Maybe<Scalars['Boolean']>;
-  readonly outputPath: Maybe<Scalars['String']>;
-  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchema>;
 };
 
 type SitePluginPluginOptionsOptions = {
   readonly emitWarning: Maybe<Scalars['Boolean']>;
   readonly failOnError: Maybe<Scalars['Boolean']>;
-  readonly extensions: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
-  readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+};
+
+type SitePluginPluginOptionsEmitSchema = {
+  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<Scalars['Boolean']>;
 };
 
 type SitePluginPluginOptionsGithubRepository = {
   readonly project: Maybe<Scalars['String']>;
   readonly branch: Maybe<Scalars['String']>;
   readonly rootDir: Maybe<Scalars['String']>;
-};
-
-type SitePluginPluginOptionsEmitSchema = {
-  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<Scalars['Boolean']>;
 };
 
 type SitePluginPackageJson = {
@@ -2252,10 +2250,6 @@ type SitePluginFilterInput = {
 type SitePluginPluginOptionsFilterInput = {
   readonly stages: Maybe<StringQueryOperatorInput>;
   readonly options: Maybe<SitePluginPluginOptionsOptionsFilterInput>;
-  readonly output: Maybe<StringQueryOperatorInput>;
-  readonly createLinkInHead: Maybe<BooleanQueryOperatorInput>;
-  readonly entryLimit: Maybe<IntQueryOperatorInput>;
-  readonly query: Maybe<StringQueryOperatorInput>;
   readonly base64Width: Maybe<IntQueryOperatorInput>;
   readonly stripMetadata: Maybe<BooleanQueryOperatorInput>;
   readonly defaultQuality: Maybe<IntQueryOperatorInput>;
@@ -2263,30 +2257,32 @@ type SitePluginPluginOptionsFilterInput = {
   readonly isTSX: Maybe<BooleanQueryOperatorInput>;
   readonly jsxPragma: Maybe<StringQueryOperatorInput>;
   readonly allExtensions: Maybe<BooleanQueryOperatorInput>;
+  readonly outputPath: Maybe<StringQueryOperatorInput>;
+  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchemaFilterInput>;
   readonly name: Maybe<StringQueryOperatorInput>;
   readonly path: Maybe<StringQueryOperatorInput>;
   readonly markdownDir: Maybe<StringQueryOperatorInput>;
   readonly githubRepository: Maybe<SitePluginPluginOptionsGithubRepositoryFilterInput>;
+  readonly output: Maybe<StringQueryOperatorInput>;
+  readonly createLinkInHead: Maybe<BooleanQueryOperatorInput>;
+  readonly entryLimit: Maybe<IntQueryOperatorInput>;
+  readonly query: Maybe<StringQueryOperatorInput>;
   readonly pathCheck: Maybe<BooleanQueryOperatorInput>;
-  readonly outputPath: Maybe<StringQueryOperatorInput>;
-  readonly emitSchema: Maybe<SitePluginPluginOptionsEmitSchemaFilterInput>;
 };
 
 type SitePluginPluginOptionsOptionsFilterInput = {
   readonly emitWarning: Maybe<BooleanQueryOperatorInput>;
   readonly failOnError: Maybe<BooleanQueryOperatorInput>;
-  readonly extensions: Maybe<StringQueryOperatorInput>;
-  readonly exclude: Maybe<StringQueryOperatorInput>;
+};
+
+type SitePluginPluginOptionsEmitSchemaFilterInput = {
+  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<BooleanQueryOperatorInput>;
 };
 
 type SitePluginPluginOptionsGithubRepositoryFilterInput = {
   readonly project: Maybe<StringQueryOperatorInput>;
   readonly branch: Maybe<StringQueryOperatorInput>;
   readonly rootDir: Maybe<StringQueryOperatorInput>;
-};
-
-type SitePluginPluginOptionsEmitSchemaFilterInput = {
-  readonly _home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql: Maybe<BooleanQueryOperatorInput>;
 };
 
 type SitePluginPackageJsonFilterInput = {
@@ -2511,12 +2507,6 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.stages'
   | 'pluginCreator.pluginOptions.options.emitWarning'
   | 'pluginCreator.pluginOptions.options.failOnError'
-  | 'pluginCreator.pluginOptions.options.extensions'
-  | 'pluginCreator.pluginOptions.options.exclude'
-  | 'pluginCreator.pluginOptions.output'
-  | 'pluginCreator.pluginOptions.createLinkInHead'
-  | 'pluginCreator.pluginOptions.entryLimit'
-  | 'pluginCreator.pluginOptions.query'
   | 'pluginCreator.pluginOptions.base64Width'
   | 'pluginCreator.pluginOptions.stripMetadata'
   | 'pluginCreator.pluginOptions.defaultQuality'
@@ -2524,15 +2514,19 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.isTSX'
   | 'pluginCreator.pluginOptions.jsxPragma'
   | 'pluginCreator.pluginOptions.allExtensions'
+  | 'pluginCreator.pluginOptions.outputPath'
+  | 'pluginCreator.pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'pluginCreator.pluginOptions.name'
   | 'pluginCreator.pluginOptions.path'
   | 'pluginCreator.pluginOptions.markdownDir'
   | 'pluginCreator.pluginOptions.githubRepository.project'
   | 'pluginCreator.pluginOptions.githubRepository.branch'
   | 'pluginCreator.pluginOptions.githubRepository.rootDir'
+  | 'pluginCreator.pluginOptions.output'
+  | 'pluginCreator.pluginOptions.createLinkInHead'
+  | 'pluginCreator.pluginOptions.entryLimit'
+  | 'pluginCreator.pluginOptions.query'
   | 'pluginCreator.pluginOptions.pathCheck'
-  | 'pluginCreator.pluginOptions.outputPath'
-  | 'pluginCreator.pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'pluginCreator.nodeAPIs'
   | 'pluginCreator.browserAPIs'
   | 'pluginCreator.ssrAPIs'
@@ -3271,12 +3265,6 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.stages'
   | 'pluginOptions.options.emitWarning'
   | 'pluginOptions.options.failOnError'
-  | 'pluginOptions.options.extensions'
-  | 'pluginOptions.options.exclude'
-  | 'pluginOptions.output'
-  | 'pluginOptions.createLinkInHead'
-  | 'pluginOptions.entryLimit'
-  | 'pluginOptions.query'
   | 'pluginOptions.base64Width'
   | 'pluginOptions.stripMetadata'
   | 'pluginOptions.defaultQuality'
@@ -3284,15 +3272,19 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.isTSX'
   | 'pluginOptions.jsxPragma'
   | 'pluginOptions.allExtensions'
+  | 'pluginOptions.outputPath'
+  | 'pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'pluginOptions.name'
   | 'pluginOptions.path'
   | 'pluginOptions.markdownDir'
   | 'pluginOptions.githubRepository.project'
   | 'pluginOptions.githubRepository.branch'
   | 'pluginOptions.githubRepository.rootDir'
+  | 'pluginOptions.output'
+  | 'pluginOptions.createLinkInHead'
+  | 'pluginOptions.entryLimit'
+  | 'pluginOptions.query'
   | 'pluginOptions.pathCheck'
-  | 'pluginOptions.outputPath'
-  | 'pluginOptions.emitSchema._home_wataru_works_gatsby_theme_kibun_gatsby_theme_kibun_src___generated___gatsby_schema_graphql'
   | 'nodeAPIs'
   | 'browserAPIs'
   | 'ssrAPIs'
@@ -3501,6 +3493,29 @@ type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
 
+type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
+        Pick<SectionMenuCategory, 'category'>
+        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
+      ) }> } };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
+
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 
 type GatsbyImageSharpFixed_tracedSVGFragment = Pick<ImageSharpFixed, 'tracedSVG' | 'width' | 'height' | 'src' | 'srcSet'>;
@@ -3526,28 +3541,5 @@ type GatsbyImageSharpFluid_withWebp_tracedSVGFragment = Pick<ImageSharpFluid, 't
 type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'sizes'>;
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
-
-type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
-        Pick<SectionMenuCategory, 'category'>
-        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
-      ) }> } };
-
-type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
-
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
-
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 }
