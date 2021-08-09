@@ -31,7 +31,6 @@
     "hastscript": "^7.0.1",
     "js-yaml": "^4.1.0",
     "mdast-util-definitions": "^5.0.0",
-    "mkdirp": "^0.5.5",
     "path-browserify": "^1.0.1",
     "prismjs": "^1.24.1",
     "react-helmet": "^6.1.0",

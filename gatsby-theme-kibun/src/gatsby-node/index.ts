@@ -9,7 +9,6 @@ import {
 } from 'gatsby';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
 import {
   transformFileToMarkdown,
   modifyMarkdownSchema,
@@ -40,7 +39,7 @@ exports.onPreBootstrap = (
   if (!fs.existsSync(mdDir)) {
     reporter.log(`the ${mdDir} directory not found`);
     reporter.log(`initializing the ${mdDir} directory`);
-    mkdirp.sync(mdDir);
+    fs.mkdirSync(mdDir, { recursive: true });
 
     const indexFile = path.resolve(mdDir, 'index.md');
     fs.writeFileSync(indexFile, defaultIndexContent);
