@@ -1,6 +1,6 @@
 import { visit, Visitor } from 'unist-util-visit';
 import nodeToString from 'hast-util-to-string';
-import { refractor } from './commonRefractor';
+import { refractor } from 'refractor/lib/common';
 import { Element } from 'hast';
 import { Plugin } from 'unified';
 import { Node as UnistNode } from 'unist';
