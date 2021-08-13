@@ -19,8 +19,7 @@ import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionM
 import { updateImageSharpNodes, updateImageSharpSchema } from './updateImageSharpNodes';
 import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
 
-const defaultIndexContent = `
----
+const defaultIndexContent = `---
 title: "Top page"
 date: ${new Date().toISOString()}
 ---

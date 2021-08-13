@@ -584,6 +584,15 @@ type Markdown = Node & {
 
 type MarkdownFrontmatter = {
   readonly title: Maybe<Scalars['String']>;
+  readonly date: Maybe<Scalars['Date']>;
+};
+
+
+type MarkdownFrontmatter_dateArgs = {
+  formatString: Maybe<Scalars['String']>;
+  fromNow: Maybe<Scalars['Boolean']>;
+  difference: Maybe<Scalars['String']>;
+  locale: Maybe<Scalars['String']>;
 };
 
 type MarkdownFields = {
@@ -1177,6 +1186,7 @@ type MarkdownFieldsFilterInput = {
 
 type MarkdownFrontmatterFilterInput = {
   readonly title: Maybe<StringQueryOperatorInput>;
+  readonly date: Maybe<DateQueryOperatorInput>;
 };
 
 type FileConnection = {
@@ -1419,6 +1429,7 @@ type FileFieldsEnum =
   | 'childrenMarkdown.fields.images.children'
   | 'childrenMarkdown.fields.slug'
   | 'childrenMarkdown.frontmatter.title'
+  | 'childrenMarkdown.frontmatter.date'
   | 'childrenMarkdown.rawMarkdownBody'
   | 'childrenMarkdown.fileAbsolutePath'
   | 'childrenMarkdown.id'
@@ -1465,6 +1476,7 @@ type FileFieldsEnum =
   | 'childMarkdown.fields.images.children'
   | 'childMarkdown.fields.slug'
   | 'childMarkdown.frontmatter.title'
+  | 'childMarkdown.frontmatter.date'
   | 'childMarkdown.rawMarkdownBody'
   | 'childMarkdown.fileAbsolutePath'
   | 'childMarkdown.id'
@@ -2848,6 +2860,7 @@ type MarkdownFieldsEnum =
   | 'fields.images.internal.type'
   | 'fields.slug'
   | 'frontmatter.title'
+  | 'frontmatter.date'
   | 'rawMarkdownBody'
   | 'fileAbsolutePath'
   | 'id'
@@ -3514,14 +3527,6 @@ type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
 
-type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
-        Pick<SectionMenuCategory, 'category'>
-        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
-      ) }> } };
-
 type SEOQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3531,6 +3536,14 @@ type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
+
+type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
+        Pick<SectionMenuCategory, 'category'>
+        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
+      ) }> } };
 
 type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
