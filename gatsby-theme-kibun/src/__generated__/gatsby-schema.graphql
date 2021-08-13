@@ -652,10 +652,6 @@ type ImageSharpResize {
   originalName: String
 }
 
-type ImageSharpFields {
-  imagePath: String
-}
-
 type Markdown implements Node {
   fields: MarkdownFields
   frontmatter: MarkdownFrontmatter
@@ -693,6 +689,10 @@ type MarkdownFields {
 type BreadCrumb {
   slug: String!
   title: String
+}
+
+type ImageSharpFields {
+  imagePath: String!
 }
 
 type SectionMenuCategory implements Node {
