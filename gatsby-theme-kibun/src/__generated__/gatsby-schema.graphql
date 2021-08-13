@@ -741,6 +741,7 @@ type SitePluginPluginOptions {
   path: String
   markdownDir: String
   githubRepository: SitePluginPluginOptionsGithubRepository
+  staticFile: SitePluginPluginOptionsStaticFile
   output: String
   createLinkInHead: Boolean
   entryLimit: Int
@@ -751,8 +752,6 @@ type SitePluginPluginOptions {
 type SitePluginPluginOptionsOptions {
   emitWarning: Boolean
   failOnError: Boolean
-  extensions: [String]
-  exclude: [String]
 }
 
 type SitePluginPluginOptionsEmitSchema {
@@ -761,8 +760,12 @@ type SitePluginPluginOptionsEmitSchema {
 
 type SitePluginPluginOptionsGithubRepository {
   project: String
-  branch: String
   rootDir: String
+  branch: String
+}
+
+type SitePluginPluginOptionsStaticFile {
+  excludeExtensions: [String]
 }
 
 type SitePluginPackageJson {
@@ -1977,6 +1980,7 @@ input SitePluginPluginOptionsFilterInput {
   path: StringQueryOperatorInput
   markdownDir: StringQueryOperatorInput
   githubRepository: SitePluginPluginOptionsGithubRepositoryFilterInput
+  staticFile: SitePluginPluginOptionsStaticFileFilterInput
   output: StringQueryOperatorInput
   createLinkInHead: BooleanQueryOperatorInput
   entryLimit: IntQueryOperatorInput
@@ -1987,8 +1991,6 @@ input SitePluginPluginOptionsFilterInput {
 input SitePluginPluginOptionsOptionsFilterInput {
   emitWarning: BooleanQueryOperatorInput
   failOnError: BooleanQueryOperatorInput
-  extensions: StringQueryOperatorInput
-  exclude: StringQueryOperatorInput
 }
 
 input SitePluginPluginOptionsEmitSchemaFilterInput {
@@ -1997,8 +1999,12 @@ input SitePluginPluginOptionsEmitSchemaFilterInput {
 
 input SitePluginPluginOptionsGithubRepositoryFilterInput {
   project: StringQueryOperatorInput
-  branch: StringQueryOperatorInput
   rootDir: StringQueryOperatorInput
+  branch: StringQueryOperatorInput
+}
+
+input SitePluginPluginOptionsStaticFileFilterInput {
+  excludeExtensions: StringQueryOperatorInput
 }
 
 input SitePluginPackageJsonFilterInput {
@@ -2196,8 +2202,6 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___stages
   pluginCreator___pluginOptions___options___emitWarning
   pluginCreator___pluginOptions___options___failOnError
-  pluginCreator___pluginOptions___options___extensions
-  pluginCreator___pluginOptions___options___exclude
   pluginCreator___pluginOptions___base64Width
   pluginCreator___pluginOptions___stripMetadata
   pluginCreator___pluginOptions___defaultQuality
@@ -2211,8 +2215,9 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___path
   pluginCreator___pluginOptions___markdownDir
   pluginCreator___pluginOptions___githubRepository___project
-  pluginCreator___pluginOptions___githubRepository___branch
   pluginCreator___pluginOptions___githubRepository___rootDir
+  pluginCreator___pluginOptions___githubRepository___branch
+  pluginCreator___pluginOptions___staticFile___excludeExtensions
   pluginCreator___pluginOptions___output
   pluginCreator___pluginOptions___createLinkInHead
   pluginCreator___pluginOptions___entryLimit
@@ -2852,8 +2857,6 @@ enum SitePluginFieldsEnum {
   pluginOptions___stages
   pluginOptions___options___emitWarning
   pluginOptions___options___failOnError
-  pluginOptions___options___extensions
-  pluginOptions___options___exclude
   pluginOptions___base64Width
   pluginOptions___stripMetadata
   pluginOptions___defaultQuality
@@ -2867,8 +2870,9 @@ enum SitePluginFieldsEnum {
   pluginOptions___path
   pluginOptions___markdownDir
   pluginOptions___githubRepository___project
-  pluginOptions___githubRepository___branch
   pluginOptions___githubRepository___rootDir
+  pluginOptions___githubRepository___branch
+  pluginOptions___staticFile___excludeExtensions
   pluginOptions___output
   pluginOptions___createLinkInHead
   pluginOptions___entryLimit

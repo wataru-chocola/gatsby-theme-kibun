@@ -11,7 +11,6 @@ module.exports = {
         markdownDir: `${__dirname}/src/markdowns`,
         githubRepository: {
           project: 'wataru-chocola/test-sitemd',
-          branch: 'main',
           rootDir: 'markdowns/',
         },
       },

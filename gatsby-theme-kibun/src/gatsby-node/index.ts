@@ -17,6 +17,7 @@ import {
 import { createMarkdownPages } from './createMarkdownPages';
 import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionMenuNodes';
 import { updateImageSharpNodes, updateImageSharpSchema } from './updateImageSharpNodes';
+import { copyStaticFiles } from './copyStaticFiles';
 import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
 
 const defaultIndexContent = `---
@@ -50,16 +51,20 @@ exports.sourceNodes = (args: SourceNodesArgs, options: PluginOptionsType) => {
   sourceSectionMenuYaml(args, options);
 };
 
-exports.onCreateNode = async (args: CreateNodeArgs) => {
+exports.onCreateNode = async (args: CreateNodeArgs, options: PluginOptionsType) => {
   if (args.node.internal.type === `ImageSharp`) {
-    return await updateImageSharpNodes(args);
+    await updateImageSharpNodes(args);
   }
 
   if (
     args.node.internal.mediaType === 'text/markdown' ||
     args.node.internal.mediaType === 'text/x-markdown'
   ) {
-    return await transformFileToMarkdown(args);
+    await transformFileToMarkdown(args);
+  }
+
+  if (args.node.internal.type === 'File') {
+    await copyStaticFiles(args, options);
   }
 };
 
