@@ -11,11 +11,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {
   transformFileToMarkdown,
-  modifyMarkdownSchema,
+  updateMarkdownSchema,
   createMarkdownResolvers,
 } from './createMarkdownNodes';
 import { createMarkdownPages } from './createMarkdownPages';
 import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionMenuNodes';
+import { updateImageSharpNodes, updateImageSharpSchema } from './updateImageSharpNodes';
 import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
 
 const defaultIndexContent = `
@@ -51,15 +52,8 @@ exports.sourceNodes = (args: SourceNodesArgs, options: PluginOptionsType) => {
 };
 
 exports.onCreateNode = async (args: CreateNodeArgs) => {
-  const { createNodeField } = args.actions;
   if (args.node.internal.type === `ImageSharp`) {
-    const parentFile = args.getNode(args.node.parent!);
-    const imagePath = path.join('/', parentFile.relativePath as string);
-    createNodeField({
-      node: args.node,
-      name: `imagePath`,
-      value: imagePath,
-    });
+    return await updateImageSharpNodes(args);
   }
 
   if (
@@ -71,7 +65,8 @@ exports.onCreateNode = async (args: CreateNodeArgs) => {
 };
 
 exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
-  modifyMarkdownSchema(args);
+  updateMarkdownSchema(args);
+  updateImageSharpSchema(args);
   createSectionMenuSchema(args);
 };
 

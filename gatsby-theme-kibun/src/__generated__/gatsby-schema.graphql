@@ -652,10 +652,6 @@ type ImageSharpResize {
   originalName: String
 }
 
-type ImageSharpFields {
-  imagePath: String
-}
-
 type Markdown implements Node {
   fields: MarkdownFields
   frontmatter: MarkdownFrontmatter
@@ -670,19 +666,6 @@ type Markdown implements Node {
 
 type MarkdownFrontmatter {
   title: String
-  date(
-    # Format the date using Moment.js' date tokens, e.g. `date(formatString: "YYYY MMMM DD")`. See https://momentjs.com/docs/#/displaying/format/ for documentation for different tokens.
-    formatString: String
-
-    # Returns a string generated with Moment.js' `fromNow` function
-    fromNow: Boolean
-
-    # Returns the difference between this date and the current time. Defaults to "milliseconds" but you can also pass in as the measurement "years", "months", "weeks", "days", "hours", "minutes", and "seconds".
-    difference: String
-
-    # Configures the locale Moment.js will use to format the date.
-    locale: String
-  ): Date
 }
 
 type MarkdownFields {
@@ -693,6 +676,10 @@ type MarkdownFields {
 type BreadCrumb {
   slug: String!
   title: String
+}
+
+type ImageSharpFields {
+  imagePath: String!
 }
 
 type SectionMenuCategory implements Node {
@@ -1001,7 +988,6 @@ input MarkdownFieldsFilterInput {
 
 input MarkdownFrontmatterFilterInput {
   title: StringQueryOperatorInput
-  date: DateQueryOperatorInput
 }
 
 type FileConnection {
@@ -1217,7 +1203,6 @@ enum FileFieldsEnum {
   childrenMarkdown___fields___images___children @deprecated(reason: "Sorting on fields that need arguments to resolve is deprecated.")
   childrenMarkdown___fields___slug
   childrenMarkdown___frontmatter___title
-  childrenMarkdown___frontmatter___date
   childrenMarkdown___rawMarkdownBody
   childrenMarkdown___fileAbsolutePath
   childrenMarkdown___id
@@ -1264,7 +1249,6 @@ enum FileFieldsEnum {
   childMarkdown___fields___images___children @deprecated(reason: "Sorting on fields that need arguments to resolve is deprecated.")
   childMarkdown___fields___slug
   childMarkdown___frontmatter___title
-  childMarkdown___frontmatter___date
   childMarkdown___rawMarkdownBody
   childMarkdown___fileAbsolutePath
   childMarkdown___id
@@ -2493,7 +2477,6 @@ enum MarkdownFieldsEnum {
   fields___images___internal___type @deprecated(reason: "Sorting on fields that need arguments to resolve is deprecated.")
   fields___slug
   frontmatter___title
-  frontmatter___date
   rawMarkdownBody
   fileAbsolutePath
   id
