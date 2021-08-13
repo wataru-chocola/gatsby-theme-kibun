@@ -82,9 +82,6 @@ export async function getImagePaths(md: string, dir?: string): Promise<string[]>
       ),
     ),
   );
-  // TODO ext check
-  // TODO absolute path
-  // TODO external path
 
   return [...Array.from(new Set(imagePaths))];
 }
