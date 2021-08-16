@@ -3544,11 +3544,6 @@ type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
 type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
 
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
-
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3556,6 +3551,11 @@ type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges:
         Pick<SectionMenuCategory, 'category'>
         & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
       ) }> } };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
 
 type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
 

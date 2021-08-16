@@ -1,8 +1,7 @@
 import React from 'react';
 import { unified } from 'unified';
-import { Node as UnistNode } from 'unist';
-import { Element } from 'hast';
-import { Paragraph } from 'mdast';
+import { Element, Root as HastRoot } from 'hast';
+import { Paragraph, Root as MdastRoot } from 'mdast';
 import { all, Handler } from 'mdast-util-to-hast';
 import remarkParser from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -27,7 +26,8 @@ const markdownHastBasicProcessor = unified()
     allowDangerousHtml: true,
     handlers: { paragraph: mdastParagraph2hast },
   })
-  .use(autolinkHeader);
+  .use(autolinkHeader)
+  .freeze();
 
 const markdownHastProcessor = unified()
   .use(remarkParser)
@@ -41,7 +41,8 @@ const markdownHastProcessor = unified()
       sh: 'bash',
     },
   })
-  .use(autolinkHeader);
+  .use(autolinkHeader)
+  .freeze();
 
 export function splitFrontmatter(md: string): [string, string] {
   const mdfile = matter(md);
@@ -49,22 +50,22 @@ export function splitFrontmatter(md: string): [string, string] {
   return [mdfile.matter, mdcontent];
 }
 
-export function mdParse(md: string): UnistNode {
-  const mdast = markdownHastProcessor.parse(md);
+export function mdParse(md: string): MdastRoot {
+  const mdast = markdownHastProcessor.parse(md) as MdastRoot;
   return mdast;
 }
 
 export function mdast2react(
-  mdast: UnistNode,
+  mdast: MdastRoot,
   pageSlug: string,
   imgdataCollection: ImageDataCollection = {},
 ): React.ReactElement | null {
-  const hast = markdownHastProcessor.runSync(mdast) as unknown as Element;
+  const hast = markdownHastProcessor.runSync(mdast) as unknown as HastRoot;
   const result = renderAst(hast, pageSlug, imgdataCollection);
   return result;
 }
 
-export function mdast2toc(mdast: UnistNode): React.ReactElement | null {
+export function mdast2toc(mdast: MdastRoot): React.ReactElement | null {
   const hast = markdownHastBasicProcessor.runSync(mdast) as unknown as Element;
   const toc = hastToc(hast);
   if (toc == null) {

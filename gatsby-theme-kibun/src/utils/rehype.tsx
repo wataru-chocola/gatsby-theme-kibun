@@ -1,7 +1,7 @@
 import React from 'react';
 import rehypeReact from 'rehype-react';
 import { unified } from 'unified';
-import { Node } from 'unist';
+import { Root as HastRoot } from 'hast';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MuiGatsbyLink } from './link';
@@ -68,7 +68,7 @@ export interface ImageDataCollection {
 }
 
 export const renderAst: (
-  tree: Node,
+  tree: HastRoot,
   slug?: string,
   imgdataCollection?: ImageDataCollection,
 ) => React.ReactElement = (tree, slug = '/', imgdataCollection = {}) => {
