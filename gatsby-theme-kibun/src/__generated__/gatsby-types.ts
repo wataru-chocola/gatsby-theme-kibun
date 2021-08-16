@@ -666,6 +666,8 @@ type SitePluginPluginOptions = {
 type SitePluginPluginOptionsOptions = {
   readonly emitWarning: Maybe<Scalars['Boolean']>;
   readonly failOnError: Maybe<Scalars['Boolean']>;
+  readonly extensions: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 type SitePluginPluginOptionsEmitSchema = {
@@ -2279,6 +2281,8 @@ type SitePluginPluginOptionsFilterInput = {
 type SitePluginPluginOptionsOptionsFilterInput = {
   readonly emitWarning: Maybe<BooleanQueryOperatorInput>;
   readonly failOnError: Maybe<BooleanQueryOperatorInput>;
+  readonly extensions: Maybe<StringQueryOperatorInput>;
+  readonly exclude: Maybe<StringQueryOperatorInput>;
 };
 
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
@@ -2517,6 +2521,8 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.stages'
   | 'pluginCreator.pluginOptions.options.emitWarning'
   | 'pluginCreator.pluginOptions.options.failOnError'
+  | 'pluginCreator.pluginOptions.options.extensions'
+  | 'pluginCreator.pluginOptions.options.exclude'
   | 'pluginCreator.pluginOptions.base64Width'
   | 'pluginCreator.pluginOptions.stripMetadata'
   | 'pluginCreator.pluginOptions.defaultQuality'
@@ -3276,6 +3282,8 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.stages'
   | 'pluginOptions.options.emitWarning'
   | 'pluginOptions.options.failOnError'
+  | 'pluginOptions.options.extensions'
+  | 'pluginOptions.options.exclude'
   | 'pluginOptions.base64Width'
   | 'pluginOptions.stripMetadata'
   | 'pluginOptions.defaultQuality'

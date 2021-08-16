@@ -1,5 +1,5 @@
 import { visit, Visitor } from 'unist-util-visit';
-import toString from 'hast-util-to-string';
+import { toString } from 'hast-util-to-string';
 import { h } from 'hastscript';
 import { Element } from 'hast';
 
