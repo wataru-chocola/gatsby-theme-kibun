@@ -1,10 +1,9 @@
 import React from 'react';
-import unified from 'unified';
+import { unified } from 'unified';
 import { Node as UnistNode } from 'unist';
 import { Element } from 'hast';
 import { Paragraph } from 'mdast';
-import * as mdast2hast from 'mdast-util-to-hast';
-import * as all from 'mdast-util-to-hast/lib/all';
+import { all, Handler } from 'mdast-util-to-hast';
 import remarkParser from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
@@ -14,7 +13,7 @@ import hastToc from './hastToc';
 import * as matter from 'gray-matter';
 import { renderAst, ImageDataCollection } from './rehype';
 
-const mdastParagraph2hast: mdast2hast.Handler = (h, tmp_node) => {
+const mdastParagraph2hast: Handler = (h, tmp_node) => {
   const node = tmp_node as Paragraph;
   if (node.children.length === 1 && node.children[0].type === 'image') {
     return h(node, 'div', all(h, node));
@@ -24,7 +23,7 @@ const mdastParagraph2hast: mdast2hast.Handler = (h, tmp_node) => {
 
 const markdownHastBasicProcessor = unified()
   .use(remarkParser)
-  .use(remarkRehype, undefined, {
+  .use(remarkRehype, {
     allowDangerousHtml: true,
     handlers: { paragraph: mdastParagraph2hast },
   })
@@ -32,7 +31,7 @@ const markdownHastBasicProcessor = unified()
 
 const markdownHastProcessor = unified()
   .use(remarkParser)
-  .use(remarkRehype, undefined, {
+  .use(remarkRehype, {
     allowDangerousHtml: true,
     handlers: { paragraph: mdastParagraph2hast },
   })

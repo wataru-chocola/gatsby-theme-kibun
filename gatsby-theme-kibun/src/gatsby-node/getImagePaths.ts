@@ -1,4 +1,4 @@
-import unified from 'unified';
+import { unified } from 'unified';
 import {
   Image as MdastImage,
   ImageReference as MdastImageReference,

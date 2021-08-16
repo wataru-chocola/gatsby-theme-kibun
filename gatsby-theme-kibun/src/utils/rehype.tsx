@@ -1,6 +1,6 @@
 import React from 'react';
 import rehypeReact from 'rehype-react';
-import unified from 'unified';
+import { unified } from 'unified';
 import { Node } from 'unist';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
