@@ -1,5 +1,5 @@
 import { visit, Visitor } from 'unist-util-visit';
-import nodeToString from 'hast-util-to-string';
+import { toString } from 'hast-util-to-string';
 import { refractor } from 'refractor/lib/common';
 import { Element } from 'hast';
 import { Plugin } from 'unified';
@@ -40,7 +40,7 @@ const codeRefractor: Plugin<Options[]> = (options: Options) => {
           className: [langClass],
         };
       }
-      result = refractor.highlight(nodeToString(node), lang);
+      result = refractor.highlight(toString(node), lang);
     } catch (err) {
       if (options.ignoreMissing && /Unknown language/.test(err.message)) {
         return;

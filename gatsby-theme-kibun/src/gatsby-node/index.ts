@@ -82,13 +82,7 @@ exports.createPages = async (args: CreatePagesArgs) => {
   await createMarkdownPages(args);
 };
 
-exports.onCreateWebpackConfig = ({
-  stage,
-  rules,
-  loaders,
-  plugins,
-  actions,
-}: CreateWebpackConfigArgs) => {
+exports.onCreateWebpackConfig = ({ plugins, actions }: CreateWebpackConfigArgs) => {
   actions.setWebpackConfig({
     plugins: [
       plugins.provide({
