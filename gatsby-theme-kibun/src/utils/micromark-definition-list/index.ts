@@ -14,6 +14,7 @@ import { constants } from 'micromark-util-symbol/constants.js';
 import { markdownSpace } from 'micromark-util-character';
 import { blankLine } from 'micromark-core-commonmark/dev/lib/blank-line';
 import { subtokenize } from 'micromark-util-subtokenize';
+import { tokenTypes } from './types';
 import assert from 'assert';
 
 interface TokenizeContextWithDefState extends TokenizeContext {
@@ -25,16 +26,6 @@ interface TokenizeContextWithDefState extends TokenizeContext {
     furtherBlankLines?: boolean;
   } & Record<string, unknown>;
 }
-
-const tokenTypes = Object.assign(types, {
-  defList: 'defList',
-  defListTerm: 'defListTerm',
-  defListDescriptionMarker: 'defListDescriptionMarker',
-  defListDescriptionPrefix: 'defListDescriptionPrefix',
-  defListDescriptionPrefixWhitespace: 'defListDescriptionPrefixWhitespace',
-  defListDescription: 'defListDescription',
-  defListDescriptionIndent: 'defListDescriptionIndent',
-});
 
 const defListConstruct: Construct = {
   name: 'defList',
@@ -57,7 +48,10 @@ export const defList: Extension = {
   document: { [codes.colon]: defListConstruct, null: [] },
 };
 
-function inspectEvents(events: Event[]): void {
+function inspectEvents(events: Event[] | undefined): void {
+  if (events == null) {
+    return;
+  }
   events.forEach((x) => {
     let content = '';
     try {
