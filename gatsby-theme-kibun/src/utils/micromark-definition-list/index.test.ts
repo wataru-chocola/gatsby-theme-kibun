@@ -1,7 +1,8 @@
-import { defList } from './index';
-import { fromMarkdown } from 'mdast-util-from-markdown';
+import { defList, defListHtml } from './index';
+import { micromark } from 'micromark';
 
-const parse = (md: string) => fromMarkdown(md, { extensions: [defList] });
+const parse = (md: string) =>
+  micromark(md, { extensions: [defList], htmlExtensions: [defListHtml] });
 
 test('simple definition list', () => {
   const result = parse(`
@@ -12,7 +13,17 @@ Apple
 Orange
 :   The fruit of an evergreen tree of the genus Citrus.
 `);
-  expect(result).toEqual({});
+  const expected = `
+<dl>
+<dt>Apple</dt>
+<dd>Pomaceous fruit of plants of the genus Malus in 
+the family Rosaceae.</dd>
+
+<dt>Orange</dt>
+<dd>The fruit of an evergreen tree of the genus Citrus.</dd>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
 
 test('definition with multiple lines without indentation', () => {
@@ -24,7 +35,17 @@ the family Rosaceae.
 Orange
 :   The fruit of an evergreen tree of the genus Citrus.
 `);
-  expect(result).toEqual({});
+  const expected = `
+<dl>
+<dt>Apple</dt>
+<dd>Pomaceous fruit of plants of the genus Malus in 
+the family Rosaceae.</dd>
+
+<dt>Orange</dt>
+<dd>The fruit of an evergreen tree of the genus Citrus.</dd>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
 
 test('have one difinition associated with one term', () => {
@@ -37,7 +58,18 @@ Apple
 Orange
 :   The fruit of an evergreen tree of the genus Citrus.
 `);
-  expect(result).toEqual({});
+  const expected = `
+<dl>
+<dt>Apple</dt>
+<dd>Pomaceous fruit of plants of the genus Malus in 
+the family Rosaceae.</dd>
+<dd>An American computer company.</dd>
+
+<dt>Orange</dt>
+<dd>The fruit of an evergreen tree of the genus Citrus.</dd>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
 
 test('associate multiple terms to a definition', () => {
@@ -49,8 +81,17 @@ Term 2
 Term 3
 :   Definition b
 `);
+  const expected = `
+<dl>
+<dt>Term 1</dt>
+<dt>Term 2</dt>
+<dd>Definition a</dd>
 
-  expect(result).toEqual({});
+<dt>Term 3</dt>
+<dd>Definition b</dd>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
 
 test('definition preceded by a blank line', () => {
@@ -64,7 +105,21 @@ Orange
 
 :    The fruit of an evergreen tree of the genus Citrus.
 `);
-  expect(result).toEqual({});
+  const expected = `
+<dl>
+<dt>Apple</dt>
+<dd>
+<p>Pomaceous fruit of plants of the genus Malus in 
+the family Rosaceae.</p>
+</dd>
+
+<dt>Orange</dt>
+<dd>
+<p>The fruit of an evergreen tree of the genus Citrus.</p>
+</dd>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
 
 test('defList could contain multiple paragraph and other block-level elements', () => {
@@ -93,5 +148,35 @@ Term 2
     1.  first list item
     2.  second list item
 `);
-  expect(result).toEqual({});
+  const expected = `
+<dl>
+<dt>Term 1</dt>
+<dd>
+<p>This is a definition with two paragraphs. Lorem ipsum
+dolor sit amet, consectetuer adipiscing elit. Aliquam
+hendrerit mi posuere lectus.</p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+vitae, risus.</p>
+</dd>
+<dd>
+<p>Second definition for term 1, also wrapped in a paragraph
+because of the blank line preceding it.</p>
+</dd>
+<dt>Term 2</dt>
+<dd>
+<p>This definition has a code block, a blockquote and a list.</p>
+</dd>
+<pre><code>code block.
+</code></pre>
+<blockquote>
+block quote
+on two lines.
+</blockquote>
+<ol>
+<li>first list item</li>
+<li>second list item</li>
+</ol>
+</dl>
+`;
+  expect(result).toEqual(expected);
 });
