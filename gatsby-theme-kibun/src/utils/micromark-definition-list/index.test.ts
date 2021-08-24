@@ -23,7 +23,7 @@ the family Rosaceae.</dd>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
 });
 
 test('definition with multiple lines without indentation', () => {
@@ -45,7 +45,7 @@ the family Rosaceae.</dd>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
 });
 
 test('have one difinition associated with one term', () => {
@@ -69,7 +69,7 @@ the family Rosaceae.</dd>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
 });
 
 test('associate multiple terms to a definition', () => {
@@ -91,7 +91,7 @@ Term 3
 <dd>Definition b</dd>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
 });
 
 test('definition preceded by a blank line', () => {
@@ -119,10 +119,10 @@ the family Rosaceae.</p>
 </dd>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
 });
 
-test('defList could contain multiple paragraph and other block-level elements', () => {
+test('defList can contain multiple paragraph and other block-level elements', () => {
   const result = parse(`
 Term 1
 
@@ -178,5 +178,48 @@ on two lines.
 </ol>
 </dl>
 `;
-  expect(result).toEqual(expected);
+  expect(result).toEqual(expected.trimLeft());
+});
+
+test('defList cannot start without any term', () => {
+  const result = parse(`
+: Definition a
+`);
+  const expected = `
+<p>: Definition a</p>
+`;
+  expect(result).toEqual(expected.trimLeft());
+});
+
+test('defList cannot start without any term (2)', () => {
+  const result = parse(`
+- a
+- b
+
+: Definition a
+`);
+  const expected = `
+<ul>
+<li>a</li>
+<li>b</li>
+</ul>
+<p>: Definition a</p>
+`;
+  expect(result).toEqual(expected.trimLeft());
+});
+
+test('defList cannot start from lazy line', () => {
+  const result = parse(`
+> BlockQuote
+Not Term
+: Definition a
+`);
+  const expected = `
+<blockquote>
+<p>BlockQuote
+Not Term
+: Definition a</p>
+</blockquote>
+`;
+  expect(result).toEqual(expected.trimLeft());
 });

@@ -102,6 +102,47 @@ function tokenizaDefListStart(
   const tail = self.events[self.events.length - 1];
   let initialSize =
     tail && tail[1].type === types.linePrefix ? tail[2].sliceSerialize(tail[1], true).length : 0;
+
+  if (self.parser.lazy[self.now().line]) {
+    // in the middle of blockquote or something
+    return nok;
+  }
+
+  let index = self.events.length;
+  let flowEvents: Event[] | undefined;
+  while (index--) {
+    if (self.events[index][1].type === types.chunkFlow) {
+      flowEvents = self.events[index][1]._tokenizer?.events;
+      break;
+    }
+  }
+
+  let paragraph = false;
+  if (flowEvents) {
+    let tmpIndex = flowEvents.length;
+    while (tmpIndex--) {
+      if (
+        flowEvents[tmpIndex][1].type !== types.lineEnding &&
+        flowEvents[tmpIndex][1].type !== types.linePrefix &&
+        flowEvents[tmpIndex][1].type !== types.lineEndingBlank &&
+        flowEvents[tmpIndex][1].type !== types.content
+      ) {
+        paragraph = flowEvents[tmpIndex][1].type === types.paragraph;
+        break;
+      }
+    }
+  }
+
+  if (self.containerState!.type == null) {
+    if (self.interrupt || paragraph) {
+      // start defList only when definition term found.
+      effects.enter(tokenTypes.defList, { _container: true });
+      self.containerState!.type = tokenTypes.defList;
+    } else {
+      return nok;
+    }
+  }
+
   return start;
 
   function start(code: Code): State | void {
@@ -110,20 +151,20 @@ function tokenizaDefListStart(
       return nok(code);
     }
 
-    if (self.parser.lazy[self.now().line]) {
-      // in the middle of blockquote or something
-      return nok(code);
-    }
+    //if (self.parser.lazy[self.now().line]) {
+    //  // in the middle of blockquote or something
+    //  return nok(code);
+    //}
 
-    if (self.containerState!.type == null) {
-      // start defList only when definition term found.
-      if (self.interrupt) {
-        effects.enter(tokenTypes.defList, { _container: true });
-        self.containerState!.type = tokenTypes.defList;
-      } else {
-        return nok(code);
-      }
-    }
+    //if (self.containerState!.type == null) {
+    //  if (self.interrupt) {
+    //    // start defList only when definition term found.
+    //    effects.enter(tokenTypes.defList, { _container: true });
+    //    self.containerState!.type = tokenTypes.defList;
+    //  } else {
+    //    return nok(code);
+    //  }
+    //}
 
     effects.enter(tokenTypes.defListDescription);
     effects.enter(tokenTypes.defListDescriptionPrefix);
