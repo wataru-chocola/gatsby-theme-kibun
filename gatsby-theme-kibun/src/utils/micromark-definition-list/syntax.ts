@@ -28,11 +28,11 @@ interface TokenizeContextWithDefState extends TokenizeContext {
 
 const defListConstruct: Construct = {
   name: 'defList',
-  tokenize: tokenizaDefListStart,
+  tokenize: tokenizeDefListStart,
   continuation: {
     tokenize: tokenizeDefListContinuation,
   },
-  resolveTo: resolveToDefinitionTerm,
+  resolveAll: resolveAllDefinitionTerm,
   exit: tokenizeDefListEnd,
 };
 
@@ -58,42 +58,114 @@ function inspectEvents(events: Event[] | undefined): void {
     } catch (e) {
       content = '<maybe incomplete token>';
     }
-    console.log({
-      event: x[0],
-      token: x[1].type,
-      content: content,
-    });
+    console.log([x[0], x[1].type, content]);
   });
 }
 
-function resolveToDefinitionTerm(events: Event[], context: TokenizeContext): Event[] {
-  console.log('xxxxx');
+function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Event[] {
+  console.log('resolveAll');
+  inspectEvents(events);
+
   let index = events.length;
+  while (index--) {
+    if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
+      events = resolveDefinitionTermTo(index, events, context);
+    }
+  }
+
+  console.log('modified events');
+  inspectEvents(events);
+  return events;
+}
+
+function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeContext): Event[] {
+  let index = to;
   let defList_start: number | undefined;
   while (index--) {
     if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defList) {
       defList_start = index;
       break;
     }
+    if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
+      // nested defList
+      events = resolveDefinitionTermTo(index, events, context);
+    }
   }
   assert(defList_start !== undefined, 'expected a start of defList found');
 
-  const tail = events[defList_start - 1];
-  if (tail[1].type === types.chunkFlow) {
-    console.log('flow events');
-    inspectEvents(tail[1]._tokenizer?.events);
+  let flowIndex: number | undefined;
+  if (events[defList_start - 1][1].type === types.chunkFlow) {
+    flowIndex = defList_start - 1;
   }
-  console.log('document events');
-  inspectEvents(events);
-  return context.events;
+  assert(flowIndex !== undefined, 'expected a chunkFlow found');
+  const flowEvents = events[flowIndex][1]._tokenizer!.events;
+
+  let inParagraph = false;
+  let paraStart: any | undefined;
+  let paraEnd: any | undefined;
+  for (let i = flowEvents.length - 1; i >= 0; i--) {
+    const tmpEvent = flowEvents[i];
+    if (tmpEvent[0] === 'exit' && tmpEvent[1].type === types.paragraph) {
+      inParagraph = true;
+      paraEnd = tmpEvent[1].end;
+    }
+    if (tmpEvent[0] === 'enter' && tmpEvent[1].type === types.paragraph) {
+      paraStart = tmpEvent[1].start;
+      break;
+    }
+    if (!inParagraph) {
+      continue;
+    }
+  }
+
+  let flowIndex_exit: number | undefined;
+  let startIndex = 0;
+  const defListEnterEvent = events[defList_start];
+  events.splice(defList_start, 1);
+  for (let i = flowIndex; i >= 0; i--) {
+    if (events[i][1].type !== types.chunkFlow) {
+      startIndex = i + 1;
+      break;
+    }
+    if (events[i][1].start.offset < paraStart.offset) {
+      startIndex = i + 1;
+      break;
+    }
+    if (events[i][1].start.offset > paraEnd.offset) {
+      continue;
+    }
+
+    if (events[i][0] === 'enter') {
+      assert(flowIndex_exit != null, 'expect a flow index exit');
+      events[i][1].type = types.chunkText;
+
+      const termToken = {
+        type: tokenTypes.defListTerm,
+        start: Object.assign({}, events[i][1].start),
+        end: Object.assign({}, events[i][1].end),
+      };
+      events.splice(flowIndex_exit + 1, 0, ['exit', termToken, context]);
+      events.splice(i, 0, ['enter', termToken, context]);
+
+      flowIndex_exit = undefined;
+    } else {
+      flowIndex_exit = i;
+    }
+  }
+
+  defListEnterEvent[1].start = Object.assign({}, events[startIndex][1].start);
+  events.splice(startIndex, 0, defListEnterEvent);
+
+  return events;
 }
 
-function tokenizaDefListStart(
+function tokenizeDefListStart(
   this: TokenizeContextWithDefState,
   effects: Effects,
   ok: State,
   nok: State,
 ): State {
+  console.log('initialize tokenizer');
   const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
   if (self.containerState == null) {
     self.containerState = {};
@@ -150,21 +222,6 @@ function tokenizaDefListStart(
     if (code !== codes.colon) {
       return nok(code);
     }
-
-    //if (self.parser.lazy[self.now().line]) {
-    //  // in the middle of blockquote or something
-    //  return nok(code);
-    //}
-
-    //if (self.containerState!.type == null) {
-    //  if (self.interrupt) {
-    //    // start defList only when definition term found.
-    //    effects.enter(tokenTypes.defList, { _container: true });
-    //    self.containerState!.type = tokenTypes.defList;
-    //  } else {
-    //    return nok(code);
-    //  }
-    //}
 
     effects.enter(tokenTypes.defListDescription);
     effects.enter(tokenTypes.defListDescriptionPrefix);
