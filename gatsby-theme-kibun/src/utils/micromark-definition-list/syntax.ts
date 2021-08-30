@@ -5,6 +5,7 @@ import {
   Code,
   Event,
   Effects,
+  Point,
   TokenizeContext,
 } from 'micromark-util-types';
 import { codes } from 'micromark-util-symbol/codes';
@@ -101,16 +102,20 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
   const flowEvents = events[flowIndex][1]._tokenizer!.events;
 
   let inParagraph = false;
-  let paraStart: any | undefined;
-  let paraEnd: any | undefined;
+  let paraStart: Point | undefined;
+  let paraEnd: Point | undefined;
+  let paraEnterIndex: number | undefined;
+  let paraExitIndex: number | undefined;
   for (let i = flowEvents.length - 1; i >= 0; i--) {
     const tmpEvent = flowEvents[i];
     if (tmpEvent[0] === 'exit' && tmpEvent[1].type === types.paragraph) {
       inParagraph = true;
       paraEnd = tmpEvent[1].end;
+      paraExitIndex = i;
     }
     if (tmpEvent[0] === 'enter' && tmpEvent[1].type === types.paragraph) {
       paraStart = tmpEvent[1].start;
+      paraEnterIndex = i;
       break;
     }
     if (!inParagraph) {
@@ -127,11 +132,11 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
       startIndex = i + 1;
       break;
     }
-    if (events[i][1].start.offset < paraStart.offset) {
+    if (paraStart != null && events[i][1].start.offset < paraStart.offset) {
       startIndex = i + 1;
       break;
     }
-    if (events[i][1].start.offset > paraEnd.offset) {
+    if (paraEnd != null && events[i][1].start.offset > paraEnd.offset) {
       continue;
     }
 
@@ -155,6 +160,11 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
 
   defListEnterEvent[1].start = Object.assign({}, events[startIndex][1].start);
   events.splice(startIndex, 0, defListEnterEvent);
+
+  if (paraEnterIndex != null && paraExitIndex != null) {
+    flowEvents.splice(paraExitIndex, 1);
+    flowEvents.splice(paraEnterIndex, 1);
+  }
 
   return events;
 }
