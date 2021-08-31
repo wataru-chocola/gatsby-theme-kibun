@@ -24,6 +24,7 @@ interface TokenizeContextWithDefState extends TokenizeContext {
     type?: string;
     initialBlankLine?: boolean;
     furtherBlankLines?: boolean;
+    lastBlankLinke?: boolean;
   } & Record<string, unknown>;
 }
 
@@ -67,19 +68,19 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
   console.log('resolveAll');
   inspectEvents(events);
 
-  // create definition terms
   let index = 0;
   while (index < events.length) {
-    if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defList) {
+    const event = events[index];
+    if (event[0] === 'enter' && event[1].type === tokenTypes.defList) {
+      // create definition terms and adjust start of defList
       index += resolveDefinitionTermTo(index, events, context);
-    } else if (
-      events[index][0] === 'enter' &&
-      events[index][1].type === tokenTypes.defListDescription
-    ) {
+    } else if (event[0] === 'enter' && event[1].type === tokenTypes.defListDescription) {
+      // mark loose definition description
+      assert(index > 0, 'expect some events before defListDescription');
       if (events[index - 1][1].type === types.chunkFlow) {
         const flowEvents = events[index - 1][1]._tokenizer!.events;
         if (flowEvents[flowEvents.length - 1][1].type === types.lineEndingBlank) {
-          events[index][1]._loose = true;
+          event[1]._loose = true;
         }
       }
     }
@@ -87,32 +88,28 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
   }
 
   // merge definition lists
-  for (let index = 0; index < events.length; index++) {
-    if (
-      index < events.length - 1 &&
-      events[index][0] === 'exit' &&
-      events[index][1].type === tokenTypes.defList &&
-      events[index + 1][0] === 'enter' &&
-      events[index + 1][1].type === tokenTypes.defList
-    ) {
-      events[index][1].end = Object.assign({}, events[index + 1][1].end);
-      const dlStack = [];
-      for (let j = index + 1; j < events.length; j++) {
-        if (events[j][1].type === tokenTypes.defList) {
-          if (events[j][0] === 'enter') {
-            dlStack.push(true);
-          } else {
-            if (dlStack.length === 1) {
-              dlStack.pop();
-              events[j][1] = events[index][1];
-              break;
-            }
-            dlStack.pop();
-          }
-        }
+  const dlStack = [];
+  index = 0;
+  while (index < events.length) {
+    const event = events[index];
+    if (event[0] === 'enter' && event[1].type === tokenTypes.defList) {
+      dlStack.push(event[1]);
+    } else if (event[0] === 'exit' && event[1].type === tokenTypes.defList) {
+      if (
+        index < events.length - 1 &&
+        events[index + 1][0] === 'enter' &&
+        events[index + 1][1].type === tokenTypes.defList
+      ) {
+        event[1].end = Object.assign({}, events[index + 1][1].end);
+        events.splice(index, 2);
+        index -= 1;
+      } else {
+        const token = dlStack.pop();
+        assert(token != null, 'expect a token of balanced enter event');
+        event[1] = token;
       }
-      events.splice(index, 2);
     }
+    index++;
   }
 
   console.log('modified events');
@@ -260,7 +257,8 @@ function tokenizeDefListStart(
       return nok(code);
     }
 
-    effects.enter(tokenTypes.defListDescription);
+    effects.enter(tokenTypes.defListDescription, { _loose: self.containerState?.lastBlankLine });
+    self.containerState!.lastBlankLinke = undefined;
     effects.enter(tokenTypes.defListDescriptionPrefix);
     effects.enter(tokenTypes.defListDescriptionMarker);
     effects.consume(code);
@@ -315,6 +313,7 @@ function tokenizeDefListContinuation(
     console.log('continuous: on blank');
     self.containerState!.furtherBlankLines =
       self.containerState!.furtherBlankLines || self.containerState!.initialBlankLine;
+    self.containerState!.lastBlankLine = true;
 
     return factorySpace(
       effects,
@@ -334,6 +333,7 @@ function tokenizeDefListContinuation(
 
     self.containerState!.furtherBlankLines = undefined;
     self.containerState!.initialBlankLine = undefined;
+    self.containerState!.lastBlankLine = undefined;
     return effects.attempt(indentConstruct, ok, notInCurrentItem)(code);
   }
 

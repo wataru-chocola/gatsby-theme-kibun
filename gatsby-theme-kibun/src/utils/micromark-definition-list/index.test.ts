@@ -155,19 +155,18 @@ because of the blank line preceding it.</p>
 <dt>Term 2</dt>
 <dd>
 <p>This definition has a code block, a blockquote and a list.</p>
-</dd>
 <pre><code>code block.
 </code></pre>
 <blockquote>
-block quote
-on two lines.
+<p>block quote
+on two lines.</p>
 </blockquote>
 <ol>
 <li>first list item</li>
 <li>second list item</li>
 </ol>
-</dl>
-`;
+</dd>
+</dl>`;
   expect(result).toEqual(expected.trimLeft());
 });
 
