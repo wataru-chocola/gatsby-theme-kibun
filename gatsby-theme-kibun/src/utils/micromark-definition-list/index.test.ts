@@ -16,13 +16,12 @@ Orange
   const expected = `
 <dl>
 <dt>Apple</dt>
-<dd>Pomaceous fruit of plants of the genus Malus in 
+<dd>Pomaceous fruit of plants of the genus Malus in
 the family Rosaceae.</dd>
 
 <dt>Orange</dt>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
-</dl>
-`;
+</dl>`;
   expect(result).toEqual(expected.trimLeft());
 });
 

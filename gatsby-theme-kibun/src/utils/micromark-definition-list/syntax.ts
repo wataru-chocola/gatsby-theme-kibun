@@ -101,15 +101,14 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
   assert(flowIndex !== undefined, 'expected a chunkFlow found');
   const flowEvents = events[flowIndex][1]._tokenizer!.events;
 
-  let inParagraph = false;
   let paraStart: Point | undefined;
   let paraEnd: Point | undefined;
   let paraEnterIndex: number | undefined;
   let paraExitIndex: number | undefined;
+  let foundEmptyLine = false;
   for (let i = flowEvents.length - 1; i >= 0; i--) {
     const tmpEvent = flowEvents[i];
     if (tmpEvent[0] === 'exit' && tmpEvent[1].type === types.paragraph) {
-      inParagraph = true;
       paraEnd = tmpEvent[1].end;
       paraExitIndex = i;
     }
@@ -118,8 +117,8 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
       paraEnterIndex = i;
       break;
     }
-    if (!inParagraph) {
-      continue;
+    if (tmpEvent[1].type === types.lineEndingBlank) {
+      foundEmptyLine = true;
     }
   }
 
@@ -148,6 +147,7 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
         type: tokenTypes.defListTerm,
         start: Object.assign({}, events[i][1].start),
         end: Object.assign({}, events[i][1].end),
+        _loose: foundEmptyLine,
       };
       events.splice(flowIndex_exit + 1, 0, ['exit', termToken, context]);
       events.splice(i, 0, ['enter', termToken, context]);
