@@ -72,6 +72,15 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
     if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
       events = resolveDefinitionTermTo(index, events, context);
     }
+
+    if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defListDescription) {
+      if (events[index - 1][1].type === types.chunkFlow) {
+        const flowEvents = events[index - 1][1]._tokenizer!.events;
+        if (flowEvents[flowEvents.length - 1][1].type === types.lineEndingBlank) {
+          events[index][1]._loose = true;
+        }
+      }
+    }
   }
 
   // merge definition lists
@@ -134,7 +143,6 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
   let paraEnd: Point | undefined;
   let paraEnterIndex: number | undefined;
   let paraExitIndex: number | undefined;
-  let foundEmptyLine = false;
   for (let i = flowEvents.length - 1; i >= 0; i--) {
     const tmpEvent = flowEvents[i];
     if (tmpEvent[0] === 'exit' && tmpEvent[1].type === types.paragraph) {
@@ -146,15 +154,13 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
       paraEnterIndex = i;
       break;
     }
-    if (tmpEvent[1].type === types.lineEndingBlank) {
-      foundEmptyLine = true;
-    }
   }
+
+  const defListEnterEvent = events[defList_start];
+  events.splice(defList_start, 1);
 
   let flowIndex_exit: number | undefined;
   let startIndex = 0;
-  const defListEnterEvent = events[defList_start];
-  events.splice(defList_start, 1);
   for (let i = flowIndex; i >= 0; i--) {
     if (events[i][1].type !== types.chunkFlow) {
       startIndex = i + 1;
@@ -176,7 +182,6 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
         type: tokenTypes.defListTerm,
         start: Object.assign({}, events[i][1].start),
         end: Object.assign({}, events[i][1].end),
-        _loose: foundEmptyLine,
       };
       events.splice(flowIndex_exit + 1, 0, ['exit', termToken, context]);
       events.splice(i, 0, ['enter', termToken, context]);
