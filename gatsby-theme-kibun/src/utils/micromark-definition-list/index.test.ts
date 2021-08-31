@@ -18,7 +18,6 @@ Orange
 <dt>Apple</dt>
 <dd>Pomaceous fruit of plants of the genus Malus in
 the family Rosaceae.</dd>
-
 <dt>Orange</dt>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
 </dl>`;
@@ -37,13 +36,11 @@ Orange
   const expected = `
 <dl>
 <dt>Apple</dt>
-<dd>Pomaceous fruit of plants of the genus Malus in 
+<dd>Pomaceous fruit of plants of the genus Malus in
 the family Rosaceae.</dd>
-
 <dt>Orange</dt>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
-</dl>
-`;
+</dl>`;
   expect(result).toEqual(expected.trimLeft());
 });
 
@@ -60,14 +57,12 @@ Orange
   const expected = `
 <dl>
 <dt>Apple</dt>
-<dd>Pomaceous fruit of plants of the genus Malus in 
+<dd>Pomaceous fruit of plants of the genus Malus in
 the family Rosaceae.</dd>
 <dd>An American computer company.</dd>
-
 <dt>Orange</dt>
 <dd>The fruit of an evergreen tree of the genus Citrus.</dd>
-</dl>
-`;
+</dl>`;
   expect(result).toEqual(expected.trimLeft());
 });
 
@@ -85,11 +80,9 @@ Term 3
 <dt>Term 1</dt>
 <dt>Term 2</dt>
 <dd>Definition a</dd>
-
 <dt>Term 3</dt>
 <dd>Definition b</dd>
-</dl>
-`;
+</dl>`;
   expect(result).toEqual(expected.trimLeft());
 });
 

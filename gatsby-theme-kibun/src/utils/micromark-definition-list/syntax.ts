@@ -67,10 +67,39 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
   console.log('resolveAll');
   inspectEvents(events);
 
-  let index = events.length;
-  while (index--) {
+  // create definition terms
+  for (let index = events.length - 1; index >= 0; index--) {
     if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
       events = resolveDefinitionTermTo(index, events, context);
+    }
+  }
+
+  // merge definition lists
+  for (let index = 0; index < events.length; index++) {
+    if (
+      index < events.length - 1 &&
+      events[index][0] === 'exit' &&
+      events[index][1].type === tokenTypes.defList &&
+      events[index + 1][0] === 'enter' &&
+      events[index + 1][1].type === tokenTypes.defList
+    ) {
+      events[index][1].end = Object.assign({}, events[index + 1][1].end);
+      const dlStack = [];
+      for (let j = index + 1; j < events.length; j++) {
+        if (events[j][1].type === tokenTypes.defList) {
+          if (events[j][0] === 'enter') {
+            dlStack.push(true);
+          } else {
+            if (dlStack.length === 1) {
+              dlStack.pop();
+              events[j][1] = events[index][1];
+              break;
+            }
+            dlStack.pop();
+          }
+        }
+      }
+      events.splice(index, 2);
     }
   }
 
