@@ -214,26 +214,34 @@ function tokenizeDefListStart(
     return nok;
   }
 
+  // find possible term chunkFlow
   let index = self.events.length;
+  let termFlowStart: Event | undefined;
   let flowEvents: Event[] | undefined;
   while (index--) {
     if (self.events[index][1].type === types.chunkFlow) {
-      flowEvents = self.events[index][1]._tokenizer?.events;
+      flowEvents ??= self.events[index][1]._tokenizer?.events;
+      termFlowStart = self.events[index];
+    } else {
       break;
     }
   }
 
   let paragraph = false;
-  if (flowEvents) {
+  if (flowEvents != null && termFlowStart != null) {
     let tmpIndex = flowEvents.length;
     while (tmpIndex--) {
+      const flowEvent = flowEvents[tmpIndex];
+      if (flowEvent[1].start.offset < termFlowStart[1].start.offset) {
+        break;
+      }
       if (
-        flowEvents[tmpIndex][1].type !== types.lineEnding &&
-        flowEvents[tmpIndex][1].type !== types.linePrefix &&
-        flowEvents[tmpIndex][1].type !== types.lineEndingBlank &&
-        flowEvents[tmpIndex][1].type !== types.content
+        flowEvent[1].type !== types.lineEnding &&
+        flowEvent[1].type !== types.linePrefix &&
+        flowEvent[1].type !== types.lineEndingBlank &&
+        flowEvent[1].type !== types.content
       ) {
-        paragraph = flowEvents[tmpIndex][1].type === types.paragraph;
+        paragraph = flowEvent[1].type === types.paragraph;
         break;
       }
     }
