@@ -68,12 +68,14 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
   inspectEvents(events);
 
   // create definition terms
-  for (let index = events.length - 1; index >= 0; index--) {
-    if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
-      events = resolveDefinitionTermTo(index, events, context);
-    }
-
-    if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defListDescription) {
+  let index = 0;
+  while (index < events.length) {
+    if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defList) {
+      index += resolveDefinitionTermTo(index, events, context);
+    } else if (
+      events[index][0] === 'enter' &&
+      events[index][1].type === tokenTypes.defListDescription
+    ) {
       if (events[index - 1][1].type === types.chunkFlow) {
         const flowEvents = events[index - 1][1]._tokenizer!.events;
         if (flowEvents[flowEvents.length - 1][1].type === types.lineEndingBlank) {
@@ -81,6 +83,7 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
         }
       }
     }
+    index++;
   }
 
   // merge definition lists
@@ -117,21 +120,11 @@ function resolveAllDefinitionTerm(events: Event[], context: TokenizeContext): Ev
   return events;
 }
 
-function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeContext): Event[] {
-  let index = to;
-  let defList_start: number | undefined;
-  while (index--) {
-    if (events[index][0] === 'enter' && events[index][1].type === tokenTypes.defList) {
-      defList_start = index;
-      break;
-    }
-    if (events[index][0] === 'exit' && events[index][1].type === tokenTypes.defList) {
-      // nested defList
-      events = resolveDefinitionTermTo(index, events, context);
-    }
-  }
-  assert(defList_start !== undefined, 'expected a start of defList found');
-
+function resolveDefinitionTermTo(
+  defList_start: number,
+  events: Event[],
+  context: TokenizeContext,
+): number {
   let flowIndex: number | undefined;
   if (events[defList_start - 1][1].type === types.chunkFlow) {
     flowIndex = defList_start - 1;
@@ -200,7 +193,7 @@ function resolveDefinitionTermTo(to: number, events: Event[], context: TokenizeC
     flowEvents.splice(paraEnterIndex, 1);
   }
 
-  return events;
+  return startIndex - defList_start;
 }
 
 function tokenizeDefListStart(
