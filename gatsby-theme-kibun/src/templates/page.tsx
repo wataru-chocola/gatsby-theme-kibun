@@ -8,6 +8,7 @@ import { Typography } from '@material-ui/core';
 import { Box, Slide } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
+import 'katex/dist/katex.min.css';
 
 import EditBox from '../components/editbox';
 import { splitFrontmatter, mdParse, mdast2react, mdast2toc } from '../utils/markdownParser';
