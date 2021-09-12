@@ -6,6 +6,8 @@ import { all, Handler } from 'mdast-util-to-hast';
 import remarkParser from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
 import codeRefractor from './syntaxHighlighter';
 import autolinkHeader from './autolinkHeader';
 import hastToc from './hastToc';
@@ -33,11 +35,13 @@ const markdownHastBasicProcessor = unified()
 const markdownHastProcessor = unified()
   .use(remarkParser)
   .use(remarkDefinitionList)
+  .use(remarkMath)
   .use(remarkRehype, {
     allowDangerousHtml: true,
     handlers: Object.assign({ paragraph: mdastParagraph2hast }, defListHastHandlers),
   })
   .use(rehypeRaw)
+  .use(rehypeKatex)
   .use(codeRefractor, {
     aliases: {
       sh: 'bash',
