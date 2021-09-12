@@ -7,6 +7,7 @@ import remarkParser from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import codeRefractor from './syntaxHighlighter';
 import autolinkHeader from './autolinkHeader';
@@ -36,6 +37,7 @@ const markdownHastProcessor = unified()
   .use(remarkParser)
   .use(remarkDefinitionList)
   .use(remarkMath)
+  .use(remarkGfm, { singleTilde: false })
   .use(remarkRehype, {
     allowDangerousHtml: true,
     handlers: Object.assign({ paragraph: mdastParagraph2hast }, defListHastHandlers),
