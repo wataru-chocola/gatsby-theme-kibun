@@ -11,6 +11,7 @@ import autolinkHeader from './autolinkHeader';
 import hastToc from './hastToc';
 import * as matter from 'gray-matter';
 import { renderAst, ImageDataCollection } from './rehype';
+import { remarkDefinitionList, defListHastHandlers } from 'remark-definition-list';
 
 const mdastParagraph2hast: Handler = (h, tmp_node) => {
   const node = tmp_node as Paragraph;
@@ -31,9 +32,10 @@ const markdownHastBasicProcessor = unified()
 
 const markdownHastProcessor = unified()
   .use(remarkParser)
+  .use(remarkDefinitionList)
   .use(remarkRehype, {
     allowDangerousHtml: true,
-    handlers: { paragraph: mdastParagraph2hast },
+    handlers: Object.assign({ paragraph: mdastParagraph2hast }, defListHastHandlers),
   })
   .use(rehypeRaw)
   .use(codeRefractor, {

@@ -261,6 +261,8 @@ type Directory_ctimeArgs = {
 type Site = Node & {
   readonly buildTime: Maybe<Scalars['Date']>;
   readonly siteMetadata: Maybe<SiteSiteMetadata>;
+  readonly port: Maybe<Scalars['Int']>;
+  readonly host: Maybe<Scalars['String']>;
   readonly polyfill: Maybe<Scalars['Boolean']>;
   readonly pathPrefix: Maybe<Scalars['String']>;
   readonly id: Scalars['ID'];
@@ -664,6 +666,8 @@ type SitePluginPluginOptions = {
 type SitePluginPluginOptionsOptions = {
   readonly emitWarning: Maybe<Scalars['Boolean']>;
   readonly failOnError: Maybe<Scalars['Boolean']>;
+  readonly extensions: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly exclude: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
 type SitePluginPluginOptionsEmitSchema = {
@@ -853,6 +857,8 @@ type Query_allDirectoryArgs = {
 type Query_siteArgs = {
   buildTime: Maybe<DateQueryOperatorInput>;
   siteMetadata: Maybe<SiteSiteMetadataFilterInput>;
+  port: Maybe<IntQueryOperatorInput>;
+  host: Maybe<StringQueryOperatorInput>;
   polyfill: Maybe<BooleanQueryOperatorInput>;
   pathPrefix: Maybe<StringQueryOperatorInput>;
   id: Maybe<StringQueryOperatorInput>;
@@ -1942,6 +1948,8 @@ type SiteFieldsEnum =
   | 'siteMetadata.title'
   | 'siteMetadata.description'
   | 'siteMetadata.siteUrl'
+  | 'port'
+  | 'host'
   | 'polyfill'
   | 'pathPrefix'
   | 'id'
@@ -2043,6 +2051,8 @@ type SiteGroupConnection = {
 type SiteFilterInput = {
   readonly buildTime: Maybe<DateQueryOperatorInput>;
   readonly siteMetadata: Maybe<SiteSiteMetadataFilterInput>;
+  readonly port: Maybe<IntQueryOperatorInput>;
+  readonly host: Maybe<StringQueryOperatorInput>;
   readonly polyfill: Maybe<BooleanQueryOperatorInput>;
   readonly pathPrefix: Maybe<StringQueryOperatorInput>;
   readonly id: Maybe<StringQueryOperatorInput>;
@@ -2271,6 +2281,8 @@ type SitePluginPluginOptionsFilterInput = {
 type SitePluginPluginOptionsOptionsFilterInput = {
   readonly emitWarning: Maybe<BooleanQueryOperatorInput>;
   readonly failOnError: Maybe<BooleanQueryOperatorInput>;
+  readonly extensions: Maybe<StringQueryOperatorInput>;
+  readonly exclude: Maybe<StringQueryOperatorInput>;
 };
 
 type SitePluginPluginOptionsEmitSchemaFilterInput = {
@@ -2509,6 +2521,8 @@ type SitePageFieldsEnum =
   | 'pluginCreator.pluginOptions.stages'
   | 'pluginCreator.pluginOptions.options.emitWarning'
   | 'pluginCreator.pluginOptions.options.failOnError'
+  | 'pluginCreator.pluginOptions.options.extensions'
+  | 'pluginCreator.pluginOptions.options.exclude'
   | 'pluginCreator.pluginOptions.base64Width'
   | 'pluginCreator.pluginOptions.stripMetadata'
   | 'pluginCreator.pluginOptions.defaultQuality'
@@ -3268,6 +3282,8 @@ type SitePluginFieldsEnum =
   | 'pluginOptions.stages'
   | 'pluginOptions.options.emitWarning'
   | 'pluginOptions.options.failOnError'
+  | 'pluginOptions.options.extensions'
+  | 'pluginOptions.options.exclude'
   | 'pluginOptions.base64Width'
   | 'pluginOptions.stripMetadata'
   | 'pluginOptions.defaultQuality'
@@ -3479,23 +3495,23 @@ type SiteBuildMetadataSortInput = {
   readonly order: Maybe<ReadonlyArray<Maybe<SortOrderEnum>>>;
 };
 
-type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+type PageMarkdownQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
 
 
-type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<(
+      Pick<File, 'relativePath'>
+      & { readonly internal: Pick<Internal, 'content'> }
+    )>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
+        Pick<ImageSharp, 'gatsbyImageData'>
+        & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
+      )>>> }> }> };
 
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+type PagesQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
-
-type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
-        Pick<SectionMenuCategory, 'category'>
-        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
-      ) }> } };
+type PagesQueryQuery = { readonly allSiteFunction: { readonly nodes: ReadonlyArray<Pick<SiteFunction, 'functionRoute'>> }, readonly allSitePage: { readonly nodes: ReadonlyArray<Pick<SitePage, 'path'>> } };
 
 type GatsbyImageSharpFixedFragment = Pick<ImageSharpFixed, 'base64' | 'width' | 'height' | 'src' | 'srcSet'>;
 
@@ -3523,18 +3539,23 @@ type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
 
-type PageMarkdownQueryVariables = Exact<{
-  slug: Scalars['String'];
-}>;
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Maybe<Pick<MarkdownFrontmatter, 'title'>>, readonly breadcrumbs: Maybe<ReadonlyArray<Maybe<Pick<BreadCrumb, 'slug' | 'title'>>>>, readonly parent: Maybe<(
-      Pick<File, 'relativePath'>
-      & { readonly internal: Pick<Internal, 'content'> }
-    )>, readonly fields: Maybe<{ readonly images: Maybe<ReadonlyArray<Maybe<(
-        Pick<ImageSharp, 'gatsbyImageData'>
-        & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
-      )>>> }> }> };
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+
+type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
+        Pick<SectionMenuCategory, 'category'>
+        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
+      ) }> } };
 
 type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
 
