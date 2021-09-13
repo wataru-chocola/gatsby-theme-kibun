@@ -7,7 +7,8 @@ import {
 } from 'gatsby';
 import { createFilePath } from 'gatsby-source-filesystem';
 
-import * as _ from 'lodash';
+import mapValues from 'lodash/mapValues';
+import isDate from 'lodash/isDate';
 import { getImagePaths } from './getImagePaths';
 import matter from 'gray-matter';
 
@@ -25,8 +26,8 @@ export async function transformFileToMarkdown({
   try {
     const data = matter(content);
     if (data.data) {
-      data.data = _.mapValues(data.data, (value) => {
-        if (_.isDate(value)) {
+      data.data = mapValues(data.data, (value) => {
+        if (isDate(value)) {
           return value.toJSON();
         }
         return value;
