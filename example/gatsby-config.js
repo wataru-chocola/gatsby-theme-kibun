@@ -8,7 +8,7 @@ module.exports = {
     {
       resolve: `gatsby-theme-kibun`,
       options: {
-        markdownDir: `${__dirname}/src/markdowns`,
+        markdownDir: `${__dirname}/markdowns`,
         githubRepository: {
           project: 'wataru-chocola/test-sitemd',
           rootDir: 'markdowns/',
@@ -28,5 +28,12 @@ module.exports = {
     //    icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
     //  },
     //},
+    {
+      resolve: 'gatsby-plugin-webpack-bundle-analyser-v2',
+      options: {
+        //disable: false,
+        disable: true,
+      },
+    },
   ],
 };

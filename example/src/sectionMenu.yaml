@@ -1,10 +1,12 @@
-- category: Category
+- category: Markdown Exmpales
   menu:
-    - text: Item1
-    - text: link
-      to: /path1/
-- category: Category2
+    - text: Markdown Syntax
+      to: /markdown_syntax/
+    - text: Code Highlight
+      to: /code_highlight/
+    - text: Embedded Images
+      to: /embedded_images/
+- category: Test Section
   menu:
-    - text: Item2
-    - text: link2
-      to: /path1-1/
+    - text: not found link
+      to: /not-found-link/
