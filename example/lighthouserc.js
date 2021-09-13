@@ -3,13 +3,13 @@ module.exports = {
     collect: {
       url: ['http://localhost:9000/'],
       startServerCommand: 'npm run serve',
-      startServerReadyPattern: "You can now view",
+      startServerReadyPattern: 'You can now view',
     },
     assert: {
       preset: 'lighthouse:recommended',
     },
-    //upload: {
-    //  target: 'temporary-public-storage',
-    //},
+    upload: {
+      target: 'temporary-public-storage',
+    },
   },
 };
