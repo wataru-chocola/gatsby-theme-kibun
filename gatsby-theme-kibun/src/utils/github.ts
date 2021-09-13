@@ -4,11 +4,11 @@ import {
   RestEndpointMethodTypes,
 } from '@octokit/plugin-rest-endpoint-methods';
 
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { useStaticQuery, graphql } from 'gatsby';
 
 const fetchNoCache: typeof fetch = (url, options) => {
-  let newOptions = _.cloneDeep(options);
+  let newOptions = cloneDeep(options);
   if (newOptions == null) {
     newOptions = {};
   }
