@@ -14,6 +14,9 @@ import EditBox from '../components/editbox';
 import { splitFrontmatter, mdParse, mdast2react, mdast2toc } from '../utils/markdownParser';
 import { ImageDataCollection } from '../utils/rehype';
 
+import { useAppDispatch } from '../state/hooks';
+import { snackMessageActions } from '../state/snackMessageSlice';
+
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
     fontSize: theme.typography.h4.fontSize,
@@ -45,6 +48,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 
   const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
   const classes = useStyles();
+  const dispatch = useAppDispatch();
 
   const [editmode, setEditmode] = React.useState(false);
 
@@ -52,12 +56,36 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
 
-  const mdast = React.useMemo(() => mdParse(currentMarkdown), [currentMarkdown]);
-  const html = React.useMemo<React.ReactElement | null>(
-    () => mdast2react(mdast, slug, imageDataCollection),
-    [mdast, slug, imageDataCollection],
-  );
-  const toc = React.useMemo<React.ReactElement | null>(() => mdast2toc(mdast), [mdast]);
+  const mdast = React.useMemo(() => {
+    try {
+      return mdParse(currentMarkdown);
+    } catch (e) {
+      console.error(e);
+      dispatch(snackMessageActions.hideMessage({}));
+      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to parse markdown: '));
+      return null;
+    }
+  }, [currentMarkdown, dispatch]);
+  const html = React.useMemo<React.ReactElement | null>(() => {
+    try {
+      return mdast != null ? mdast2react(mdast, slug, imageDataCollection) : null;
+    } catch (e) {
+      console.error(e);
+      dispatch(snackMessageActions.hideMessage({}));
+      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
+      return null;
+    }
+  }, [mdast, slug, imageDataCollection, dispatch]);
+  const toc = React.useMemo<React.ReactElement | null>(() => {
+    try {
+      return mdast != null ? mdast2toc(mdast) : null;
+    } catch (e) {
+      console.error(e);
+      dispatch(snackMessageActions.hideMessage({}));
+      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to create toc: '));
+      return null;
+    }
+  }, [mdast, dispatch]);
 
   const saveMarkdown = React.useCallback(
     (md: string) => {
