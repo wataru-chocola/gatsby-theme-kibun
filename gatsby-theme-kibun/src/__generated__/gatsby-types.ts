@@ -3517,10 +3517,28 @@ type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
 
+type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
+        Pick<SectionMenuCategory, 'category'>
+        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
+      ) }> } };
+
 type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
 
 type PageMarkdownQueryVariables = Exact<{
   slug: Scalars['String'];
@@ -3534,23 +3552,5 @@ type PageMarkdownQuery = { readonly markdown: Maybe<{ readonly frontmatter: Mayb
         Pick<ImageSharp, 'gatsbyImageData'>
         & { readonly fields: Maybe<Pick<ImageSharpFields, 'imagePath'>> }
       )>>> }> }> };
-
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type githubRepositryQuery = { readonly sitePlugin: Maybe<{ readonly pluginOptions: Maybe<{ readonly githubRepository: Maybe<Pick<SitePluginPluginOptionsGithubRepository, 'project' | 'branch' | 'rootDir'>> }> }> };
-
-type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SiteSectionMenuQuery = { readonly allSectionMenuCategory: { readonly edges: ReadonlyArray<{ readonly node: (
-        Pick<SectionMenuCategory, 'category'>
-        & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
-      ) }> } };
-
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
 
 }

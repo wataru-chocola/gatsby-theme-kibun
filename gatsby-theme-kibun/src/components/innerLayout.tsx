@@ -103,7 +103,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
       <main className={classes.content}>
         <Toolbar />
         <Container maxWidth="md" fixed disableGutters>
-          <ErrorBoundary fallback={<h1>Error</h1>}>
+          <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
             <Paper>{children}</Paper>
           </ErrorBoundary>
         </Container>

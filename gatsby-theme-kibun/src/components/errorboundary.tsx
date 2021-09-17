@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ErrorInfo } from 'react';
 
 type ErrorBoundaryProps = React.PropsWithChildren<{
   fallback: React.ReactNode;
@@ -13,6 +13,11 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true };
+  }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    console.groupCollapsed('Error at:');
+    console.error(errorInfo.componentStack);
+    console.groupEnd();
   }
 
   render(): React.ReactNode {
