@@ -1,4 +1,5 @@
 import { Octokit } from '@octokit/core';
+import type { RequestError } from '@octokit/types';
 import {
   restEndpointMethods,
   RestEndpointMethodTypes,
@@ -180,16 +181,27 @@ export class githubRepoOperator {
         merged = true;
         break;
       } catch (e) {
-        if (e.status != null && (e.status === 409 || e.status === 405)) {
-          error = e;
-          await sleepAsync(2000);
-          continue;
+        if (
+          typeof e === 'object' &&
+          e != null &&
+          'status' in e &&
+          typeof (e as any).status === 'number'
+        ) {
+          const tmp_e: RequestError = e as RequestError;
+          if (tmp_e.status != null && (tmp_e.status === 409 || tmp_e.status === 405)) {
+            error = e;
+            await sleepAsync(2000);
+            continue;
+          }
         }
         throw e;
       }
     }
     if (!merged) {
-      throw Error(error);
+      if (error == null) {
+        error = Error('failed to check merginability by unknown reason');
+      }
+      throw error;
     }
 
     await this.octokit.rest.git.deleteRef({

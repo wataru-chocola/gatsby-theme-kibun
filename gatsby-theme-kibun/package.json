@@ -10,6 +10,7 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@octokit/core": "^3.5.1",
     "@octokit/plugin-rest-endpoint-methods": "^5.8.0",
+    "@octokit/types": "^6.28.1",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/react-helmet": "^6.1.2",
     "@types/unist": "^2.0.6",

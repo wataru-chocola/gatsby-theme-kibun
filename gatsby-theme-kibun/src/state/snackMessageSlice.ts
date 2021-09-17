@@ -27,6 +27,27 @@ const snackMessageSlice = createSlice({
         autoHideDuration: action.payload.autoHideDuration || null,
       };
     },
+    addErrorMessage: {
+      reducer(
+        state,
+        action: PayloadAction<{
+          message: string;
+          autoHideDuration?: number;
+        }>,
+      ) {
+        return {
+          on: true,
+          message: action.payload.message,
+          severity: 'error',
+          autoHideDuration: action.payload.autoHideDuration || null,
+        };
+      },
+      prepare(e: unknown, autoHideDuration?: number, msg_prefix?: string) {
+        let emsg = msg_prefix ? msg_prefix : '';
+        emsg += e instanceof Error ? e.message : typeof e === 'string' ? e : '';
+        return { payload: { message: emsg, autoHideDuration: autoHideDuration } };
+      },
+    },
     hideMessage(state, action) {
       if (state != null) {
         state.on = false;
