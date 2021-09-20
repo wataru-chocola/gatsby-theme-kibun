@@ -8,14 +8,26 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import { useStaticQuery, graphql } from 'gatsby';
 
-const fetchNoCache: typeof fetch = (url, options) => {
+async function fetchNoCache(
+  url: RequestInfo,
+  options?: RequestInit & { timeout?: number },
+): Promise<Response> {
+  const timeout = options?.timeout || 5000;
   let newOptions = cloneDeep(options);
   if (newOptions == null) {
     newOptions = {};
   }
   newOptions.cache = 'no-cache';
-  return fetch(url, newOptions);
-};
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(url, {
+    ...newOptions,
+    signal: controller.signal,
+  });
+  clearTimeout(id);
+  return response;
+}
 
 const MyOctokit = Octokit.plugin(restEndpointMethods);
 

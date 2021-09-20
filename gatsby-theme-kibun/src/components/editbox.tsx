@@ -95,20 +95,21 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     React.useEffect(() => {
       if (isLoggedIn) {
-        try {
-          github.getFileContent(srcPath).then((content) => {
+        github
+          .getFileContent(srcPath)
+          .then((content) => {
             const tmpContent = splitFrontmatter(content);
             if (tmpContent[1] !== markdown) {
               console.log('detect diff');
             }
+          })
+          .catch((e) => {
+            console.error(e);
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(
+              snackMessageActions.addErrorMessage(e, 3000, 'failed to fetch content source: '),
+            );
           });
-        } catch (e) {
-          console.error(e);
-          dispatch(snackMessageActions.hideMessage({}));
-          dispatch(
-            snackMessageActions.addErrorMessage(e, 3000, 'failed to fetch content source: '),
-          );
-        }
       }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
