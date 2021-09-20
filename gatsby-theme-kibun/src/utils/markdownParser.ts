@@ -45,8 +45,10 @@ const markdownHastProcessor = unified()
   .use(rehypeRaw)
   .use(rehypeKatex)
   .use(codeRefractor, {
+    ignoreMissing: true,
     aliases: {
-      sh: 'bash',
+      bash: 'sh',
+      go: 'golang',
     },
   })
   .use(autolinkHeader)
