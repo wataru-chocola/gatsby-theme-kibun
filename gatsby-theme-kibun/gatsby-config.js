@@ -14,7 +14,12 @@ module.exports = (options) => ({
     },
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        failOnError: false,
+      },
+    },
     `gatsby-plugin-image`,
     `gatsby-plugin-typescript`,
     {

@@ -95,12 +95,21 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     React.useEffect(() => {
       if (isLoggedIn) {
-        github.getFileContent(srcPath).then((content) => {
-          const tmpContent = splitFrontmatter(content);
-          if (tmpContent[1] !== markdown) {
-            console.log('detect diff');
-          }
-        });
+        github
+          .getFileContent(srcPath)
+          .then((content) => {
+            const tmpContent = splitFrontmatter(content);
+            if (tmpContent[1] !== markdown) {
+              console.log('detect diff');
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            dispatch(snackMessageActions.hideMessage({}));
+            dispatch(
+              snackMessageActions.addErrorMessage(e, 3000, 'failed to fetch content source: '),
+            );
+          });
       }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -123,13 +132,10 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
             );
           })
           .catch((e) => {
+            console.error(e);
             dispatch(snackMessageActions.hideMessage({}));
             dispatch(
-              snackMessageActions.setMessage({
-                message: `error: ${e.message}!`,
-                severity: 'error',
-                autoHideDuration: 2000,
-              }),
+              snackMessageActions.addErrorMessage(e, 3000, 'failed to update github content: '),
             );
           })
           .finally(() => {

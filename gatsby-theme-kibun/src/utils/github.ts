@@ -1,4 +1,5 @@
 import { Octokit } from '@octokit/core';
+import type { RequestError } from '@octokit/types';
 import {
   restEndpointMethods,
   RestEndpointMethodTypes,
@@ -7,14 +8,26 @@ import {
 import cloneDeep from 'lodash/cloneDeep';
 import { useStaticQuery, graphql } from 'gatsby';
 
-const fetchNoCache: typeof fetch = (url, options) => {
+async function fetchNoCache(
+  url: RequestInfo,
+  options?: RequestInit & { timeout?: number },
+): Promise<Response> {
+  const timeout = options?.timeout || 5000;
   let newOptions = cloneDeep(options);
   if (newOptions == null) {
     newOptions = {};
   }
   newOptions.cache = 'no-cache';
-  return fetch(url, newOptions);
-};
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(url, {
+    ...newOptions,
+    signal: controller.signal,
+  });
+  clearTimeout(id);
+  return response;
+}
 
 const MyOctokit = Octokit.plugin(restEndpointMethods);
 
@@ -180,16 +193,27 @@ export class githubRepoOperator {
         merged = true;
         break;
       } catch (e) {
-        if (e.status != null && (e.status === 409 || e.status === 405)) {
-          error = e;
-          await sleepAsync(2000);
-          continue;
+        if (
+          typeof e === 'object' &&
+          e != null &&
+          'status' in e &&
+          typeof (e as any).status === 'number'
+        ) {
+          const tmp_e: RequestError = e as RequestError;
+          if (tmp_e.status != null && (tmp_e.status === 409 || tmp_e.status === 405)) {
+            error = e;
+            await sleepAsync(2000);
+            continue;
+          }
         }
         throw e;
       }
     }
     if (!merged) {
-      throw Error(error);
+      if (error == null) {
+        error = Error('failed to check merginability by unknown reason');
+      }
+      throw error;
     }
 
     await this.octokit.rest.git.deleteRef({

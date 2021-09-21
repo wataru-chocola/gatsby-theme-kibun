@@ -726,10 +726,6 @@ type SitePlugin implements Node {
 type SitePluginPluginOptions {
   stages: [String]
   options: SitePluginPluginOptionsOptions
-  base64Width: Int
-  stripMetadata: Boolean
-  defaultQuality: Int
-  failOnError: Boolean
   isTSX: Boolean
   jsxPragma: String
   allExtensions: Boolean
@@ -746,6 +742,10 @@ type SitePluginPluginOptions {
   query: String
   disable: Boolean
   pathCheck: Boolean
+  failOnError: Boolean
+  base64Width: Int
+  stripMetadata: Boolean
+  defaultQuality: Int
 }
 
 type SitePluginPluginOptionsOptions {
@@ -1964,10 +1964,6 @@ input SitePluginFilterInput {
 input SitePluginPluginOptionsFilterInput {
   stages: StringQueryOperatorInput
   options: SitePluginPluginOptionsOptionsFilterInput
-  base64Width: IntQueryOperatorInput
-  stripMetadata: BooleanQueryOperatorInput
-  defaultQuality: IntQueryOperatorInput
-  failOnError: BooleanQueryOperatorInput
   isTSX: BooleanQueryOperatorInput
   jsxPragma: StringQueryOperatorInput
   allExtensions: BooleanQueryOperatorInput
@@ -1984,6 +1980,10 @@ input SitePluginPluginOptionsFilterInput {
   query: StringQueryOperatorInput
   disable: BooleanQueryOperatorInput
   pathCheck: BooleanQueryOperatorInput
+  failOnError: BooleanQueryOperatorInput
+  base64Width: IntQueryOperatorInput
+  stripMetadata: BooleanQueryOperatorInput
+  defaultQuality: IntQueryOperatorInput
 }
 
 input SitePluginPluginOptionsOptionsFilterInput {
@@ -2204,10 +2204,6 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___options___failOnError
   pluginCreator___pluginOptions___options___extensions
   pluginCreator___pluginOptions___options___exclude
-  pluginCreator___pluginOptions___base64Width
-  pluginCreator___pluginOptions___stripMetadata
-  pluginCreator___pluginOptions___defaultQuality
-  pluginCreator___pluginOptions___failOnError
   pluginCreator___pluginOptions___isTSX
   pluginCreator___pluginOptions___jsxPragma
   pluginCreator___pluginOptions___allExtensions
@@ -2226,6 +2222,10 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___query
   pluginCreator___pluginOptions___disable
   pluginCreator___pluginOptions___pathCheck
+  pluginCreator___pluginOptions___failOnError
+  pluginCreator___pluginOptions___base64Width
+  pluginCreator___pluginOptions___stripMetadata
+  pluginCreator___pluginOptions___defaultQuality
   pluginCreator___nodeAPIs
   pluginCreator___browserAPIs
   pluginCreator___ssrAPIs
@@ -2862,10 +2862,6 @@ enum SitePluginFieldsEnum {
   pluginOptions___options___failOnError
   pluginOptions___options___extensions
   pluginOptions___options___exclude
-  pluginOptions___base64Width
-  pluginOptions___stripMetadata
-  pluginOptions___defaultQuality
-  pluginOptions___failOnError
   pluginOptions___isTSX
   pluginOptions___jsxPragma
   pluginOptions___allExtensions
@@ -2884,6 +2880,10 @@ enum SitePluginFieldsEnum {
   pluginOptions___query
   pluginOptions___disable
   pluginOptions___pathCheck
+  pluginOptions___failOnError
+  pluginOptions___base64Width
+  pluginOptions___stripMetadata
+  pluginOptions___defaultQuality
   nodeAPIs
   browserAPIs
   ssrAPIs
