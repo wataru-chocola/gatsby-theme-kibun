@@ -3,6 +3,7 @@ import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
+import ErrorBoundary from '../components/errorboundary';
 
 import { Typography } from '@material-ui/core';
 import { Box, Slide } from '@material-ui/core';
@@ -105,19 +106,30 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
     setEditmode(false);
   }, [setEditmode]);
 
+  const editboxErrHandler = React.useCallback(
+    (e: Error) => {
+      dispatch(snackMessageActions.hideMessage({}));
+      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to open edit box: '));
+      setEditmode(false);
+    },
+    [dispatch, setEditmode],
+  );
+
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
       <Slide in={editmode} mountOnEnter unmountOnExit>
-        <EditBox
-          closeEditmode={closeEditmode}
-          saveMarkdown={saveMarkdown}
-          renderMarkdown={setCurrentMarkdown}
-          resetMarkdown={resetMarkdown}
-          md={markdown}
-          frontmatter={frontmatter}
-          srcPath={pageinfo.parent?.relativePath || ''}
-        ></EditBox>
+        <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
+          <EditBox
+            closeEditmode={closeEditmode}
+            saveMarkdown={saveMarkdown}
+            renderMarkdown={setCurrentMarkdown}
+            resetMarkdown={resetMarkdown}
+            md={markdown}
+            frontmatter={frontmatter}
+            srcPath={pageinfo.parent?.relativePath || ''}
+          ></EditBox>
+        </ErrorBoundary>
       </Slide>
 
       <Box pt={2} pb={0.5} px={2}>
