@@ -2,7 +2,7 @@ import { visit, Visitor } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
 import { h } from 'hastscript';
 import { Element as HastElement, Root } from 'hast';
-import { hast2react } from './rehype';
+import { hast2react } from './hast2react';
 import { HastRoot } from 'remark-rehype';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);

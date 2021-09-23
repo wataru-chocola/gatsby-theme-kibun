@@ -14,7 +14,7 @@ import 'katex/dist/katex.min.css';
 import EditBox from '../components/editbox';
 import { splitFrontmatter, md2hast } from '../utils/markdownParser';
 import { hast2toc } from '../utils/hastToc';
-import { hast2react, ImageDataCollection } from '../utils/rehype';
+import { hast2react, ImageDataCollection } from '../utils/hast2react';
 import { highlight } from '../utils/syntaxHighlighter';
 
 import { useAppDispatch } from '../state/hooks';
