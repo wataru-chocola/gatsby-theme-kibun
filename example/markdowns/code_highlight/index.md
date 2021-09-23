@@ -96,3 +96,15 @@ def set_console_handlers(logger: logging.Logger, verbose: bool = False, debug: b
     stderr_handler.addFilter(ContextFilter())
     logger.addHandler(stderr_handler)
 ```
+
+## Powershell (not included in common language set)
+
+```powershell
+Write-Host "Hello, World!"
+```
+
+## MySQL (alias for SQL)
+
+```mysql
+CREATE DATABASE progate;
+```

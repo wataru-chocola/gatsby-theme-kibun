@@ -12,9 +12,16 @@ interface Options {
   dynamic?: boolean;
 }
 
+const aliasToName: Record<string, string> = {
+  ps1: 'powershell',
+  bat: 'batch',
+  mysql: 'sql',
+};
+
 const defaultAliases = {
   bash: 'sh',
   go: 'golang',
+  python: 'python3',
 };
 refractor.alias(defaultAliases);
 
@@ -54,9 +61,17 @@ export async function highlight(
 
       if (!refractor.registered(lang)) {
         if (options?.dynamic) {
+          let alias: string | null = null;
+          if (aliasToName[lang] != null) {
+            lang = aliasToName[lang];
+            alias = lang;
+          }
           try {
             const module = await import(`refractor/lang/${lang}.js`);
             refractor.register(module.default);
+            if (alias != null) {
+              refractor.alias(lang, alias);
+            }
           } catch (e) {
             if (/Cannot find module/.test(e.message)) {
               missingLanguages.push(lang);

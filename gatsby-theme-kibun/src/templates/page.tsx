@@ -89,7 +89,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 
       if (missingLanguages) {
         [highlighted, missingLanguages] = await highlight(hast, { dynamic: true });
-        if (missingLanguages) {
+        if (missingLanguages.length > 0) {
           console.warn(`syntax not found: ${missingLanguages}`);
         }
         try {
