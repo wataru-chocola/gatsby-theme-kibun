@@ -1,14 +1,24 @@
 import { visit, Visitor } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
 import { h } from 'hastscript';
-import { Element, Root } from 'hast';
+import { Element as HastElement, Root } from 'hast';
+import { hast2react } from './hast2react';
+import { HastRoot } from 'remark-rehype';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
-export default function hastToc(tree: Element): Root | null {
+export function hast2toc(hast: HastRoot): React.ReactElement | null {
+  const toc = hastToc(hast);
+  if (toc == null) {
+    return null;
+  }
+  return hast2react(toc);
+}
+
+export default function hastToc(tree: HastRoot): Root | null {
   let toc: Root | null = null;
 
-  const visitor: Visitor<Element> = (node, _index, _parent) => {
+  const visitor: Visitor<HastElement> = (node, _index, _parent) => {
     if (!headerTags.has(node.tagName)) {
       return;
     }
@@ -19,15 +29,15 @@ export default function hastToc(tree: Element): Root | null {
       toc = h(null, [h('ul')]);
     }
 
-    let listContainer = toc.children[0] as Element;
+    let listContainer = toc.children[0] as HastElement;
     for (let i = 1; i < headerDepth; i++) {
-      let lastItem = listContainer.children[listContainer.children.length - 1] as Element;
+      let lastItem = listContainer.children[listContainer.children.length - 1] as HastElement;
       if (lastItem == null) {
         lastItem = h('li', '(missing header)');
         listContainer.children.push(lastItem);
       }
 
-      let lastChildOfItem = lastItem.children[lastItem.children.length - 1] as Element;
+      let lastChildOfItem = lastItem.children[lastItem.children.length - 1] as HastElement;
       if (
         lastChildOfItem == null ||
         !(lastChildOfItem.type === 'element' && lastChildOfItem.tagName === 'ul')
@@ -39,7 +49,7 @@ export default function hastToc(tree: Element): Root | null {
     }
 
     const headerId = node.properties?.id;
-    let headerItem: Element | string;
+    let headerItem: HastElement | string;
     if (!headerId) {
       headerItem = headerTitle;
     } else {
@@ -49,6 +59,6 @@ export default function hastToc(tree: Element): Root | null {
     listContainer.children.push(h('li', headerItem));
   };
 
-  visit<Element>(tree, 'element', visitor);
+  visit<HastElement, string>(tree, 'element', visitor);
   return toc;
 }

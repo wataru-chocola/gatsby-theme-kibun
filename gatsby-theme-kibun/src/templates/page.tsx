@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
@@ -12,8 +12,10 @@ import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
 import EditBox from '../components/editbox';
-import { splitFrontmatter, mdParse, mdast2react, mdast2toc } from '../utils/markdownParser';
-import { ImageDataCollection } from '../utils/rehype';
+import { splitFrontmatter, md2hast } from '../utils/markdownParser';
+import { hast2toc } from '../utils/hastToc';
+import { hast2react, ImageDataCollection } from '../utils/hast2react';
+import { highlight } from '../utils/syntaxHighlighter';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -53,13 +55,14 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 
   const [editmode, setEditmode] = React.useState(false);
 
-  const [frontmatter, setFrontmatter] = React.useState(content[0]);
+  const [frontmatter, _setFrontmatter] = React.useState(content[0]);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
+  const [html, setHtml] = React.useState<React.ReactElement | null>(null);
 
-  const mdast = React.useMemo(() => {
+  const hast = React.useMemo(() => {
     try {
-      return mdParse(currentMarkdown);
+      return md2hast(currentMarkdown);
     } catch (e) {
       console.error(e);
       dispatch(snackMessageActions.hideMessage({}));
@@ -67,26 +70,51 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
       return null;
     }
   }, [currentMarkdown, dispatch]);
-  const html = React.useMemo<React.ReactElement | null>(() => {
-    try {
-      return mdast != null ? mdast2react(mdast, slug, imageDataCollection) : null;
-    } catch (e) {
-      console.error(e);
-      dispatch(snackMessageActions.hideMessage({}));
-      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
-      return null;
-    }
-  }, [mdast, slug, imageDataCollection, dispatch]);
+
+  useEffect(() => {
+    const f = async () => {
+      if (hast == null) {
+        return;
+      }
+
+      let [highlighted, missingLanguages] = await highlight(hast);
+      try {
+        setHtml(hast2react(highlighted, slug, imageDataCollection));
+      } catch (e) {
+        console.error(e);
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
+        return;
+      }
+
+      if (missingLanguages) {
+        [highlighted, missingLanguages] = await highlight(hast, { dynamic: true });
+        if (missingLanguages.length > 0) {
+          console.warn(`syntax not found: ${missingLanguages}`);
+        }
+        try {
+          setHtml(hast2react(highlighted, slug, imageDataCollection));
+        } catch (e) {
+          console.error(e);
+          dispatch(snackMessageActions.hideMessage({}));
+          dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
+          return;
+        }
+      }
+    };
+    f();
+  }, [hast, imageDataCollection, slug, dispatch]);
+
   const toc = React.useMemo<React.ReactElement | null>(() => {
     try {
-      return mdast != null ? mdast2toc(mdast) : null;
+      return hast != null ? hast2toc(hast) : null;
     } catch (e) {
       console.error(e);
       dispatch(snackMessageActions.hideMessage({}));
       dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to create toc: '));
       return null;
     }
-  }, [mdast, dispatch]);
+  }, [hast, dispatch]);
 
   const saveMarkdown = React.useCallback(
     (md: string) => {

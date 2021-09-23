@@ -120,6 +120,14 @@ module.exports = {
     'jsx-a11y/role-supports-aria-props': `warn`,
     'jsx-a11y/scope': `warn`,
     'jsx-a11y/tabindex-no-positive': `warn`,
+
+    'no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      },
+    ]
   },
   overrides: [
     {
@@ -130,6 +138,14 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+
+        '@typescript-eslint/no-unused-vars': [
+          'warn',
+          {
+            argsIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+          },
+        ],
       },
     },
   ],
