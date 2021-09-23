@@ -49,7 +49,7 @@ const autolinkHeader: Plugin = () => {
   };
 
   return (tree: UnistNode) => {
-    visit<Element>(tree as Element, 'element', visitor);
+    visit<Element, string>(tree as Element, 'element', visitor);
     slugger.reset();
   };
 };

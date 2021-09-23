@@ -67,7 +67,7 @@ export interface ImageDataCollection {
   [key: string]: ImageDataLike;
 }
 
-export const renderAst: (
+export const hast2react: (
   tree: HastRoot,
   slug?: string,
   imgdataCollection?: ImageDataCollection,
