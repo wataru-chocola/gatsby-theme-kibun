@@ -9,7 +9,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import autolinkHeader from './autolinkHeader';
-import * as matter from 'gray-matter';
+import matter from 'gray-matter';
 import { remarkDefinitionList, defListHastHandlers } from 'remark-definition-list';
 
 const mdastParagraph2hast: Handler = (h, tmp_node) => {
