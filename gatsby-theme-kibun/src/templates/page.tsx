@@ -15,7 +15,7 @@ import EditBox from '../components/editbox';
 import { splitFrontmatter, md2hast } from '../utils/markdownParser';
 import { hast2toc } from '../utils/hastToc';
 import { hast2react, ImageDataCollection } from '../utils/hast2react';
-import { highlight } from '../utils/syntaxHighlighter';
+import { highlightSync, highlightAsync } from '../utils/syntaxHighlighter';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -58,7 +58,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
   const [frontmatter, _setFrontmatter] = React.useState(content[0]);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
-  const [html, setHtml] = React.useState<React.ReactElement | null>(null);
 
   const hast = React.useMemo(() => {
     try {
@@ -71,39 +70,43 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
     }
   }, [currentMarkdown, dispatch]);
 
+  const [reactTree, missingLanguages] = React.useMemo<
+    [React.ReactElement | null, Array<string>]
+  >(() => {
+    if (hast == null) {
+      return [null, []];
+    }
+    const [highlightedTmp, missingLanguagesTmp] = highlightSync(hast);
+    const reactTree =
+      highlightedTmp != null ? hast2react(highlightedTmp, slug, imageDataCollection) : null;
+    if (missingLanguagesTmp.length > 0) {
+      console.info(`syntax not found (at static generation): ${missingLanguagesTmp}`);
+    }
+    return [reactTree, missingLanguagesTmp];
+  }, [hast, slug, imageDataCollection]);
+  const [html, setHtml] = React.useState<React.ReactElement | null>(reactTree);
+
   useEffect(() => {
     const f = async () => {
-      if (hast == null) {
+      if (hast == null || missingLanguages.length === 0) {
         return;
       }
 
-      let [highlighted, missingLanguages] = await highlight(hast);
+      const [highlightedTmp, missingLanguagesTmp] = await highlightAsync(hast);
+      if (missingLanguagesTmp.length > 0) {
+        console.warn(`syntax not found: ${missingLanguagesTmp}`);
+      }
       try {
-        setHtml(hast2react(highlighted, slug, imageDataCollection));
+        setHtml(hast2react(highlightedTmp, slug, imageDataCollection));
       } catch (e) {
         console.error(e);
         dispatch(snackMessageActions.hideMessage({}));
         dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
         return;
       }
-
-      if (missingLanguages) {
-        [highlighted, missingLanguages] = await highlight(hast, { dynamic: true });
-        if (missingLanguages.length > 0) {
-          console.warn(`syntax not found: ${missingLanguages}`);
-        }
-        try {
-          setHtml(hast2react(highlighted, slug, imageDataCollection));
-        } catch (e) {
-          console.error(e);
-          dispatch(snackMessageActions.hideMessage({}));
-          dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
-          return;
-        }
-      }
     };
     f();
-  }, [hast, imageDataCollection, slug, dispatch]);
+  }, [missingLanguages, hast, imageDataCollection, slug, dispatch]);
 
   const toc = React.useMemo<React.ReactElement | null>(() => {
     try {

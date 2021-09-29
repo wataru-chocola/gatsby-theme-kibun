@@ -9,13 +9,15 @@ interface Aliases {
 
 interface Options {
   aliases?: Aliases;
-  dynamic?: boolean;
 }
 
 const aliasToName: Record<string, string> = {
+  powershell: 'powershell',
   ps1: 'powershell',
   bat: 'batch',
+  'common-lisp': 'lisp',
   mysql: 'sql',
+  console: 'shell-script',
 };
 
 const defaultAliases = {
@@ -33,15 +35,10 @@ function getLanguage(classNames: string[]) {
     }
   }
 
-  return null;
+  return 'text';
 }
 
-export async function highlight(
-  tree: HastRoot,
-  options?: Options,
-): Promise<[HastRoot, Array<string>]> {
-  const missingLanguages = [] as Array<string>;
-
+function getCodeElements(tree: HastRoot): Array<[HastElement, HastElement]> {
   const targets = [] as Array<[HastElement, HastElement]>;
   visit(tree, 'element', (node, _index, parent_tmp) => {
     const parent = parent_tmp as HastElement;
@@ -50,53 +47,85 @@ export async function highlight(
     }
     targets.push([node, parent]);
   });
+  return targets;
+}
+
+function addLangClassToParent(parent: HastElement, lang: string): void {
+  const langClass = 'language-' + lang;
+  if (parent.properties != null) {
+    const parent_classes = (parent.properties?.className || []) as string[];
+    parent.properties.className = parent_classes.concat(langClass);
+  } else {
+    parent.properties = {
+      className: [langClass],
+    };
+  }
+}
+
+export function highlightSync(tree: HastRoot, options?: Options): [HastRoot, Array<string>] {
+  if (options?.aliases) {
+    refractor.alias(options.aliases);
+  }
+
+  const missingLanguages = [] as Array<string>;
+  const targets = getCodeElements(tree);
+  targets.map(([node, parent]) => {
+    const classNames = (node.properties?.className || []) as string[];
+    let lang = getLanguage(classNames);
+
+    if (!refractor.registered(lang)) {
+      missingLanguages.push(lang);
+      lang = 'text';
+    }
+    const result = refractor.highlight(toString(node), lang);
+
+    addLangClassToParent(parent, lang);
+    node.children = result.children as HastElement[];
+    return null;
+  });
+
+  return [tree, missingLanguages];
+}
+
+export async function highlightAsync(
+  tree: HastRoot,
+  options?: Options,
+): Promise<[HastRoot, Array<string>]> {
+  if (options?.aliases) {
+    refractor.alias(options.aliases);
+  }
+
+  const missingLanguages = [] as Array<string>;
+  const targets = getCodeElements(tree);
 
   await Promise.all(
     targets.map(async ([node, parent]) => {
       const classNames = (node.properties?.className || []) as string[];
       let lang = getLanguage(classNames);
-      if (lang === null) {
-        lang = 'text';
-      }
 
       if (!refractor.registered(lang)) {
-        if (options?.dynamic) {
-          let alias: string | null = null;
-          if (aliasToName[lang] != null) {
-            lang = aliasToName[lang];
-            alias = lang;
+        let alias: string | null = null;
+        if (aliasToName[lang] != null) {
+          lang = aliasToName[lang];
+          alias = lang;
+        }
+        try {
+          const module = await import(`refractor/lang/${lang}.js`);
+          refractor.register(module.default);
+          if (alias != null) {
+            refractor.alias(lang, alias);
           }
-          try {
-            const module = await import(`refractor/lang/${lang}.js`);
-            refractor.register(module.default);
-            if (alias != null) {
-              refractor.alias(lang, alias);
-            }
-          } catch (e) {
-            if (/Cannot find module/.test(e.message)) {
-              missingLanguages.push(lang);
-              lang = 'text';
-            }
+        } catch (e) {
+          if (/Cannot find module/.test(e.message)) {
+            missingLanguages.push(lang);
+            lang = 'text';
           }
-        } else {
-          missingLanguages.push(lang);
-          lang = 'text';
         }
       }
       const result = refractor.highlight(toString(node), lang);
 
-      const langClass = 'language-' + lang;
-      if (parent.properties != null) {
-        const parent_classes = (parent.properties?.className || []) as string[];
-        parent.properties.className = parent_classes.concat(langClass);
-      } else {
-        parent.properties = {
-          className: [langClass],
-        };
-      }
-
+      addLangClassToParent(parent, lang);
       node.children = result.children as HastElement[];
-      return;
     }),
   );
 
