@@ -9,16 +9,8 @@ interface Aliases {
 
 interface Options {
   aliases?: Aliases;
+  aliasToNameMap?: Map<string, string>;
 }
-
-const aliasToName: Record<string, string> = {
-  powershell: 'powershell',
-  ps1: 'powershell',
-  bat: 'batch',
-  'common-lisp': 'lisp',
-  mysql: 'sql',
-  console: 'shell-script',
-};
 
 const defaultAliases = {
   bash: 'sh',
@@ -26,41 +18,6 @@ const defaultAliases = {
   python: 'python3',
 };
 refractor.alias(defaultAliases);
-
-function getLanguage(classNames: string[]) {
-  for (const classListItem of classNames) {
-    if (classListItem.slice(0, 9) === 'language-') {
-      const lang = classListItem.slice(9).toLowerCase();
-      return lang;
-    }
-  }
-
-  return 'text';
-}
-
-function getCodeElements(tree: HastRoot): Array<[HastElement, HastElement]> {
-  const targets = [] as Array<[HastElement, HastElement]>;
-  visit(tree, 'element', (node, _index, parent_tmp) => {
-    const parent = parent_tmp as HastElement;
-    if (!parent || parent.tagName !== 'pre' || node.tagName !== 'code') {
-      return;
-    }
-    targets.push([node, parent]);
-  });
-  return targets;
-}
-
-function addLangClassToParent(parent: HastElement, lang: string): void {
-  const langClass = 'language-' + lang;
-  if (parent.properties != null) {
-    const parent_classes = (parent.properties?.className || []) as string[];
-    parent.properties.className = parent_classes.concat(langClass);
-  } else {
-    parent.properties = {
-      className: [langClass],
-    };
-  }
-}
 
 export function highlightSync(tree: HastRoot, options?: Options): [HastRoot, Array<string>] {
   if (options?.aliases) {
@@ -95,6 +52,7 @@ export async function highlightAsync(
     refractor.alias(options.aliases);
   }
 
+  const aliasToNameMap = options?.aliasToNameMap || new Map();
   const missingLanguages = [] as Array<string>;
   const targets = getCodeElements(tree);
 
@@ -105,8 +63,8 @@ export async function highlightAsync(
 
       if (!refractor.registered(lang)) {
         let alias: string | null = null;
-        if (aliasToName[lang] != null) {
-          lang = aliasToName[lang];
+        if (aliasToNameMap.has(lang)) {
+          lang = aliasToNameMap.get(lang);
           alias = lang;
         }
         try {
@@ -130,4 +88,39 @@ export async function highlightAsync(
   );
 
   return [tree, missingLanguages];
+}
+
+function getLanguage(classNames: string[]) {
+  for (const classListItem of classNames) {
+    if (classListItem.slice(0, 9) === 'language-') {
+      const lang = classListItem.slice(9).toLowerCase();
+      return lang;
+    }
+  }
+
+  return 'text';
+}
+
+function getCodeElements(tree: HastRoot): Array<[HastElement, HastElement]> {
+  const targets = [] as Array<[HastElement, HastElement]>;
+  visit(tree, 'element', (node, _index, parent_tmp) => {
+    const parent = parent_tmp as HastElement;
+    if (!parent || parent.tagName !== 'pre' || node.tagName !== 'code') {
+      return;
+    }
+    targets.push([node, parent]);
+  });
+  return targets;
+}
+
+function addLangClassToParent(parent: HastElement, lang: string): void {
+  const langClass = 'language-' + lang;
+  if (parent.properties != null) {
+    const parent_classes = (parent.properties?.className || []) as string[];
+    parent.properties.className = parent_classes.concat(langClass);
+  } else {
+    parent.properties = {
+      className: [langClass],
+    };
+  }
 }

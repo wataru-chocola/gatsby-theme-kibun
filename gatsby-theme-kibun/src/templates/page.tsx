@@ -30,8 +30,17 @@ interface PageSlugContext {
   slug: string;
 }
 
-const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>> = (props) => {
+const defaultPrismAliasToName = new Map([
+  ['ps1', 'powershell'],
+  ['bat', 'batch'],
+  ['common-lisp', 'lisp'],
+  ['mysql', 'sql'],
+  ['console', 'shell-session'],
+]);
+
+const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
   const pageinfo = props.data.markdown!;
+  const prismAliasesMapArray = props.data.prismAliasMap?.aliasesMap;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
     path: crumb!.slug,
@@ -70,6 +79,14 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
     }
   }, [currentMarkdown, dispatch]);
 
+  const prismAliasesMap = React.useMemo(
+    () =>
+      new Map([
+        ...(prismAliasesMapArray?.map((item) => [item!.alias, item!.name]) as [string, string][]),
+        ...defaultPrismAliasToName,
+      ]),
+    [prismAliasesMapArray],
+  );
   const [reactTree, missingLanguages] = React.useMemo<
     [React.ReactElement | null, Array<string>]
   >(() => {
@@ -77,13 +94,18 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
       return [null, []];
     }
     const [highlightedTmp, missingLanguagesTmp] = highlightSync(hast);
+    const missingLanguages: Array<string> = [];
     const reactTree =
       highlightedTmp != null ? hast2react(highlightedTmp, slug, imageDataCollection) : null;
-    if (missingLanguagesTmp.length > 0) {
-      console.info(`syntax not found (at static generation): ${missingLanguagesTmp}`);
+    for (const missingLang of missingLanguagesTmp) {
+      if (prismAliasesMap.has(missingLang)) {
+        missingLanguages.push(missingLang);
+      } else {
+        console.warn(`unknown syntax: ${missingLang}`);
+      }
     }
-    return [reactTree, missingLanguagesTmp];
-  }, [hast, slug, imageDataCollection]);
+    return [reactTree, missingLanguages];
+  }, [hast, slug, imageDataCollection, prismAliasesMap]);
   const [html, setHtml] = React.useState<React.ReactElement | null>(reactTree);
 
   useEffect(() => {
@@ -92,10 +114,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
         return;
       }
 
-      const [highlightedTmp, missingLanguagesTmp] = await highlightAsync(hast);
-      if (missingLanguagesTmp.length > 0) {
-        console.warn(`syntax not found: ${missingLanguagesTmp}`);
-      }
+      const [highlightedTmp, _missingLanguagesTmp] = await highlightAsync(hast, {
+        aliasToNameMap: prismAliasesMap,
+      });
       try {
         setHtml(hast2react(highlightedTmp, slug, imageDataCollection));
       } catch (e) {
@@ -106,7 +127,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
       }
     };
     f();
-  }, [missingLanguages, hast, imageDataCollection, slug, dispatch]);
+  }, [missingLanguages, prismAliasesMap, hast, imageDataCollection, slug, dispatch]);
 
   const toc = React.useMemo<React.ReactElement | null>(() => {
     try {
@@ -187,7 +208,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 export default Page;
 
 export const query = graphql`
-  query PageMarkdown($slug: String!) {
+  query Page($slug: String!) {
     markdown(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
@@ -211,6 +232,12 @@ export const query = graphql`
           }
           gatsbyImageData
         }
+      }
+    }
+    prismAliasMap {
+      aliasesMap {
+        alias
+        name
       }
     }
   }

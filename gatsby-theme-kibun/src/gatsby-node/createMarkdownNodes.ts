@@ -92,7 +92,7 @@ export async function transformFileToMarkdown({
   }
 }
 
-export function updateMarkdownSchema({ actions, schema }: CreateSchemaCustomizationArgs): void {
+export function updateMarkdownSchema({ actions }: CreateSchemaCustomizationArgs): void {
   const { createTypes } = actions;
   const typeDefs = [
     `
