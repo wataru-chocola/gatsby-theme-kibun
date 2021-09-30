@@ -23,7 +23,7 @@ const mdastParagraph2hast: Handler = (h, tmp_node) => {
 const markdownHastProcessor = unified()
   .use(remarkParser)
   .use(remarkDefinitionList)
-  .use(remarkMath)
+  .use(remarkMath, { singleDollarTextMath: false })
   .use(remarkGfm, { singleTilde: false })
   .use(remarkRehype, {
     allowDangerousHtml: true,
