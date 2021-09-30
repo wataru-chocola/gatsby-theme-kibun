@@ -15,7 +15,7 @@ import EditBox from '../components/editbox';
 import { splitFrontmatter, md2hast } from '../utils/markdownParser';
 import { hast2toc } from '../utils/hastToc';
 import { hast2react, ImageDataCollection } from '../utils/hast2react';
-import { highlight } from '../utils/syntaxHighlighter';
+import { highlightSync, highlightAsync } from '../utils/syntaxHighlighter';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -30,8 +30,17 @@ interface PageSlugContext {
   slug: string;
 }
 
-const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>> = (props) => {
+const defaultPrismAliasToName = new Map([
+  ['ps1', 'powershell'],
+  ['bat', 'batch'],
+  ['common-lisp', 'lisp'],
+  ['mysql', 'sql'],
+  ['console', 'shell-session'],
+]);
+
+const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
   const pageinfo = props.data.markdown!;
+  const prismAliasesMapArray = props.data.prismAliasMap?.aliasesMap;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
     path: crumb!.slug,
@@ -58,7 +67,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
   const [frontmatter, _setFrontmatter] = React.useState(content[0]);
   const [markdown, setMarkdown] = React.useState(content[1]);
   const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
-  const [html, setHtml] = React.useState<React.ReactElement | null>(null);
 
   const hast = React.useMemo(() => {
     try {
@@ -71,39 +79,55 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
     }
   }, [currentMarkdown, dispatch]);
 
+  const prismAliasesMap = React.useMemo(
+    () =>
+      new Map([
+        ...(prismAliasesMapArray?.map((item) => [item!.alias, item!.name]) as [string, string][]),
+        ...defaultPrismAliasToName,
+      ]),
+    [prismAliasesMapArray],
+  );
+  const [reactTree, missingLanguages] = React.useMemo<
+    [React.ReactElement | null, Array<string>]
+  >(() => {
+    if (hast == null) {
+      return [null, []];
+    }
+    const [highlightedTmp, missingLanguagesTmp] = highlightSync(hast);
+    const missingLanguages: Array<string> = [];
+    const reactTree =
+      highlightedTmp != null ? hast2react(highlightedTmp, slug, imageDataCollection) : null;
+    for (const missingLang of missingLanguagesTmp) {
+      if (prismAliasesMap.has(missingLang)) {
+        missingLanguages.push(missingLang);
+      } else {
+        console.warn(`unknown syntax: ${missingLang}`);
+      }
+    }
+    return [reactTree, missingLanguages];
+  }, [hast, slug, imageDataCollection, prismAliasesMap]);
+  const [html, setHtml] = React.useState<React.ReactElement | null>(reactTree);
+
   useEffect(() => {
     const f = async () => {
-      if (hast == null) {
+      if (hast == null || missingLanguages.length === 0) {
         return;
       }
 
-      let [highlighted, missingLanguages] = await highlight(hast);
+      const [highlightedTmp, _missingLanguagesTmp] = await highlightAsync(hast, {
+        aliasToNameMap: prismAliasesMap,
+      });
       try {
-        setHtml(hast2react(highlighted, slug, imageDataCollection));
+        setHtml(hast2react(highlightedTmp, slug, imageDataCollection));
       } catch (e) {
         console.error(e);
         dispatch(snackMessageActions.hideMessage({}));
         dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
         return;
       }
-
-      if (missingLanguages) {
-        [highlighted, missingLanguages] = await highlight(hast, { dynamic: true });
-        if (missingLanguages.length > 0) {
-          console.warn(`syntax not found: ${missingLanguages}`);
-        }
-        try {
-          setHtml(hast2react(highlighted, slug, imageDataCollection));
-        } catch (e) {
-          console.error(e);
-          dispatch(snackMessageActions.hideMessage({}));
-          dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
-          return;
-        }
-      }
     };
     f();
-  }, [hast, imageDataCollection, slug, dispatch]);
+  }, [missingLanguages, prismAliasesMap, hast, imageDataCollection, slug, dispatch]);
 
   const toc = React.useMemo<React.ReactElement | null>(() => {
     try {
@@ -184,7 +208,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageMarkdownQuery, PageSlugContext>>
 export default Page;
 
 export const query = graphql`
-  query PageMarkdown($slug: String!) {
+  query Page($slug: String!) {
     markdown(fields: { slug: { eq: $slug } }) {
       frontmatter {
         title
@@ -208,6 +232,12 @@ export const query = graphql`
           }
           gatsbyImageData
         }
+      }
+    }
+    prismAliasMap {
+      aliasesMap {
+        alias
+        name
       }
     }
   }

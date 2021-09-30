@@ -19,6 +19,7 @@ import { createSectionMenuSchema, sourceSectionMenuYaml } from './createSectionM
 import { updateImageSharpNodes, updateImageSharpSchema } from './updateImageSharpNodes';
 import { copyStaticFiles } from './copyStaticFiles';
 import { pluginOptionsSchema, PluginOptionsType } from './pluginOptions';
+import { createPrismAliasesMap } from './createPrismAliasesMap';
 
 const defaultIndexContent = `---
 title: "Top page"
@@ -30,21 +31,20 @@ Welcome to gatsby-theme-kibun Wiki!
 
 exports.pluginOptionsSchema = pluginOptionsSchema;
 
-exports.onPreBootstrap = (
-  { store, reporter }: ParentSpanPluginArgs,
-  options: PluginOptionsType,
-) => {
-  const { program } = store.getState();
+exports.onPreBootstrap = (args: ParentSpanPluginArgs, options: PluginOptionsType) => {
+  const { program } = args.store.getState();
   const mdDir = path.resolve(program.directory, options.markdownDir);
 
   if (!fs.existsSync(mdDir)) {
-    reporter.log(`the ${mdDir} directory not found`);
-    reporter.log(`initializing the ${mdDir} directory`);
+    args.reporter.log(`the ${mdDir} directory not found`);
+    args.reporter.log(`initializing the ${mdDir} directory`);
     fs.mkdirSync(mdDir, { recursive: true });
 
     const indexFile = path.resolve(mdDir, 'index.md');
     fs.writeFileSync(indexFile, defaultIndexContent);
   }
+
+  createPrismAliasesMap(args);
 };
 
 exports.sourceNodes = (args: SourceNodesArgs, options: PluginOptionsType) => {
