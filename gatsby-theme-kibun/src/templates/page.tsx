@@ -13,9 +13,10 @@ import 'katex/dist/katex.min.css';
 
 import EditBox from '../components/editbox';
 import { splitFrontmatter } from '../utils/markdownParser';
-import { ImageDataCollection } from '../utils/hast2react';
 
 import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
+import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
+import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -30,42 +31,13 @@ interface PageSlugContext {
   slug: string;
 }
 
-const defaultPrismAliasToName = new Map([
-  ['ps1', 'powershell'],
-  ['bat', 'batch'],
-  ['common-lisp', 'lisp'],
-  ['mysql', 'sql'],
-  ['console', 'shell-session'],
-]);
-
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
   const pageinfo = props.data.markdown!;
-  const prismAliasesMapArray = props.data.prismAliasMap?.aliasesMap;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
     path: crumb!.slug,
     title: crumb!.title,
   }));
-
-  const imageData = props.data.markdown!.fields?.images;
-  const imageDataCollection = React.useMemo<ImageDataCollection>(() => {
-    const tmp_imageDataCollection: ImageDataCollection = {};
-    imageData?.forEach((image) => {
-      if (image != null) {
-        tmp_imageDataCollection[image.fields!.imagePath!] = image.gatsbyImageData;
-      }
-    });
-    return tmp_imageDataCollection;
-  }, [imageData]);
-
-  const prismAliasesMap = React.useMemo(
-    () =>
-      new Map([
-        ...(prismAliasesMapArray?.map((item) => [item!.alias, item!.name]) as [string, string][]),
-        ...defaultPrismAliasToName,
-      ]),
-    [prismAliasesMapArray],
-  );
 
   const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
   const [frontmatter, _setFrontmatter] = React.useState(content[0]);
@@ -74,7 +46,10 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     setMarkdown: setCurrentMarkdown,
     html,
     toc,
-  } = useMarkdownRenderer(markdown, slug, { imageDataCollection, prismAliasesMap });
+  } = useMarkdownRenderer(markdown, slug, {
+    imageDataFromQL: props.data.markdown!.fields?.images as ImageDataFromQL,
+    prismAliasesFromQL: props.data.prismAliasMap?.aliasesMap as PrismAliasesFromQL,
+  });
   useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
 
   const classes = useStyles();

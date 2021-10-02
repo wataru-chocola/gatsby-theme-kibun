@@ -2,8 +2,14 @@ import React, { useEffect } from 'react';
 
 import { md2hast } from '../utils/markdownParser';
 import { hast2toc } from '../utils/hastToc';
-import { hast2react, ImageDataCollection } from '../utils/hast2react';
+import { hast2react } from '../utils/hast2react';
 import { highlightSync, highlightAsync } from '../utils/syntaxHighlighter';
+
+import { usePrismAliasesMapFromQL, PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
+import {
+  useImageDataCollectionFromQL,
+  ImageDataFromQL,
+} from '../hooks/useImageDataCollectionFromQL';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -12,8 +18,8 @@ export function useMarkdownRenderer(
   md: string,
   slug: string,
   options?: {
-    imageDataCollection: ImageDataCollection;
-    prismAliasesMap: Map<string, string>;
+    imageDataFromQL: ImageDataFromQL;
+    prismAliasesFromQL: PrismAliasesFromQL;
   },
 ): {
   toc: React.ReactElement | null;
@@ -22,6 +28,9 @@ export function useMarkdownRenderer(
 } {
   const dispatch = useAppDispatch();
   const [markdown, setMarkdown] = React.useState(md);
+
+  const imageDataCollection = useImageDataCollectionFromQL(options?.imageDataFromQL);
+  const prismAliasesMap = usePrismAliasesMapFromQL(options?.prismAliasesFromQL);
 
   const hast = React.useMemo(() => {
     try {
@@ -43,18 +52,16 @@ export function useMarkdownRenderer(
     const [highlighted, missingLanguagesTmp] = highlightSync(hast);
     const missingLanguages: Array<string> = [];
     for (const missingLang of missingLanguagesTmp) {
-      if (options?.prismAliasesMap.has(missingLang)) {
+      if (prismAliasesMap.has(missingLang)) {
         missingLanguages.push(missingLang);
       } else {
         console.warn(`unknown syntax: ${missingLang}`);
       }
     }
 
-    setHtml(
-      highlighted != null ? hast2react(highlighted, slug, options?.imageDataCollection) : null,
-    );
+    setHtml(highlighted != null ? hast2react(highlighted, slug, imageDataCollection) : null);
     return missingLanguages;
-  }, [hast, slug, options?.imageDataCollection, options?.prismAliasesMap]);
+  }, [hast, slug, imageDataCollection, prismAliasesMap]);
 
   useEffect(() => {
     const f = async () => {
@@ -63,10 +70,10 @@ export function useMarkdownRenderer(
       }
 
       const [highlightedTmp, _missingLanguagesTmp] = await highlightAsync(hast, {
-        aliasToNameMap: options?.prismAliasesMap,
+        aliasToNameMap: prismAliasesMap,
       });
       try {
-        setHtml(hast2react(highlightedTmp, slug, options?.imageDataCollection));
+        setHtml(hast2react(highlightedTmp, slug, imageDataCollection));
       } catch (e) {
         console.error(e);
         dispatch(snackMessageActions.hideMessage({}));
@@ -75,14 +82,7 @@ export function useMarkdownRenderer(
       }
     };
     f();
-  }, [
-    missingLanguages,
-    options?.prismAliasesMap,
-    options?.imageDataCollection,
-    hast,
-    slug,
-    dispatch,
-  ]);
+  }, [missingLanguages, prismAliasesMap, imageDataCollection, hast, slug, dispatch]);
 
   const toc = React.useMemo<React.ReactElement | null>(() => {
     try {
