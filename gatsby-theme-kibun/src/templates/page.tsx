@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
@@ -12,10 +12,10 @@ import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
 import EditBox from '../components/editbox';
-import { splitFrontmatter, md2hast } from '../utils/markdownParser';
-import { hast2toc } from '../utils/hastToc';
-import { hast2react, ImageDataCollection } from '../utils/hast2react';
-import { highlightSync, highlightAsync } from '../utils/syntaxHighlighter';
+import { splitFrontmatter } from '../utils/markdownParser';
+import { ImageDataCollection } from '../utils/hast2react';
+
+import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
@@ -39,6 +39,7 @@ const defaultPrismAliasToName = new Map([
 ]);
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
+  console.log('page rendering');
   const pageinfo = props.data.markdown!;
   const prismAliasesMapArray = props.data.prismAliasMap?.aliasesMap;
   const slug = props.pageContext.slug! as string;
@@ -58,27 +59,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     return tmp_imageDataCollection;
   }, [imageData]);
 
-  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
-  const classes = useStyles();
-  const dispatch = useAppDispatch();
-
-  const [editmode, setEditmode] = React.useState(false);
-
-  const [frontmatter, _setFrontmatter] = React.useState(content[0]);
-  const [markdown, setMarkdown] = React.useState(content[1]);
-  const [currentMarkdown, setCurrentMarkdown] = React.useState(markdown);
-
-  const hast = React.useMemo(() => {
-    try {
-      return md2hast(currentMarkdown);
-    } catch (e) {
-      console.error(e);
-      dispatch(snackMessageActions.hideMessage({}));
-      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to parse markdown: '));
-      return null;
-    }
-  }, [currentMarkdown, dispatch]);
-
   const prismAliasesMap = React.useMemo(
     () =>
       new Map([
@@ -87,58 +67,20 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
       ]),
     [prismAliasesMapArray],
   );
-  const [reactTree, missingLanguages] = React.useMemo<
-    [React.ReactElement | null, Array<string>]
-  >(() => {
-    if (hast == null) {
-      return [null, []];
-    }
-    const [highlightedTmp, missingLanguagesTmp] = highlightSync(hast);
-    const missingLanguages: Array<string> = [];
-    const reactTree =
-      highlightedTmp != null ? hast2react(highlightedTmp, slug, imageDataCollection) : null;
-    for (const missingLang of missingLanguagesTmp) {
-      if (prismAliasesMap.has(missingLang)) {
-        missingLanguages.push(missingLang);
-      } else {
-        console.warn(`unknown syntax: ${missingLang}`);
-      }
-    }
-    return [reactTree, missingLanguages];
-  }, [hast, slug, imageDataCollection, prismAliasesMap]);
-  const [html, setHtml] = React.useState<React.ReactElement | null>(reactTree);
 
-  useEffect(() => {
-    const f = async () => {
-      if (hast == null || missingLanguages.length === 0) {
-        return;
-      }
+  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
+  const [frontmatter, _setFrontmatter] = React.useState(content[0]);
+  const [markdown, setMarkdown] = React.useState(content[1]);
+  const {
+    setMarkdown: setCurrentMarkdown,
+    html,
+    toc,
+  } = useMarkdownRenderer(markdown, slug, { imageDataCollection, prismAliasesMap });
 
-      const [highlightedTmp, _missingLanguagesTmp] = await highlightAsync(hast, {
-        aliasToNameMap: prismAliasesMap,
-      });
-      try {
-        setHtml(hast2react(highlightedTmp, slug, imageDataCollection));
-      } catch (e) {
-        console.error(e);
-        dispatch(snackMessageActions.hideMessage({}));
-        dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to render html: '));
-        return;
-      }
-    };
-    f();
-  }, [missingLanguages, prismAliasesMap, hast, imageDataCollection, slug, dispatch]);
+  const classes = useStyles();
+  const dispatch = useAppDispatch();
 
-  const toc = React.useMemo<React.ReactElement | null>(() => {
-    try {
-      return hast != null ? hast2toc(hast) : null;
-    } catch (e) {
-      console.error(e);
-      dispatch(snackMessageActions.hideMessage({}));
-      dispatch(snackMessageActions.addErrorMessage(e, 3000, 'failed to create toc: '));
-      return null;
-    }
-  }, [hast, dispatch]);
+  const [editmode, setEditmode] = React.useState(false);
 
   const saveMarkdown = React.useCallback(
     (md: string) => {
@@ -149,7 +91,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   );
   const resetMarkdown = React.useCallback(() => {
     setCurrentMarkdown(markdown);
-  }, [markdown]);
+  }, [markdown, setCurrentMarkdown]);
 
   const openEditmode = React.useCallback(() => {
     setEditmode(true);
