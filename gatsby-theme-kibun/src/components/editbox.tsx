@@ -141,6 +141,8 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
           .finally(() => {
             dispatch(isSavingActions.doneSaving({}));
           });
+      } else {
+        dispatch(isSavingActions.doneSaving({}));
       }
 
       saveMarkdown(markdown);
