@@ -12,7 +12,7 @@ import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
 import EditBox from '../components/editbox';
-import { splitFrontmatter } from '../utils/markdownParser';
+import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
 import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';

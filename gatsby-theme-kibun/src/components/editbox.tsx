@@ -13,7 +13,7 @@ import { selectIsSaving } from '../state/isSavingSelector';
 import { isSavingActions } from '../state/isSavingSlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
-import { splitFrontmatter } from '../utils/markdownParser';
+import { splitFrontmatter } from '../utils/markdown/markdownParser';
 import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
 
 const useStyles = makeStyles((theme: Theme) => ({
