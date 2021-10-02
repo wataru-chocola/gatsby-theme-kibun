@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
@@ -39,7 +39,6 @@ const defaultPrismAliasToName = new Map([
 ]);
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
-  console.log('page rendering');
   const pageinfo = props.data.markdown!;
   const prismAliasesMapArray = props.data.prismAliasMap?.aliasesMap;
   const slug = props.pageContext.slug! as string;
@@ -76,29 +75,19 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     html,
     toc,
   } = useMarkdownRenderer(markdown, slug, { imageDataCollection, prismAliasesMap });
+  useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
 
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
   const [editmode, setEditmode] = React.useState(false);
 
-  const saveMarkdown = React.useCallback(
-    (md: string) => {
-      setMarkdown(md);
-      setCurrentMarkdown(md);
-    },
-    [setMarkdown, setCurrentMarkdown],
+  const resetMarkdown = React.useCallback(
+    () => setCurrentMarkdown(markdown),
+    [markdown, setCurrentMarkdown],
   );
-  const resetMarkdown = React.useCallback(() => {
-    setCurrentMarkdown(markdown);
-  }, [markdown, setCurrentMarkdown]);
-
-  const openEditmode = React.useCallback(() => {
-    setEditmode(true);
-  }, [setEditmode]);
-  const closeEditmode = React.useCallback(() => {
-    setEditmode(false);
-  }, [setEditmode]);
+  const openEditmode = React.useCallback(() => setEditmode(true), [setEditmode]);
+  const closeEditmode = React.useCallback(() => setEditmode(false), [setEditmode]);
 
   const editboxErrHandler = React.useCallback(
     (e: Error) => {
@@ -116,7 +105,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
           <EditBox
             closeEditmode={closeEditmode}
-            saveMarkdown={saveMarkdown}
+            saveMarkdown={setMarkdown}
             renderMarkdown={setCurrentMarkdown}
             resetMarkdown={resetMarkdown}
             md={markdown}

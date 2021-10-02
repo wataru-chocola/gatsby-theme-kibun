@@ -64,8 +64,8 @@ export async function highlightAsync(
       if (!refractor.registered(lang)) {
         let alias: string | null = null;
         if (aliasToNameMap.has(lang)) {
-          lang = aliasToNameMap.get(lang);
           alias = lang;
+          lang = aliasToNameMap.get(lang);
         }
         try {
           const module = await import(`refractor/lang/${lang}.js`);

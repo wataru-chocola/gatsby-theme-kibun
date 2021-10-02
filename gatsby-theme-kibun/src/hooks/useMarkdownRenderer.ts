@@ -20,7 +20,6 @@ export function useMarkdownRenderer(
   html: React.ReactElement | null;
   setMarkdown: (md: string) => void;
 } {
-  console.log('markdown rendering');
   const dispatch = useAppDispatch();
   const [markdown, setMarkdown] = React.useState(md);
 
