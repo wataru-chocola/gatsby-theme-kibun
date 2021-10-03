@@ -818,6 +818,19 @@ type SectionMenuItem {
   to: String
 }
 
+type sectionMenu implements Node {
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+
+  # Returns all children nodes filtered by type SectionMenuCategory
+  childrenSectionMenuCategory: [SectionMenuCategory]
+
+  # Returns the first child node of type SectionMenuCategory or null if there are no children of given type on this node
+  childSectionMenuCategory: SectionMenuCategory
+}
+
 type PrismAliasMap implements Node {
   id: ID!
   parent: Node
@@ -852,6 +865,8 @@ type Query {
   allMarkdown(filter: MarkdownFilterInput, sort: MarkdownSortInput, skip: Int, limit: Int): MarkdownConnection!
   sectionMenuCategory(category: StringQueryOperatorInput, menu: SectionMenuItemFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): SectionMenuCategory
   allSectionMenuCategory(filter: SectionMenuCategoryFilterInput, sort: SectionMenuCategorySortInput, skip: Int, limit: Int): SectionMenuCategoryConnection!
+  sectionMenu(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, childrenSectionMenuCategory: SectionMenuCategoryFilterListInput, childSectionMenuCategory: SectionMenuCategoryFilterInput): sectionMenu
+  allSectionMenu(filter: sectionMenuFilterInput, sort: sectionMenuSortInput, skip: Int, limit: Int): sectionMenuConnection!
   prismAliasMap(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, aliasesMap: PrismAliasMapAliasesMapFilterListInput): PrismAliasMap
   allPrismAliasMap(filter: PrismAliasMapFilterInput, sort: PrismAliasMapSortInput, skip: Int, limit: Int): PrismAliasMapConnection!
 }
@@ -3117,6 +3132,230 @@ input SectionMenuCategoryFilterInput {
 
 input SectionMenuCategorySortInput {
   fields: [SectionMenuCategoryFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+input SectionMenuCategoryFilterListInput {
+  elemMatch: SectionMenuCategoryFilterInput
+}
+
+type sectionMenuConnection {
+  totalCount: Int!
+  edges: [sectionMenuEdge!]!
+  nodes: [sectionMenu!]!
+  pageInfo: PageInfo!
+  distinct(field: sectionMenuFieldsEnum!): [String!]!
+  max(field: sectionMenuFieldsEnum!): Float
+  min(field: sectionMenuFieldsEnum!): Float
+  sum(field: sectionMenuFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: sectionMenuFieldsEnum!): [sectionMenuGroupConnection!]!
+}
+
+type sectionMenuEdge {
+  next: sectionMenu
+  node: sectionMenu!
+  previous: sectionMenu
+}
+
+enum sectionMenuFieldsEnum {
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+  childrenSectionMenuCategory
+  childrenSectionMenuCategory___category
+  childrenSectionMenuCategory___menu
+  childrenSectionMenuCategory___menu___text
+  childrenSectionMenuCategory___menu___to
+  childrenSectionMenuCategory___id
+  childrenSectionMenuCategory___parent___id
+  childrenSectionMenuCategory___parent___parent___id
+  childrenSectionMenuCategory___parent___parent___children
+  childrenSectionMenuCategory___parent___children
+  childrenSectionMenuCategory___parent___children___id
+  childrenSectionMenuCategory___parent___children___children
+  childrenSectionMenuCategory___parent___internal___content
+  childrenSectionMenuCategory___parent___internal___contentDigest
+  childrenSectionMenuCategory___parent___internal___description
+  childrenSectionMenuCategory___parent___internal___fieldOwners
+  childrenSectionMenuCategory___parent___internal___ignoreType
+  childrenSectionMenuCategory___parent___internal___mediaType
+  childrenSectionMenuCategory___parent___internal___owner
+  childrenSectionMenuCategory___parent___internal___type
+  childrenSectionMenuCategory___children
+  childrenSectionMenuCategory___children___id
+  childrenSectionMenuCategory___children___parent___id
+  childrenSectionMenuCategory___children___parent___children
+  childrenSectionMenuCategory___children___children
+  childrenSectionMenuCategory___children___children___id
+  childrenSectionMenuCategory___children___children___children
+  childrenSectionMenuCategory___children___internal___content
+  childrenSectionMenuCategory___children___internal___contentDigest
+  childrenSectionMenuCategory___children___internal___description
+  childrenSectionMenuCategory___children___internal___fieldOwners
+  childrenSectionMenuCategory___children___internal___ignoreType
+  childrenSectionMenuCategory___children___internal___mediaType
+  childrenSectionMenuCategory___children___internal___owner
+  childrenSectionMenuCategory___children___internal___type
+  childrenSectionMenuCategory___internal___content
+  childrenSectionMenuCategory___internal___contentDigest
+  childrenSectionMenuCategory___internal___description
+  childrenSectionMenuCategory___internal___fieldOwners
+  childrenSectionMenuCategory___internal___ignoreType
+  childrenSectionMenuCategory___internal___mediaType
+  childrenSectionMenuCategory___internal___owner
+  childrenSectionMenuCategory___internal___type
+  childSectionMenuCategory___category
+  childSectionMenuCategory___menu
+  childSectionMenuCategory___menu___text
+  childSectionMenuCategory___menu___to
+  childSectionMenuCategory___id
+  childSectionMenuCategory___parent___id
+  childSectionMenuCategory___parent___parent___id
+  childSectionMenuCategory___parent___parent___children
+  childSectionMenuCategory___parent___children
+  childSectionMenuCategory___parent___children___id
+  childSectionMenuCategory___parent___children___children
+  childSectionMenuCategory___parent___internal___content
+  childSectionMenuCategory___parent___internal___contentDigest
+  childSectionMenuCategory___parent___internal___description
+  childSectionMenuCategory___parent___internal___fieldOwners
+  childSectionMenuCategory___parent___internal___ignoreType
+  childSectionMenuCategory___parent___internal___mediaType
+  childSectionMenuCategory___parent___internal___owner
+  childSectionMenuCategory___parent___internal___type
+  childSectionMenuCategory___children
+  childSectionMenuCategory___children___id
+  childSectionMenuCategory___children___parent___id
+  childSectionMenuCategory___children___parent___children
+  childSectionMenuCategory___children___children
+  childSectionMenuCategory___children___children___id
+  childSectionMenuCategory___children___children___children
+  childSectionMenuCategory___children___internal___content
+  childSectionMenuCategory___children___internal___contentDigest
+  childSectionMenuCategory___children___internal___description
+  childSectionMenuCategory___children___internal___fieldOwners
+  childSectionMenuCategory___children___internal___ignoreType
+  childSectionMenuCategory___children___internal___mediaType
+  childSectionMenuCategory___children___internal___owner
+  childSectionMenuCategory___children___internal___type
+  childSectionMenuCategory___internal___content
+  childSectionMenuCategory___internal___contentDigest
+  childSectionMenuCategory___internal___description
+  childSectionMenuCategory___internal___fieldOwners
+  childSectionMenuCategory___internal___ignoreType
+  childSectionMenuCategory___internal___mediaType
+  childSectionMenuCategory___internal___owner
+  childSectionMenuCategory___internal___type
+}
+
+type sectionMenuGroupConnection {
+  totalCount: Int!
+  edges: [sectionMenuEdge!]!
+  nodes: [sectionMenu!]!
+  pageInfo: PageInfo!
+  distinct(field: sectionMenuFieldsEnum!): [String!]!
+  max(field: sectionMenuFieldsEnum!): Float
+  min(field: sectionMenuFieldsEnum!): Float
+  sum(field: sectionMenuFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: sectionMenuFieldsEnum!): [sectionMenuGroupConnection!]!
+  field: String!
+  fieldValue: String
+}
+
+input sectionMenuFilterInput {
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+  childrenSectionMenuCategory: SectionMenuCategoryFilterListInput
+  childSectionMenuCategory: SectionMenuCategoryFilterInput
+}
+
+input sectionMenuSortInput {
+  fields: [sectionMenuFieldsEnum]
   order: [SortOrderEnum] = [ASC]
 }
 

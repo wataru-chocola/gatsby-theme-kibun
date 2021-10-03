@@ -54,22 +54,20 @@ export const SectionNavigationList: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteSectionMenuQuery>(
     graphql`
       query SiteSectionMenu {
-        allSectionMenuCategory {
-          edges {
-            node {
-              category
-              menu {
-                text
-                to
-              }
+        sectionMenu {
+          childrenSectionMenuCategory {
+            menu {
+              text
+              to
             }
+            category
           }
         }
       }
     `,
   );
   const naviData: NaviDataType =
-    (data.allSectionMenuCategory?.edges.map((edge) => edge.node) as NaviDataType) || [];
+    (data.sectionMenu?.childrenSectionMenuCategory as NaviDataType) || [];
   const classes = useStyles();
 
   const naviListItems: React.ReactElement[] = [];
