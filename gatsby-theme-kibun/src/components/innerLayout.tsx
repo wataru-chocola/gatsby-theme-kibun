@@ -7,7 +7,7 @@ import { Hidden } from '@material-ui/core';
 
 import { AppBar, SiteTitle, MenuButton, SearchBox } from './appbar';
 import { AccountButton } from './accountButton';
-import { SignInButton } from './signInButton';
+import { LogInButton } from './logInButton';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
 import { SnackMessage } from './snackMessage';
@@ -70,7 +70,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
         <SiteTitle />
         <div className={classes.grow} />
         <SearchBox />
-        {isLoggedIn ? <AccountButton /> : <SignInButton />}
+        {isLoggedIn ? <AccountButton /> : <LogInButton />}
       </AppBar>
 
       <nav aria-label="sidemenu">

@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SignInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
+export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const [inLoginProgress, setInLoginProgress] = React.useState<boolean>(false);
@@ -168,4 +168,4 @@ export const SignInButton = React.forwardRef<HTMLButtonElement>((_props, ref) =>
     </React.Fragment>
   );
 });
-SignInButton.displayName = 'SignInButton';
+LogInButton.displayName = 'SignInButton';
