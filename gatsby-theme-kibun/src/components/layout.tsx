@@ -2,7 +2,7 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 
-import Seo from './seo';
+import Seo from './utils/seo';
 import theme from '../theme';
 
 import InnerLayout, { InnerLayoutProps } from './innerLayout';

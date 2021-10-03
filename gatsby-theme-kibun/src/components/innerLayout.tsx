@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Toolbar } from '@material-ui/core';
 import { Container, ContainerProps } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { Hidden } from '@material-ui/core';
 
-import { HeaderBar } from './headerbar';
+import { HeaderBar } from './headerBar';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { SectionNavigationList } from './sectionNavigationList';
-import { SnackMessage } from './snackMessage';
-import ErrorBoundary from './errorboundary';
+import { SnackMessage } from './utils/snackMessage';
+import ErrorBoundary from './utils/errorboundary';
 
 const drawerWidth = 240;
 
@@ -40,9 +40,9 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
   const container = window !== undefined ? () => window().document.body : undefined;
 
-  const handleDrawerToggle = () => {
-    setMobileDrawerOpen(!mobileDrawerOpen);
-  };
+  const handleDrawerToggle = useCallback(() => {
+    setMobileDrawerOpen((prev) => !prev);
+  }, [setMobileDrawerOpen]);
 
   return (
     <div className={classes.root}>

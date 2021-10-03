@@ -3,7 +3,7 @@ import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
-import ErrorBoundary from '../components/errorboundary';
+import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@material-ui/core';
 import { Box, Slide } from '@material-ui/core';
