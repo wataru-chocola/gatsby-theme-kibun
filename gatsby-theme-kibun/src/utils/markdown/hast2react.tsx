@@ -4,7 +4,7 @@ import { unified } from 'unified';
 import { Root as HastRoot } from 'hast';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { MuiGatsbyLink } from './link';
+import { MuiGatsbyLink } from '../link';
 import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
 import path from 'path';
 

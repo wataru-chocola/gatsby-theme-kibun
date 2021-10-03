@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageDataCollection } from '../utils/hast2react';
+import { ImageDataCollection } from '../utils/markdown/hast2react';
 import { ImageDataLike } from 'gatsby-plugin-image';
 
 type ImageFromQL = {

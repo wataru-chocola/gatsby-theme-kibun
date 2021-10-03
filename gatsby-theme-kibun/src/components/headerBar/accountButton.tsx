@@ -3,8 +3,8 @@ import { IconButton } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-import { useAppDispatch } from '../state/hooks';
-import { loginActions } from '../state/loginSlice';
+import { useAppDispatch } from '../../state/hooks';
+import { loginActions } from '../../state/loginSlice';
 
 export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const menuId = 'account-menu';

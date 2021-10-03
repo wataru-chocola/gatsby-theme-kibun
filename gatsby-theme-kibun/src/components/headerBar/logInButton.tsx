@@ -6,8 +6,8 @@ import { Octokit } from '@octokit/core';
 import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
 import Alert from '@material-ui/lab/Alert';
 
-import { useAppDispatch } from '../state/hooks';
-import { loginActions } from '../state/loginSlice';
+import { useAppDispatch } from '../../state/hooks';
+import { loginActions } from '../../state/loginSlice';
 
 const MyOctokit = Octokit.plugin(restEndpointMethods);
 
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const SignInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
+export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const [inLoginProgress, setInLoginProgress] = React.useState<boolean>(false);
@@ -85,7 +85,7 @@ export const SignInButton = React.forwardRef<HTMLButtonElement>((_props, ref) =>
     const octokit = new MyOctokit({ auth: patoken });
     octokit.rest.users
       .getAuthenticated()
-      .then((response) => {
+      .then((_response) => {
         setLoginDone(true);
         objRef.current.timer = window.setTimeout(() => {
           dispatch(loginActions.logIn(patoken));
@@ -168,4 +168,4 @@ export const SignInButton = React.forwardRef<HTMLButtonElement>((_props, ref) =>
     </React.Fragment>
   );
 });
-SignInButton.displayName = 'SignInButton';
+LogInButton.displayName = 'SignInButton';

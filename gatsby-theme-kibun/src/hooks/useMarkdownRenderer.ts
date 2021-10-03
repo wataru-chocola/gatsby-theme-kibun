@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
-import { md2hast } from '../utils/markdownParser';
-import { hast2toc } from '../utils/hastToc';
-import { hast2react } from '../utils/hast2react';
+import { md2hast } from '../utils/markdown/markdownParser';
+import { hast2toc } from '../utils/markdown/hastToc';
+import { hast2react } from '../utils/markdown/hast2react';
 import { highlightSync, highlightAsync } from '../utils/syntaxHighlighter';
 
 import { usePrismAliasesMapFromQL, PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
