@@ -6,8 +6,8 @@ import { Octokit } from '@octokit/core';
 import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
 import Alert from '@material-ui/lab/Alert';
 
-import { useAppDispatch } from '../state/hooks';
-import { loginActions } from '../state/loginSlice';
+import { useAppDispatch } from '../../state/hooks';
+import { loginActions } from '../../state/loginSlice';
 
 const MyOctokit = Octokit.plugin(restEndpointMethods);
 
@@ -85,7 +85,7 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
     const octokit = new MyOctokit({ auth: patoken });
     octokit.rest.users
       .getAuthenticated()
-      .then((response) => {
+      .then((_response) => {
         setLoginDone(true);
         objRef.current.timer = window.setTimeout(() => {
           dispatch(loginActions.logIn(patoken));
