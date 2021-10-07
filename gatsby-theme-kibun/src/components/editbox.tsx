@@ -8,13 +8,14 @@ import { Box, Paper, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
-import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
+import { selectIsLoggedIn } from '../state/loginSelector';
 import { selectIsSaving } from '../state/isSavingSelector';
 import { isSavingActions } from '../state/isSavingSlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
-import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
+
+import { useGithubRepoOperator } from '../hooks/useGithubRepoOperator';
 
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
@@ -65,21 +66,8 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     const isSaving = useAppSelector((state) => selectIsSaving(state));
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
-    const token = useAppSelector((state) => selectToken(state));
     const dispatch = useAppDispatch();
-    const repoInfo = useGithubRepositoryInfo();
-    const github = React.useMemo(
-      () =>
-        new githubRepoOperator(
-          {
-            project: repoInfo.project,
-            branch: repoInfo.branch,
-            basePath: repoInfo.rootDir,
-          },
-          { token: token as string },
-        ),
-      [repoInfo, token],
-    );
+    const github = useGithubRepoOperator();
 
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
