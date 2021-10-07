@@ -82,11 +82,12 @@ export async function transformFileToMarkdown({
 
     return markdownNodeCreated;
   } catch (err) {
+    const errmsg = err instanceof Error ? err.message : String(err);
     reporter.panicOnBuild(
       `Error processing Markdown ${
         node.absolutePath ? `file ${node.absolutePath}` : `in node ${node.id}`
       }:\n
-        ${err.message}`,
+        ${errmsg}`,
     );
     return;
   }
