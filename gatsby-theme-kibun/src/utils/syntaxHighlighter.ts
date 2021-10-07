@@ -74,9 +74,11 @@ export async function highlightAsync(
             refractor.alias(lang, alias);
           }
         } catch (e) {
-          if (/Cannot find module/.test(e.message)) {
+          if (e instanceof Error && /Cannot find module/.test(e.message)) {
             missingLanguages.push(lang);
             lang = 'text';
+          } else {
+            throw e;
           }
         }
       }

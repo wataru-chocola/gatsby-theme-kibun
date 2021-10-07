@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/core';
-import type { RequestError } from '@octokit/types';
+import { RequestError } from '@octokit/request-error';
 import {
   restEndpointMethods,
   RestEndpointMethodTypes,
@@ -193,14 +193,8 @@ export class githubRepoOperator {
         merged = true;
         break;
       } catch (e) {
-        if (
-          typeof e === 'object' &&
-          e != null &&
-          'status' in e &&
-          typeof (e as any).status === 'number'
-        ) {
-          const tmp_e: RequestError = e as RequestError;
-          if (tmp_e.status != null && (tmp_e.status === 409 || tmp_e.status === 405)) {
+        if (e instanceof RequestError) {
+          if (e.status != null && (e.status === 409 || e.status === 405)) {
             error = e;
             await sleepAsync(2000);
             continue;
@@ -229,7 +223,7 @@ export class githubRepoOperator {
     const now = new Date();
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const randomName = [...Array(16).keys()]
-      .map((i) => chars.charAt(Math.floor(Math.random() * chars.length)))
+      .map((_i) => chars.charAt(Math.floor(Math.random() * chars.length)))
       .join('');
     return `update-${now.getFullYear()}${now.getMonth()}${now.getDate()}-${randomName}`;
   }

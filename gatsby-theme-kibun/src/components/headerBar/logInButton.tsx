@@ -94,8 +94,8 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
           setAnchorEl(null);
         }, 1000);
       })
-      .catch((error) => {
-        setLoginErrorMsg(error.message);
+      .catch((error: unknown) => {
+        setLoginErrorMsg(error instanceof Error ? error.message : String(error));
         setInLoginProgress(false);
         setLoginError(true);
       });

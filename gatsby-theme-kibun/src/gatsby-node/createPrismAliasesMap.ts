@@ -48,9 +48,10 @@ export async function createPrismAliasesMap({
     prismAliasesNode.internal.contentDigest = createContentDigest(prismAliasesNode);
     createNode(prismAliasesNode);
   } catch (err) {
+    const errmsg = err instanceof Error ? err.message : String(err);
     reporter.panicOnBuild(
       `Error creating prism alias map:\n
-        ${err.message}`,
+        ${errmsg}`,
     );
     return null;
   }
