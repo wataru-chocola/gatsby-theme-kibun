@@ -5,6 +5,7 @@ import {
   RestEndpointMethodTypes,
 } from '@octokit/plugin-rest-endpoint-methods';
 
+import { sleepAsync } from './sleepAsync';
 import cloneDeep from 'lodash/cloneDeep';
 
 async function fetchNoCache(
@@ -291,12 +292,4 @@ export class githubRepoOperator {
 
     throw Error('cannot get mergeable property');
   }
-}
-
-async function sleepAsync(ms: number): Promise<null> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(null);
-    }, ms);
-  });
 }
