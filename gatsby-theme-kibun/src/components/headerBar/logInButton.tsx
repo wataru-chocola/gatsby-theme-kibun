@@ -2,14 +2,12 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Popover, TextField, Box, Typography, Button } from '@material-ui/core';
 import { Collapse, CircularProgress } from '@material-ui/core';
-import { Octokit } from '@octokit/core';
-import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
 import Alert from '@material-ui/lab/Alert';
 
-import { useAppDispatch } from '../../state/hooks';
+import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { loginActions } from '../../state/loginSlice';
-
-const MyOctokit = Octokit.plugin(restEndpointMethods);
+import { githubAPIActions } from '../../state/githubAPISlice';
+import { selectLoginState, selectLoginError } from '../../state/loginSelector';
 
 const useStyles = makeStyles((theme) => ({
   loginTitle: {
@@ -40,14 +38,9 @@ const useStyles = makeStyles((theme) => ({
 
 export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const [inLoginProgress, setInLoginProgress] = React.useState<boolean>(false);
   const [patoken, setPAToken] = React.useState<string>('');
-  const [loginDone, setLoginDone] = React.useState<boolean>(false);
-  const [loginError, setLoginError] = React.useState<boolean>(false);
-  const [loginErrorMsg, setLoginErrorMsg] = React.useState<string>('');
-
-  const objRef = React.useRef<{ timer?: number }>({});
+  const loginState = useAppSelector((state) => selectLoginState(state));
+  const loginError = useAppSelector((state) => selectLoginError(state));
   const dispatch = useAppDispatch();
 
   const isMenuOpen = Boolean(anchorEl);
@@ -60,17 +53,8 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
     [setPAToken],
   );
 
-  React.useEffect(() => {
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      const timer = objRef.current.timer;
-      if (timer != null) {
-        clearTimeout(timer);
-      }
-    };
-  }, [objRef]);
-
   const handleLoginBoxOpen = (event: React.MouseEvent<HTMLElement>) => {
+    dispatch(loginActions.clearState({}));
     setAnchorEl(event.currentTarget);
   };
   const handleLoginBoxClose = () => {
@@ -78,27 +62,7 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
   };
 
   const clickLoginButton = () => {
-    setLoginDone(false);
-    setLoginError(false);
-    setInLoginProgress(true);
-
-    const octokit = new MyOctokit({ auth: patoken });
-    octokit.rest.users
-      .getAuthenticated()
-      .then((_response) => {
-        setLoginDone(true);
-        objRef.current.timer = window.setTimeout(() => {
-          dispatch(loginActions.logIn(patoken));
-          setInLoginProgress(false);
-
-          setAnchorEl(null);
-        }, 1000);
-      })
-      .catch((error: unknown) => {
-        setLoginErrorMsg(error instanceof Error ? error.message : String(error));
-        setInLoginProgress(false);
-        setLoginError(true);
-      });
+    dispatch(githubAPIActions.login(patoken));
   };
 
   const loginForm = (
@@ -134,18 +98,20 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
             color="primary"
             className={classes.button}
             onClick={clickLoginButton}
-            disabled={inLoginProgress}
+            disabled={loginState === 'progress' || loginState === 'succeeded'}
           >
             Log in to Github
           </Button>
-          {inLoginProgress && <CircularProgress className={classes.circularProgress} />}
+          {(loginState === 'progress' || loginState === 'succeeded') && (
+            <CircularProgress className={classes.circularProgress} />
+          )}
         </Box>
         <Box py={2}>
-          <Collapse in={loginDone}>
+          <Collapse in={loginState === 'succeeded'}>
             <Alert severity="success">success</Alert>
           </Collapse>
-          <Collapse in={loginError}>
-            <Alert severity="error">failed: {loginErrorMsg}</Alert>
+          <Collapse in={loginState === 'failed'}>
+            <Alert severity="error">failed: {loginError}</Alert>
           </Collapse>
         </Box>
       </Box>

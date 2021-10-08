@@ -8,13 +8,18 @@ import { Box, Paper, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
-import { selectIsLoggedIn, selectToken } from '../state/loginSelector';
-import { selectIsSaving } from '../state/isSavingSelector';
-import { isSavingActions } from '../state/isSavingSlice';
+import { selectIsLoggedIn } from '../state/loginSelector';
+import {
+  selectGithubUpdateMarkdownError,
+  selectGithubUpdateMarkdownState,
+  selectGithubGetMarkdownState,
+  selectGithubGetMarkdownError,
+  selectGithubGetMarkdownResult,
+} from '../state/githubAPISelector';
+import { githubAPIActions } from '../state/githubAPISlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
-import { splitFrontmatter } from '../utils/markdown/markdownParser';
-import { githubRepoOperator, useGithubRepositoryInfo } from '../utils/github';
+import { useGithubRepoOperator } from '../hooks/useGithubRepoOperator';
 
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
@@ -53,7 +58,62 @@ interface EditBoxProps {
   frontmatter?: string;
 }
 
-const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
+export const EditBoxMonitor: React.VFC = () => {
+  const dispatch = useAppDispatch();
+
+  const updatingState = useAppSelector((state) => selectGithubUpdateMarkdownState(state));
+  const updatingError = useAppSelector((state) => selectGithubUpdateMarkdownError(state));
+  const gettingState = useAppSelector((state) => selectGithubGetMarkdownState(state));
+  const gettingError = useAppSelector((state) => selectGithubGetMarkdownError(state));
+
+  React.useEffect(() => {
+    switch (updatingState) {
+      case 'progress':
+        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
+        break;
+      case 'succeeded':
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(
+          snackMessageActions.setMessage({
+            message: 'success!',
+            severity: 'success',
+            autoHideDuration: 2000,
+          }),
+        );
+        break;
+      case 'failed':
+        console.error(updatingError);
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(
+          snackMessageActions.addErrorMessage(
+            updatingError,
+            3000,
+            'failed to update github content: ',
+          ),
+        );
+    }
+  }, [dispatch, updatingState, updatingError]);
+
+  React.useEffect(() => {
+    switch (gettingState) {
+      case 'failed':
+        console.error(gettingError);
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(
+          snackMessageActions.addErrorMessage(
+            gettingError,
+            3000,
+            'failed to fetch content source: ',
+          ),
+        );
+    }
+  }, [dispatch, gettingState, gettingError]);
+
+  return null;
+};
+EditBoxMonitor.displayName = 'EditBoxMonitor';
+
+export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
   (
     { closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md, frontmatter },
     forwardedRef,
@@ -63,23 +123,12 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
 
-    const isSaving = useAppSelector((state) => selectIsSaving(state));
+    const updatingState = useAppSelector((state) => selectGithubUpdateMarkdownState(state));
+    const gettingMarkdownResult = useAppSelector((state) => selectGithubGetMarkdownResult(state));
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
-    const token = useAppSelector((state) => selectToken(state));
+
     const dispatch = useAppDispatch();
-    const repoInfo = useGithubRepositoryInfo();
-    const github = React.useMemo(
-      () =>
-        new githubRepoOperator(
-          {
-            project: repoInfo.project,
-            branch: repoInfo.branch,
-            basePath: repoInfo.rootDir,
-          },
-          { token: token as string },
-        ),
-      [repoInfo, token],
-    );
+    const github = useGithubRepoOperator();
 
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
@@ -95,54 +144,26 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     React.useEffect(() => {
       if (isLoggedIn) {
-        github
-          .getFileContent(srcPath)
-          .then((content) => {
-            const tmpContent = splitFrontmatter(content);
-            if (tmpContent[1] !== markdown) {
-              console.log('detect diff');
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-            dispatch(snackMessageActions.hideMessage({}));
-            dispatch(
-              snackMessageActions.addErrorMessage(e, 3000, 'failed to fetch content source: '),
-            );
-          });
+        dispatch(githubAPIActions.getMarkdown({ github: github, path: srcPath }));
       }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+    React.useEffect(() => {
+      if (gettingMarkdownResult != null && gettingMarkdownResult !== markdown) {
+        console.log('detect diff');
+      }
+    }, [gettingMarkdownResult]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const saveEditing = React.useCallback(() => {
-      dispatch(isSavingActions.startSaving({}));
       if (markdown !== md && isLoggedIn) {
-        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
-        const newContent = '---\n' + frontmatter + '\n---\n' + markdown;
-        github
-          .updateMarkdown(srcPath, newContent)
-          .then(() => {
-            console.log('update markdown');
-            dispatch(snackMessageActions.hideMessage({}));
-            dispatch(
-              snackMessageActions.setMessage({
-                message: 'success!',
-                severity: 'success',
-                autoHideDuration: 2000,
-              }),
-            );
-          })
-          .catch((e) => {
-            console.error(e);
-            dispatch(snackMessageActions.hideMessage({}));
-            dispatch(
-              snackMessageActions.addErrorMessage(e, 3000, 'failed to update github content: '),
-            );
-          })
-          .finally(() => {
-            dispatch(isSavingActions.doneSaving({}));
-          });
-      } else {
-        dispatch(isSavingActions.doneSaving({}));
+        dispatch(
+          githubAPIActions.updateMarkdown({
+            github: github,
+            path: srcPath,
+            frontmatter: frontmatter || '',
+            markdown: markdown,
+          }),
+        );
       }
 
       saveMarkdown(markdown);
@@ -169,9 +190,9 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
       },
       [setMarkdown],
     );
-    const previewRenderedHTML = () => {
+    const previewRenderedHTML = React.useCallback(() => {
       renderMarkdown(markdown);
-    };
+    }, [renderMarkdown, markdown]);
 
     const buttons = [
       <Tooltip title="cancel" aria-label="cancel" key="cancel">
@@ -185,7 +206,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         </IconButton>
       </Tooltip>,
       <Tooltip title="save" aria-label="save" key="save">
-        <IconButton color="primary" onClick={saveEditing} disabled={isSaving}>
+        <IconButton color="primary" onClick={saveEditing} disabled={updatingState === 'progress'}>
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
