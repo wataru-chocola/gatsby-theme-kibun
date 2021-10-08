@@ -6,6 +6,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { loginActions } from '../../state/loginSlice';
+import { githubAPIActions } from '../../state/githubAPISlice';
 import { selectLoginState, selectLoginError } from '../../state/loginSelector';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,7 +62,7 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
   };
 
   const clickLoginButton = () => {
-    dispatch(loginActions.login(patoken));
+    dispatch(githubAPIActions.login(patoken));
   };
 
   const loginForm = (

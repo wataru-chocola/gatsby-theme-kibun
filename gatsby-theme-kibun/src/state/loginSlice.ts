@@ -1,9 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { sleepAsync } from '../utils/sleepAsync';
-import { Octokit } from '@octokit/core';
-import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
-
-const MyOctokit = Octokit.plugin(restEndpointMethods);
+import { createSlice } from '@reduxjs/toolkit';
+import { githubAPIActions } from './githubAPISlice';
 
 type loginState = (
   | {
@@ -18,17 +14,8 @@ type loginState = (
   state: 'pending' | 'progress' | 'succeeded' | 'succeededDone' | 'failed';
 };
 
-const actionLoginSucceeded = 'github/login/succeeded';
-
-const login = createAsyncThunk('github/login', async (token: string, thunkAPI) => {
-  const { dispatch } = thunkAPI;
-  const octokit = new MyOctokit({ auth: token });
-
-  await octokit.rest.users.getAuthenticated();
-  dispatch({ type: actionLoginSucceeded });
-  await sleepAsync(1000);
-  return token;
-});
+const login = githubAPIActions.login;
+const loginSucceeded = `${login.typePrefix}/login/succeeded`;
 
 const initialState: loginState = { isLoggedIn: false, state: 'pending' };
 
@@ -47,7 +34,7 @@ const loginSlice = createSlice({
     [login.pending.type]: (state, _action) => {
       state.state = 'progress';
     },
-    [actionLoginSucceeded]: (state, _action) => {
+    [loginSucceeded]: (state, _action) => {
       state.state = 'succeeded';
     },
     [login.fulfilled.type]: (_state, action) => {
@@ -61,4 +48,4 @@ const loginSlice = createSlice({
 });
 
 export const loginReducer = loginSlice.reducer;
-export const loginActions = Object.assign({}, loginSlice.actions, { login });
+export const loginActions = loginSlice.actions;

@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { githubRepoOperator } from '../utils/github';
+import { sleepAsync } from '../utils/sleepAsync';
+
+import { Octokit } from '@octokit/core';
+import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
+
+const MyOctokit = Octokit.plugin(restEndpointMethods);
 
 type apiState = {
   state: 'pending' | 'progress' | 'succeeded' | 'failed';
@@ -9,6 +15,16 @@ type apiState = {
 type githubAPIState = {
   update: apiState;
 };
+
+const login = createAsyncThunk('githubAPI/login', async (token: string, thunkAPI) => {
+  const { dispatch } = thunkAPI;
+  const octokit = new MyOctokit({ auth: token });
+
+  await octokit.rest.users.getAuthenticated();
+  dispatch({ type: 'githubAPI/login/succeeded' });
+  await sleepAsync(1000);
+  return token;
+});
 
 const updateMarkdown = createAsyncThunk(
   'githubAPI/update',
@@ -42,5 +58,6 @@ const githubAPISlice = createSlice({
 
 export const githubAPIReducer = githubAPISlice.reducer;
 export const githubAPIActions = Object.assign({}, githubAPISlice.actions, {
+  login,
   updateMarkdown,
 });
