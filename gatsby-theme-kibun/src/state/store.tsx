@@ -4,14 +4,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import { loginReducer } from './loginSlice';
 import { snackMessageReducer } from './snackMessageSlice';
-import { isSavingReducer } from './isSavingSlice';
+import { githubAPIReducer } from './githubAPISlice';
 
 const createStore = () => {
   return configureStore({
     reducer: {
       login: loginReducer,
       snackMessage: snackMessageReducer,
-      isSaving: isSavingReducer,
+      githubAPI: githubAPIReducer,
     },
   });
 };

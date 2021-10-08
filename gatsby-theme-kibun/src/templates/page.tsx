@@ -11,7 +11,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
-import EditBox from '../components/editbox';
+import EditBox, { EditBoxMonitor } from '../components/editbox';
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
 import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
@@ -76,6 +76,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
     <Layout pageTitle={title}>
+      <EditBoxMonitor />
       <Slide in={editmode} mountOnEnter unmountOnExit>
         <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
           <EditBox

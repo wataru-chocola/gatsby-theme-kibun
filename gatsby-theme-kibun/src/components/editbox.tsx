@@ -9,8 +9,11 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
 import { selectIsLoggedIn } from '../state/loginSelector';
-import { selectIsSaving } from '../state/isSavingSelector';
-import { isSavingActions } from '../state/isSavingSlice';
+import {
+  selectGithubUpdateMarkdownError,
+  selectGithubUpdateMarkdownState,
+} from '../state/githubAPISelector';
+import { githubAPIActions } from '../state/githubAPISlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
@@ -54,7 +57,44 @@ interface EditBoxProps {
   frontmatter?: string;
 }
 
-const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
+export const EditBoxMonitor: React.VFC = () => {
+  const dispatch = useAppDispatch();
+  const updatingState = useAppSelector((state) => selectGithubUpdateMarkdownState(state));
+  const updatingError = useAppSelector((state) => selectGithubUpdateMarkdownError(state));
+
+  React.useEffect(() => {
+    switch (updatingState) {
+      case 'progress':
+        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
+        break;
+      case 'succeeded':
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(
+          snackMessageActions.setMessage({
+            message: 'success!',
+            severity: 'success',
+            autoHideDuration: 2000,
+          }),
+        );
+        break;
+      case 'failed':
+        console.error(updatingError);
+        dispatch(snackMessageActions.hideMessage({}));
+        dispatch(
+          snackMessageActions.addErrorMessage(
+            updatingError,
+            3000,
+            'failed to update github content: ',
+          ),
+        );
+    }
+  }, [dispatch, updatingState, updatingError]);
+
+  return null;
+};
+EditBoxMonitor.displayName = 'EditBoxMonitor';
+
+export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
   (
     { closeEditmode, saveMarkdown, renderMarkdown, resetMarkdown, srcPath, md, frontmatter },
     forwardedRef,
@@ -64,7 +104,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     const classes = useStyles();
     const innerRef = React.useRef<HTMLDivElement>();
 
-    const isSaving = useAppSelector((state) => selectIsSaving(state));
+    const updatingState = useAppSelector((state) => selectGithubUpdateMarkdownState(state));
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const dispatch = useAppDispatch();
     const github = useGithubRepoOperator();
@@ -102,35 +142,15 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const saveEditing = React.useCallback(() => {
-      dispatch(isSavingActions.startSaving({}));
       if (markdown !== md && isLoggedIn) {
-        dispatch(snackMessageActions.setMessage({ message: 'saving changes' }));
-        const newContent = '---\n' + frontmatter + '\n---\n' + markdown;
-        github
-          .updateMarkdown(srcPath, newContent)
-          .then(() => {
-            console.log('update markdown');
-            dispatch(snackMessageActions.hideMessage({}));
-            dispatch(
-              snackMessageActions.setMessage({
-                message: 'success!',
-                severity: 'success',
-                autoHideDuration: 2000,
-              }),
-            );
-          })
-          .catch((e) => {
-            console.error(e);
-            dispatch(snackMessageActions.hideMessage({}));
-            dispatch(
-              snackMessageActions.addErrorMessage(e, 3000, 'failed to update github content: '),
-            );
-          })
-          .finally(() => {
-            dispatch(isSavingActions.doneSaving({}));
-          });
-      } else {
-        dispatch(isSavingActions.doneSaving({}));
+        dispatch(
+          githubAPIActions.updateMarkdown({
+            github: github,
+            path: srcPath,
+            frontmatter: frontmatter || '',
+            markdown: markdown,
+          }),
+        );
       }
 
       saveMarkdown(markdown);
@@ -173,7 +193,7 @@ const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
         </IconButton>
       </Tooltip>,
       <Tooltip title="save" aria-label="save" key="save">
-        <IconButton color="primary" onClick={saveEditing} disabled={isSaving}>
+        <IconButton color="primary" onClick={saveEditing} disabled={updatingState === 'progress'}>
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
