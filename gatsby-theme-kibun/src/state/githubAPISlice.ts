@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { githubRepoOperator } from '../utils/github';
+
 import { sleepAsync } from '../utils/sleepAsync';
+import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
 import { Octokit } from '@octokit/core';
 import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods';
@@ -14,6 +16,10 @@ type apiState = {
 
 type githubAPIState = {
   update: apiState;
+  getMarkdown: apiState & {
+    frontmatter?: string;
+    markdown?: string;
+  };
 };
 
 const login = createAsyncThunk('githubAPI/login', async (token: string, thunkAPI) => {
@@ -38,9 +44,22 @@ const updateMarkdown = createAsyncThunk(
   },
 );
 
+const getMarkdown = createAsyncThunk(
+  'githubAPI/getFile',
+  async (payload: { github: githubRepoOperator; path: string }, _thunkAPI) => {
+    const github = payload.github;
+    const content = await github.getFileContent(payload.path);
+    const [frontmatter, markdown] = splitFrontmatter(content);
+    return [frontmatter, markdown];
+  },
+);
+
 const githubAPISlice = createSlice({
   name: 'githubAPI',
-  initialState: { update: { state: 'pending' } } as githubAPIState,
+  initialState: {
+    update: { state: 'pending' },
+    getMarkdown: { state: 'pending' },
+  } as githubAPIState,
   reducers: {},
   extraReducers: {
     [updateMarkdown.pending.type]: (state, _action) => {
@@ -53,6 +72,20 @@ const githubAPISlice = createSlice({
       state.update.state = 'failed';
       state.update.error = action.error.message;
     },
+
+    [getMarkdown.pending.type]: (state, _action) => {
+      state.getMarkdown.state = 'progress';
+    },
+    [getMarkdown.fulfilled.type]: (state, action) => {
+      state.getMarkdown.state = 'succeeded';
+      const [frontmatter, markdown] = action.payload;
+      state.getMarkdown.frontmatter = frontmatter;
+      state.getMarkdown.markdown = markdown;
+    },
+    [getMarkdown.rejected.type]: (state, action) => {
+      state.getMarkdown.state = 'failed';
+      state.getMarkdown.error = action.error.message;
+    },
   },
 });
 
@@ -60,4 +93,5 @@ export const githubAPIReducer = githubAPISlice.reducer;
 export const githubAPIActions = Object.assign({}, githubAPISlice.actions, {
   login,
   updateMarkdown,
+  getMarkdown,
 });
