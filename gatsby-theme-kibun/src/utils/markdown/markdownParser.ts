@@ -11,6 +11,7 @@ import remarkMath from 'remark-math';
 import autolinkHeader from './autolinkHeader';
 import matter from 'gray-matter';
 import { remarkDefinitionList, defListHastHandlers } from 'remark-definition-list';
+import { remarkExtendedTable, extendedTableHandlers } from 'remark-extended-table';
 
 const mdastParagraph2hast: Handler = (h, tmp_node) => {
   const node = tmp_node as Paragraph;
@@ -25,9 +26,14 @@ const markdownHastProcessor = unified()
   .use(remarkDefinitionList)
   .use(remarkMath, { singleDollarTextMath: false })
   .use(remarkGfm, { singleTilde: false })
+  .use(remarkExtendedTable, { colspanWithEmpty: true })
   .use(remarkRehype, {
     allowDangerousHtml: true,
-    handlers: Object.assign({ paragraph: mdastParagraph2hast }, defListHastHandlers),
+    handlers: Object.assign(
+      { paragraph: mdastParagraph2hast },
+      defListHastHandlers,
+      extendedTableHandlers,
+    ),
   })
   .use(rehypeRaw)
   .use(rehypeKatex)
