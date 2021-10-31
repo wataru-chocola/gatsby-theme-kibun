@@ -430,8 +430,6 @@ type SitePluginPluginOptions {
 type SitePluginPluginOptionsOptions {
   emitWarning: Boolean
   failOnError: Boolean
-  extensions: [String]
-  exclude: [String]
 }
 
 type SitePluginPluginOptionsEmitSchema {
@@ -759,6 +757,28 @@ type ImageSharpResize {
   height: Int
   aspectRatio: Float
   originalName: String
+}
+
+enum GatsbyImageFormat {
+  NO_CHANGE
+  AUTO
+  JPG
+  PNG
+  WEBP
+  AVIF
+}
+
+enum GatsbyImageLayout {
+  FIXED
+  FULL_WIDTH
+  CONSTRAINED
+}
+
+enum GatsbyImagePlaceholder {
+  DOMINANT_COLOR
+  TRACED_SVG
+  BLURRED
+  NONE
 }
 
 type Markdown implements Node {
@@ -2045,8 +2065,6 @@ input SitePluginPluginOptionsFilterInput {
 input SitePluginPluginOptionsOptionsFilterInput {
   emitWarning: BooleanQueryOperatorInput
   failOnError: BooleanQueryOperatorInput
-  extensions: StringQueryOperatorInput
-  exclude: StringQueryOperatorInput
 }
 
 input SitePluginPluginOptionsEmitSchemaFilterInput {
@@ -2224,8 +2242,6 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___stages
   pluginCreator___pluginOptions___options___emitWarning
   pluginCreator___pluginOptions___options___failOnError
-  pluginCreator___pluginOptions___options___extensions
-  pluginCreator___pluginOptions___options___exclude
   pluginCreator___pluginOptions___failOnError
   pluginCreator___pluginOptions___base64Width
   pluginCreator___pluginOptions___stripMetadata
@@ -2368,8 +2384,6 @@ enum SitePluginFieldsEnum {
   pluginOptions___stages
   pluginOptions___options___emitWarning
   pluginOptions___options___failOnError
-  pluginOptions___options___extensions
-  pluginOptions___options___exclude
   pluginOptions___failOnError
   pluginOptions___base64Width
   pluginOptions___stripMetadata
