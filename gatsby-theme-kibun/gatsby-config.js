@@ -1,17 +1,17 @@
 module.exports = (options) => ({
   plugins: [
-    {
-      resolve: 'gatsby-plugin-eslint',
-      options: {
-        test: /\.js$|\.jsx$|\.ts$|\.tsx$/,
-        exclude: /(node_modules|.cache|public)/,
-        stages: ['develop'],
-        options: {
-          emitWarning: true,
-          failOnError: true,
-        },
-      },
-    },
+    //{
+    //  resolve: 'gatsby-plugin-eslint',
+    //  options: {
+    //    test: /\.js$|\.jsx$|\.ts$|\.tsx$/,
+    //    exclude: /(node_modules|.cache|public)/,
+    //    stages: ['develop'],
+    //    options: {
+    //      emitWarning: true,
+    //      failOnError: true,
+    //    },
+    //  },
+    //},
     `gatsby-plugin-react-helmet`,
     `gatsby-transformer-sharp`,
     {

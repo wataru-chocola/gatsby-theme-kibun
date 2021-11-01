@@ -13,10 +13,10 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
-    "gatsby": "^3.13.0",
+    "gatsby": "^4.0.2",
     "gatsby-theme-kibun": "*",
-    "gatsby-plugin-sitemap": "^4.9.0",
-    "gatsby-plugin-manifest": "^3.13.0",
+    "gatsby-plugin-sitemap": "^5.0.0",
+    "gatsby-plugin-manifest": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
