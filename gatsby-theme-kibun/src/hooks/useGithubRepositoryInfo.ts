@@ -12,25 +12,24 @@ export function useGithubRepositoryInfo(): githubRepositoryInfo {
     graphql`
       query githubRepositry {
         sitePlugin(name: { eq: "gatsby-theme-kibun" }) {
-          pluginOptions {
-            githubRepository {
-              project
-              branch
-              rootDir
-            }
-          }
+          pluginOptions
         }
       }
     `,
   );
-  const project = data.sitePlugin?.pluginOptions?.githubRepository?.project;
+  const pluginOptions: any = data.sitePlugin?.pluginOptions;
+  if (pluginOptions == null) {
+    throw Error('must specify githubRepositry.project in your config');
+  }
+
+  const project = pluginOptions.githubRepository?.project;
   if (project == null) {
     throw Error('must specify githubRepositry.project in your config');
   }
 
   return {
     project: project,
-    branch: data.sitePlugin?.pluginOptions?.githubRepository?.branch || 'main',
-    rootDir: data.sitePlugin?.pluginOptions?.githubRepository?.rootDir || '',
+    branch: pluginOptions.githubRepository?.branch || 'main',
+    rootDir: pluginOptions.githubRepository?.rootDir || '',
   };
 }
