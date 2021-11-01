@@ -74,8 +74,8 @@ exports.createSchemaCustomization = (args: CreateSchemaCustomizationArgs) => {
   createSectionMenuSchema(args);
 };
 
-exports.createResolvers = (args: CreateResolversArgs) => {
-  createMarkdownResolvers(args);
+exports.createResolvers = async (args: CreateResolversArgs) => {
+  await createMarkdownResolvers(args);
 };
 
 exports.createPages = async (args: CreatePagesArgs) => {

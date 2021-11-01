@@ -137,26 +137,35 @@ interface MarkdownNode {
 
 interface nodeContext {
   nodeModel: {
-    getAllNodes: (arg1: any, arg2: any) => MarkdownNode[];
+    findOne: <T>(args: any, pageDependencies?: any) => Promise<T>;
   };
 }
 
-export function createMarkdownResolvers({ createResolvers }: CreateResolversArgs): void {
+export async function createMarkdownResolvers({
+  createResolvers,
+}: CreateResolversArgs): Promise<void> {
   const resolvers = {
     Markdown: {
       breadcrumbs: {
         type: [`BreadCrumb`],
-        resolve(source: MarkdownNode, _args: any, context: nodeContext, _info: any) {
+        resolve: async (source: MarkdownNode, _args: any, context: nodeContext, _info: any) => {
           const subPaths = makeSubPaths(source.fields.slug);
-          return subPaths.map((subPath) => {
-            const tmpNode = context.nodeModel
-              .getAllNodes({ type: 'Markdown' }, { conneciton: 'Markdown' })
-              .find((markdown: MarkdownNode) => markdown.fields.slug === subPath);
-            return {
-              slug: subPath,
-              title: tmpNode?.frontmatter?.title,
-            };
-          });
+          return await Promise.all(
+            subPaths.map(async (subPath) => {
+              const tmpNode = await context.nodeModel.findOne<MarkdownNode>({
+                type: 'Markdown',
+                query: {
+                  filter: {
+                    fields: { slug: { eq: subPath } },
+                  },
+                },
+              });
+              return {
+                slug: subPath,
+                title: tmpNode?.frontmatter?.title,
+              };
+            }),
+          );
         },
       },
     },
