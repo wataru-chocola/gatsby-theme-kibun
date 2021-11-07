@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Toolbar } from '@material-ui/core';
-import { Container, ContainerProps } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { Hidden } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Toolbar } from '@mui/material';
+import { Container, ContainerProps } from '@mui/material';
+import { Paper } from '@mui/material';
+import { Hidden } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
@@ -64,7 +64,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
           </MobileDrawer>
         </Hidden>
 
-        <Hidden xsDown implementation="css">
+        <Hidden smDown implementation="css">
           <SideBarDrawer
             className={classes.drawer}
             classes={{

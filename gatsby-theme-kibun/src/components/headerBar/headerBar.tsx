@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { AppBar, Toolbar } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { AppBar, Toolbar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { MenuButton } from './menuButton';
 import { SiteTitle } from './siteTitle';

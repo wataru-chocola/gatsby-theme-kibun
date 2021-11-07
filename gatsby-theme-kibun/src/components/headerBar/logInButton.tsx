@@ -1,8 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Popover, TextField, Box, Typography, Button } from '@material-ui/core';
-import { Collapse, CircularProgress } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import makeStyles from '@mui/styles/makeStyles';
+import { Popover, TextField, Box, Typography, Button } from '@mui/material';
+import { Collapse, CircularProgress } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { loginActions } from '../../state/loginSlice';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, GatsbyLinkProps as OriginalGatsbyLinkProps } from 'gatsby';
-import MuiLink, { LinkProps } from '@material-ui/core/Link';
+import MuiLink, { LinkProps } from '@mui/material/Link';
 
 interface ALinkProps extends Omit<OriginalGatsbyLinkProps<any>, 'to'> {
   href: string;

@@ -5,9 +5,10 @@ import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
 import ErrorBoundary from '../components/utils/errorboundary';
 
-import { Typography } from '@material-ui/core';
-import { Box, Slide } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import { Box, Slide } from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 

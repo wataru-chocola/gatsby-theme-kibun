@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   List,
   ListItemText,
@@ -7,9 +7,9 @@ import {
   ListItemIcon,
   ListSubheader,
   ListItemProps,
-} from '@material-ui/core';
-import ArrowRightRoundedIcon from '@material-ui/icons/ArrowRightRounded';
-import { Typography } from '@material-ui/core';
+} from '@mui/material';
+import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
+import { Typography } from '@mui/material';
 import { GatsbyLink, GatsbyLinkProps } from '../utils/link';
 import { useStaticQuery, graphql } from 'gatsby';
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Drawer, DrawerProps } from '@material-ui/core';
-import { Toolbar } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Drawer, DrawerProps } from '@mui/material';
+import { Toolbar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme) => ({
   drawerContainer: {

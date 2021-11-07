@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { IconButton } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import { IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface MenuButtonProps {
   onClick: () => void;
@@ -18,7 +18,7 @@ export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
         onClick={onClick}
         className={className}
         ref={ref}
-      >
+        size="large">
         <MenuIcon />
       </IconButton>
     );

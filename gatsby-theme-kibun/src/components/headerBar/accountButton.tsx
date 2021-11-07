@@ -1,7 +1,7 @@
 import React from 'react';
-import { IconButton } from '@material-ui/core';
-import { Menu, MenuItem } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import { IconButton } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import { useAppDispatch } from '../../state/hooks';
 import { loginActions } from '../../state/loginSlice';
@@ -49,7 +49,7 @@ export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) =
         onClick={handleProfileMenuOpen}
         color="inherit"
         ref={ref}
-      >
+        size="large">
         <AccountCircle />
       </IconButton>
       {renderMenu}

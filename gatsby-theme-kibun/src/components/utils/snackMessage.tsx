@@ -1,12 +1,12 @@
 import React from 'react';
-import { Snackbar } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Snackbar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 
 import { shallowEqual } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../state/hooks';
 import { snackMessageActions } from '../../state/snackMessageSlice';
 import { selectSnackMessage } from '../../state/snackMessageSelector';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 
 const useStyles = makeStyles((theme) => ({
   alert: {

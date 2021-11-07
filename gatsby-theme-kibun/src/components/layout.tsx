@@ -1,10 +1,7 @@
 import React from 'react';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { CssBaseline } from '@material-ui/core';
+import { CssBaseline } from '@mui/material';
 
 import Seo from './utils/seo';
-import theme from '../theme';
-
 import InnerLayout, { InnerLayoutProps } from './innerLayout';
 
 import './layout.css';
@@ -18,10 +15,8 @@ const Layout: React.FC<LayoutProps> = ({ pageTitle, ...props }) => {
     <React.Fragment>
       <Seo title={pageTitle} />
 
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <InnerLayout {...props} />
-      </ThemeProvider>
+      <CssBaseline />
+      <InnerLayout {...props} />
     </React.Fragment>
   );
 };

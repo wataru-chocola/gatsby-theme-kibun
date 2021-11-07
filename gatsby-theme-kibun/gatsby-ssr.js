@@ -1,2 +1,4 @@
 import { wrapperWithStore } from './src/state/store';
-export const wrapRootElement = wrapperWithStore;
+import wrapWithThemeProvider from './src/theme';
+
+export const wrapRootElement = ({ element }) => wrapWithThemeProvider(wrapperWithStore(element));

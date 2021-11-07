@@ -1,6 +1,6 @@
 import React from 'react';
-import { Breadcrumbs, BreadcrumbsProps } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { Breadcrumbs, BreadcrumbsProps } from '@mui/material';
+import { Typography } from '@mui/material';
 import { MuiGatsbyLink } from '../utils/link';
 
 interface PathBreadcrumb {

@@ -1,11 +1,13 @@
 import React from 'react';
 
-import { IconButton, Tooltip, TextField } from '@material-ui/core';
-import PlayArrow from '@material-ui/icons/PlayArrow';
-import CloseIcon from '@material-ui/icons/Close';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import { Box, Paper, Grid } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { IconButton, Tooltip, TextField } from '@mui/material';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { Box, Paper, Grid } from '@mui/material';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
 import { selectIsLoggedIn } from '../state/loginSelector';
@@ -24,7 +26,7 @@ import { useGithubRepoOperator } from '../hooks/useGithubRepoOperator';
 const useStyles = makeStyles((theme: Theme) => ({
   editBox: {
     position: 'sticky',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       top: theme.mixins.toolbar.minHeight as number,
     },
     [theme.breakpoints.up('md')]: {
@@ -196,17 +198,21 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
 
     const buttons = [
       <Tooltip title="cancel" aria-label="cancel" key="cancel">
-        <IconButton color="secondary" onClick={cancelEditing}>
+        <IconButton color="secondary" onClick={cancelEditing} size="large">
           <CloseIcon />
         </IconButton>
       </Tooltip>,
       <Tooltip title="preview" aria-label="preview" key="preview">
-        <IconButton color="primary" onClick={previewRenderedHTML}>
+        <IconButton color="primary" onClick={previewRenderedHTML} size="large">
           <PlayArrow />
         </IconButton>
       </Tooltip>,
       <Tooltip title="save" aria-label="save" key="save">
-        <IconButton color="primary" onClick={saveEditing} disabled={updatingState === 'progress'}>
+        <IconButton
+          color="primary"
+          onClick={saveEditing}
+          disabled={updatingState === 'progress'}
+          size="large">
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
