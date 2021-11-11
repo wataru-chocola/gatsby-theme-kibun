@@ -111,7 +111,7 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
       return () => {
         editBoxHeight && window.scrollBy(0, -editBoxHeight);
       };
-    }, []);
+    });
 
     React.useEffect(() => {
       if (isLoggedIn) {
