@@ -1,7 +1,7 @@
 import React from 'react';
 import { createTheme } from '@mui/material/styles';
 import { jaJP } from '@mui/material/locale';
-import { ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { indigo } from '@mui/material/colors';
 
 const fontFamily = [
@@ -69,11 +69,6 @@ const theme = createTheme(
   },
   jaJP,
 );
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
 
 // eslint-disable-next-line
 export default function wrapWithThemeProvider(element: JSX.Element | JSX.Element[]) {
