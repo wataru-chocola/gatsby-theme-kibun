@@ -5,9 +5,6 @@ import PlayArrow from '@mui/icons-material/PlayArrow';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { Box, Paper, Grid } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-
-import makeStyles from '@mui/styles/makeStyles';
 
 import { useAppSelector, useAppDispatch } from '../state/hooks';
 import { selectIsLoggedIn } from '../state/loginSelector';
@@ -22,33 +19,6 @@ import { githubAPIActions } from '../state/githubAPISlice';
 import { snackMessageActions } from '../state/snackMessageSlice';
 
 import { useGithubRepoOperator } from '../hooks/useGithubRepoOperator';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  editBox: {
-    position: 'sticky',
-    [theme.breakpoints.down('md')]: {
-      top: theme.mixins.toolbar.minHeight as number,
-    },
-    [theme.breakpoints.up('md')]: {
-      top: (theme.mixins.toolbar.minHeight as number) + theme.spacing(1),
-    },
-    zIndex: theme.zIndex.appBar,
-    backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'><path fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'></path></svg>")`,
-  },
-  editInputField: {
-    backgroundColor: 'white',
-    [`& fieldset`]: {
-      borderRadius: 0,
-    },
-  },
-  editButtons: {
-    [theme.breakpoints.up('md')]: {
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-    justifyContent: 'flex-end',
-  },
-}));
 
 interface EditBoxProps {
   closeEditmode: () => void;
@@ -122,8 +92,7 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
   ) => {
     const inputEl = React.useRef<null | HTMLDivElement>(null);
     const [markdown, setMarkdown] = React.useState(md || '');
-    const classes = useStyles();
-    const innerRef = React.useRef<HTMLDivElement>();
+    const innerRef = React.useRef<HTMLDivElement | null>(null);
 
     const updatingState = useAppSelector((state) => selectGithubUpdateMarkdownState(state));
     const gettingMarkdownResult = useAppSelector((state) => selectGithubGetMarkdownResult(state));
@@ -212,19 +181,34 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
           color="primary"
           onClick={saveEditing}
           disabled={updatingState === 'progress'}
-          size="large">
+          size="large"
+        >
           <SaveAltIcon />
         </IconButton>
       </Tooltip>,
     ];
 
     return (
-      <Paper className={classes.editBox} square elevation={4} ref={innerRef}>
+      <Paper
+        square
+        elevation={4}
+        ref={innerRef}
+        sx={{
+          position: 'sticky',
+          top: (theme) => ({
+            xs: `${theme.mixins.toolbar.minHeight!}px`,
+            md: `${
+              (theme.mixins.toolbar.minHeight as number) + Number(theme.spacing(1).slice(0, -2))
+            }px`,
+          }),
+          zIndex: 'appBar',
+          backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'><path fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'></path></svg>")`,
+        }}
+      >
         <Box p={0} pt={2}>
           <Grid container spacing={0}>
             <Grid item xs={12} md>
               <TextField
-                className={classes.editInputField}
                 variant="outlined"
                 multiline
                 fullWidth
@@ -232,9 +216,28 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
                 ref={inputEl}
                 value={markdown}
                 onChange={updateMarkdown}
+                sx={{
+                  backgroundColor: 'white',
+                  [`& fieldset`]: {
+                    borderRadius: 0,
+                  },
+                }}
               ></TextField>
             </Grid>
-            <Grid container item md={1} className={classes.editButtons}>
+            <Grid
+              container
+              item
+              md={1}
+              sx={{
+                flexDirection: {
+                  md: 'column',
+                },
+                alignItems: {
+                  md: 'center',
+                },
+                justifyContent: 'flex-end',
+              }}
+            >
               {buttons.map((e, i) => (
                 <Grid item key={i}>
                   {e}

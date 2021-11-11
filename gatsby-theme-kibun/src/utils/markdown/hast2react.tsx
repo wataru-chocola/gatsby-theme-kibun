@@ -3,17 +3,9 @@ import rehypeReact from 'rehype-react';
 import { unified } from 'unified';
 import { Root as HastRoot } from 'hast';
 import { Box, Typography } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
 import { MuiGatsbyLink } from '../link';
 import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
 import path from 'path';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  h6: {
-    color: theme.palette.text.secondary,
-  },
-}));
 
 const H1: React.FC = (props: any) => (
   <Typography variant="h1" component="h2" {...props}></Typography>
@@ -40,8 +32,16 @@ const H5: React.FC = (props: any) => (
 );
 
 const H6: React.FC = (props: any) => {
-  const classes = useStyles();
-  return <Typography variant="h6" component="h6" className={classes.h6} {...props}></Typography>;
+  return (
+    <Typography
+      variant="h6"
+      component="h6"
+      sx={{
+        color: 'text.secondary',
+      }}
+      {...props}
+    ></Typography>
+  );
 };
 
 const P: React.FC = (props: any) => (
