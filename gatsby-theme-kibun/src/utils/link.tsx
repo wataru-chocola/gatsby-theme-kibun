@@ -45,9 +45,9 @@ export const MuiGatsbyLink = React.forwardRef<HTMLAnchorElement, LinkProps & { t
   (props, ref) => {
     const { to } = props;
     return to ? (
-      <MuiLink ref={ref} component={GatsbyLink} to={to} {...props} />
+      <MuiLink ref={ref} component={GatsbyLink} underline="hover" to={to} {...props} />
     ) : (
-      <MuiLink ref={ref} {...props} />
+      <MuiLink ref={ref} underline="hover" {...props} />
     );
   },
 );
