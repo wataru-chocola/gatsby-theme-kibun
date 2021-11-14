@@ -127,7 +127,7 @@ module.exports = {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       },
-    ]
+    ],
   },
   overrides: [
     {
@@ -138,6 +138,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
 
         '@typescript-eslint/no-unused-vars': [
           'warn',

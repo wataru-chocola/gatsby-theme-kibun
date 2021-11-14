@@ -1,22 +1,7 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
 import { useStaticQuery, graphql } from 'gatsby';
 import { MuiGatsbyLink } from '../../utils/link';
-
-const useSiteTitleStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.primary.main,
-    borderRadius: '1em',
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    '&:hover, &:focus': {
-      backgroundColor: theme.palette.primary.light,
-    },
-  },
-}));
 
 export const SiteTitle: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
@@ -30,9 +15,7 @@ export const SiteTitle: React.VFC = () => {
       }
     `,
   );
-
   const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`;
-  const classes = useSiteTitleStyles();
 
   return (
     <MuiGatsbyLink
@@ -41,7 +24,17 @@ export const SiteTitle: React.VFC = () => {
       to="/"
       noWrap
       underline="none"
-      className={classes.root}
+      sx={{
+        backgroundColor: 'primary.main',
+        borderRadius: 1,
+        paddingTop: 1,
+        paddingBottom: 1,
+        paddingLeft: 2,
+        paddingRight: 2,
+        '&:hover, &:focus': {
+          backgroundColor: 'primary.light',
+        },
+      }}
     >
       {siteTitle}
     </MuiGatsbyLink>

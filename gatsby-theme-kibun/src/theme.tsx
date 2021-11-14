@@ -1,6 +1,8 @@
-import { createTheme } from '@material-ui/core/styles';
-import { jaJP } from '@material-ui/core/locale';
-import { indigo } from '@material-ui/core/colors';
+import React from 'react';
+import { createTheme } from '@mui/material/styles';
+import { jaJP } from '@mui/material/locale';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { indigo } from '@mui/material/colors';
 
 const fontFamily = [
   '"Helvetica Neue"',
@@ -68,4 +70,11 @@ const theme = createTheme(
   jaJP,
 );
 
-export default theme;
+// eslint-disable-next-line
+export default function wrapWithThemeProvider(element: JSX.Element | JSX.Element[]) {
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>{element}</ThemeProvider>
+    </StyledEngineProvider>
+  );
+}

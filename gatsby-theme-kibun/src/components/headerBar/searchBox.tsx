@@ -1,66 +1,56 @@
 import React from 'react';
 
-import { makeStyles, alpha } from '@material-ui/core/styles';
-import { InputBase } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-
-const useSearchStyles = makeStyles((theme) => ({
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
+import { alpha } from '@mui/material/styles';
+import { Box, InputBase } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
-  const classes = useSearchStyles();
   return (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
+    <Box
+      sx={{
+        position: 'relative',
+        borderRadius: 2,
+        backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
+        '&:hover': {
+          backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
+        },
+        marginRight: 2,
+        marginLeft: { sm: 3, xs: 0 },
+        width: { sm: 'auto', xs: '100%' },
+      }}
+    >
+      <Box
+        sx={{
+          padding: 2,
+          height: '100%',
+          position: 'absolute',
+          pointerEvents: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <SearchIcon />
-      </div>
+      </Box>
       <InputBase
         placeholder="Search..."
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
+        sx={{
+          color: 'inherit',
+          '& .MuiInputBase-input': {
+            padding: 1,
+            // vertical padding + font size from searchIcon
+            paddingLeft: (theme) => `calc(1em + ${theme.spacing(4)})`,
+            transition: (theme) => theme.transitions.create('width'),
+            width: {
+              sx: '100%',
+              md: '20ch',
+            },
+          },
         }}
         inputProps={{ 'aria-label': 'search' }}
         ref={ref}
       />
-    </div>
+    </Box>
   );
 });
 SearchBox.displayName = 'SearchBox';

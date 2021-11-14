@@ -18,9 +18,7 @@ const createStore = () => {
 
 const store = createStore();
 
-export const wrapperWithStore: (arg: { element: React.ReactElement }) => React.ReactElement = ({
-  element,
-}) => {
+export const wrapperWithStore: (element: React.ReactElement) => React.ReactElement = (element) => {
   return <Provider store={store}>{element}</Provider>;
 };
 

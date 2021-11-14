@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   List,
   ListItemText,
@@ -7,36 +6,16 @@ import {
   ListItemIcon,
   ListSubheader,
   ListItemProps,
-} from '@material-ui/core';
-import ArrowRightRoundedIcon from '@material-ui/icons/ArrowRightRounded';
-import { Typography } from '@material-ui/core';
+} from '@mui/material';
+import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
+import { Typography } from '@mui/material';
 import { GatsbyLink, GatsbyLinkProps } from '../utils/link';
 import { useStaticQuery, graphql } from 'gatsby';
 
-function ListItemLink(
-  props: Omit<ListItemProps<'a', GatsbyLinkProps & { button?: true }>, 'component'>,
-) {
+type ListItemLinkProps = Omit<ListItemProps<'a', GatsbyLinkProps & { button?: true }>, 'component'>;
+function ListItemLink(props: ListItemLinkProps) {
   return <ListItem button component={GatsbyLink} {...props} />;
 }
-
-const useStyles = makeStyles((theme) => ({
-  subheader: {
-    color: theme.palette.secondary.main,
-    lineHeight: '1em',
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  },
-  icon: {
-    color: theme.palette.secondary.light,
-    minWidth: 0,
-  },
-  nested: {
-    [theme.breakpoints.up('md')]: {
-      paddingTop: theme.spacing(0),
-      paddingBottom: theme.spacing(0),
-    },
-  },
-}));
 
 type NaviItemType = {
   text: string;
@@ -49,6 +28,41 @@ type NaviCategoryType = {
 };
 
 type NaviDataType = NaviCategoryType[];
+
+function makeNaviMenu(naviMenuItems: NaviItemType[]): React.ReactElement[] {
+  const nestedListItems: React.ReactElement[] = [];
+  for (let j = 0; j < naviMenuItems.length; j++) {
+    const nestedItemData = naviMenuItems[j];
+    const linkText = (
+      <React.Fragment>
+        <ListItemIcon sx={{ color: 'secondary.light', minWidth: 0 }}>
+          <ArrowRightRoundedIcon />
+        </ListItemIcon>
+        <ListItemText>
+          <Typography noWrap variant="body2">
+            {nestedItemData.text}
+          </Typography>
+        </ListItemText>
+      </React.Fragment>
+    );
+
+    const nestedStyle = { paddingTop: { md: 0 }, paddingBottom: { md: 0 } } as const;
+    if (nestedItemData.to != null) {
+      nestedListItems.push(
+        <ListItemLink button key={j} to={nestedItemData.to} sx={nestedStyle}>
+          {linkText}
+        </ListItemLink>,
+      );
+    } else {
+      nestedListItems.push(
+        <ListItem button key={j} sx={nestedStyle}>
+          {linkText}
+        </ListItem>,
+      );
+    }
+  }
+  return nestedListItems;
+}
 
 export const SectionNavigationList: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteSectionMenuQuery>(
@@ -68,7 +82,6 @@ export const SectionNavigationList: React.VFC = () => {
   );
   const naviData: NaviDataType =
     (data.sectionMenu?.childrenSectionMenuCategory as NaviDataType) || [];
-  const classes = useStyles();
 
   const naviListItems: React.ReactElement[] = [];
   naviData.forEach((naviCategory, i) => {
@@ -77,40 +90,13 @@ export const SectionNavigationList: React.VFC = () => {
         key={`header-${i}`}
         component="div"
         disableSticky
-        classes={{ root: classes.subheader }}
+        sx={{ color: 'secondary.main', lineHeight: '1em', paddingTop: 1, paddingBottom: 1 }}
       >
         {naviCategory.category}
       </ListSubheader>,
     );
 
-    const nestedListItems: React.ReactElement[] = [];
-    naviCategory.menu.forEach((nestedItemData, j) => {
-      const linkText = (
-        <React.Fragment>
-          <ListItemIcon className={classes.icon}>
-            <ArrowRightRoundedIcon />
-          </ListItemIcon>
-          <ListItemText>
-            <Typography noWrap variant="body2">
-              {nestedItemData.text}
-            </Typography>
-          </ListItemText>
-        </React.Fragment>
-      );
-      if (nestedItemData.to != null) {
-        nestedListItems.push(
-          <ListItemLink button key={j} to={nestedItemData.to} className={classes.nested}>
-            {linkText}
-          </ListItemLink>,
-        );
-      } else {
-        nestedListItems.push(
-          <ListItem button key={j} className={classes.nested}>
-            {linkText}
-          </ListItem>,
-        );
-      }
-    });
+    const nestedListItems = makeNaviMenu(naviCategory.menu);
     naviListItems.push(<List key={`list-${i}`}>{nestedListItems}</List>);
   });
 

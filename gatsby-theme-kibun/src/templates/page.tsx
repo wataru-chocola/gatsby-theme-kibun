@@ -3,11 +3,11 @@ import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
+
 import ErrorBoundary from '../components/utils/errorboundary';
 
-import { Typography } from '@material-ui/core';
-import { Box, Slide } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import { Box, Slide } from '@mui/material';
 import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
@@ -20,12 +20,6 @@ import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  title: {
-    fontSize: theme.typography.h4.fontSize,
-  },
-}));
 
 interface PageSlugContext {
   slug: string;
@@ -52,7 +46,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   });
   useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
 
-  const classes = useStyles();
   const dispatch = useAppDispatch();
 
   const [editmode, setEditmode] = React.useState(false);
@@ -77,8 +70,8 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   return (
     <Layout pageTitle={title}>
       <EditBoxMonitor />
-      <Slide in={editmode} mountOnEnter unmountOnExit>
-        <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
+      <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
+        <Slide in={editmode} mountOnEnter unmountOnExit>
           <EditBox
             closeEditmode={closeEditmode}
             saveMarkdown={setMarkdown}
@@ -88,14 +81,14 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
             frontmatter={frontmatter}
             srcPath={pageinfo.parent?.relativePath || ''}
           ></EditBox>
-        </ErrorBoundary>
-      </Slide>
+        </Slide>
+      </ErrorBoundary>
 
       <Box pt={2} pb={0.5} px={2}>
         <PathBreadcrumbs crumbs={crumbs} />
       </Box>
       <Box bgcolor="primary.light" color="primary.contrastText" px={2} py={1}>
-        <Typography variant="h1" className={classes.title}>
+        <Typography variant="h1" sx={{ fontSize: 'h4' }}>
           {title}
         </Typography>
       </Box>

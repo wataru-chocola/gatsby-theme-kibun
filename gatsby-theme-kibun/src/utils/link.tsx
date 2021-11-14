@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, GatsbyLinkProps as OriginalGatsbyLinkProps } from 'gatsby';
-import MuiLink, { LinkProps } from '@material-ui/core/Link';
+import MuiLink, { LinkProps } from '@mui/material/Link';
 
 interface ALinkProps extends Omit<OriginalGatsbyLinkProps<any>, 'to'> {
   href: string;
@@ -45,9 +45,9 @@ export const MuiGatsbyLink = React.forwardRef<HTMLAnchorElement, LinkProps & { t
   (props, ref) => {
     const { to } = props;
     return to ? (
-      <MuiLink ref={ref} component={GatsbyLink} to={to} {...props} />
+      <MuiLink ref={ref} component={GatsbyLink} underline="hover" to={to} {...props} />
     ) : (
-      <MuiLink ref={ref} {...props} />
+      <MuiLink ref={ref} underline="hover" {...props} />
     );
   },
 );
