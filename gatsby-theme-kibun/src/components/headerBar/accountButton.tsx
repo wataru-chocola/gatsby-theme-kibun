@@ -47,9 +47,17 @@ export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) =
         aria-controls={menuId}
         aria-haspopup="true"
         onClick={handleProfileMenuOpen}
-        color="inherit"
+        color="primary"
+        sx={{
+          padding: 1,
+          '&:hover': {
+            backgroundColor: (theme) => theme.palette.primary.main,
+            color: 'white',
+          },
+        }}
         ref={ref}
-        size="large">
+        size="large"
+      >
         <AccountCircle />
       </IconButton>
       {renderMenu}

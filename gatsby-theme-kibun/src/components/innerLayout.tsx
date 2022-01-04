@@ -36,40 +36,42 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   } as const;
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box>
       <SnackMessage />
       <HeaderBar onMenuButton={handleDrawerToggle} />
 
-      <nav aria-label="sidemenu">
-        <MobileDrawer
-          container={container}
-          open={mobileDrawerOpen}
-          onClose={handleDrawerToggle}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            ...drawerSx,
-          }}
-        >
-          <SectionNavigationList />
-        </MobileDrawer>
+      <Box sx={{ display: 'flex' }}>
+        <nav aria-label="sidemenu">
+          <MobileDrawer
+            container={container}
+            open={mobileDrawerOpen}
+            onClose={handleDrawerToggle}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              ...drawerSx,
+            }}
+          >
+            <SectionNavigationList />
+          </MobileDrawer>
 
-        <SideBarDrawer
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            ...drawerSx,
-          }}
-        >
-          <SectionNavigationList />
-        </SideBarDrawer>
-      </nav>
+          <SideBarDrawer
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              ...drawerSx,
+            }}
+          >
+            <SectionNavigationList />
+          </SideBarDrawer>
+        </nav>
 
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        <Toolbar />
-        <Container maxWidth="md" fixed disableGutters>
-          <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
-            <Paper>{children}</Paper>
-          </ErrorBoundary>
-        </Container>
+        <Box component="main" sx={{ flexGrow: 1 }}>
+          <Toolbar />
+          <Container maxWidth="md" fixed disableGutters>
+            <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
+              <Paper>{children}</Paper>
+            </ErrorBoundary>
+          </Container>
+        </Box>
       </Box>
     </Box>
   );

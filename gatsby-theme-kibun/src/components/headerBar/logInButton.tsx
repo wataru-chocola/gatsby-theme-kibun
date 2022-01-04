@@ -109,7 +109,13 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
         aria-haspopup="true"
         onClick={handleLoginBoxOpen}
         ref={ref}
-        style={{ color: 'white' }}
+        variant="outlined"
+        sx={{
+          '&:hover': {
+            backgroundColor: (theme) => theme.palette.primary.main,
+            color: 'white',
+          },
+        }}
       >
         Sign in
       </Button>

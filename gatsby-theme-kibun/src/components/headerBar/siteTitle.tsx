@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useStaticQuery, graphql } from 'gatsby';
 import { MuiGatsbyLink } from '../../utils/link';
+import { Box } from '@mui/material';
 
 export const SiteTitle: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
@@ -18,25 +19,23 @@ export const SiteTitle: React.VFC = () => {
   const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`;
 
   return (
-    <MuiGatsbyLink
-      color="inherit"
-      variant="h6"
-      to="/"
-      noWrap
-      underline="none"
-      sx={{
-        backgroundColor: 'primary.main',
-        borderRadius: 1,
-        paddingTop: 1,
-        paddingBottom: 1,
-        paddingLeft: 2,
-        paddingRight: 2,
-        '&:hover, &:focus': {
-          backgroundColor: 'primary.light',
-        },
-      }}
-    >
-      {siteTitle}
-    </MuiGatsbyLink>
+    <Box>
+      <MuiGatsbyLink
+        variant="h6"
+        to="/"
+        noWrap
+        underline="none"
+        sx={{
+          color: 'primary.main',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          '&:hover, &:focus': {
+            color: 'primary.light',
+          },
+        }}
+      >
+        {siteTitle}
+      </MuiGatsbyLink>
+    </Box>
   );
 };

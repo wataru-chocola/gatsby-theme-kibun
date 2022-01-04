@@ -90,7 +90,13 @@ export const SectionNavigationList: React.VFC = () => {
         key={`header-${i}`}
         component="div"
         disableSticky
-        sx={{ color: 'secondary.main', lineHeight: '1em', paddingTop: 1, paddingBottom: 1 }}
+        sx={{
+          color: 'primary.contrastText',
+          backgroundColor: 'primary.main',
+          lineHeight: '1em',
+          paddingTop: 1,
+          paddingBottom: 1,
+        }}
       >
         {naviCategory.category}
       </ListSubheader>,
