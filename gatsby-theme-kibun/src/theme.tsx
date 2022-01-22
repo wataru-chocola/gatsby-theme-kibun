@@ -56,14 +56,17 @@ const theme = createTheme(
       },
       gray: [
         '#E2E2E2',
-        '#E2E2E2',
-        '#E2E2E2',
+        '#C6C6C6',
+        '#AAAAAA',
         '#8D8D8D',
         '#717171',
         '#555555',
         '#383838',
         '#1C1C1C',
       ],
+      text: {
+        primary: '#555555',
+      },
     },
     typography: {
       fontFamily: fontFamily.join(','),
