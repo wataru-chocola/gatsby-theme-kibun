@@ -9,7 +9,7 @@ import { SectionNavigationList } from './sectionNavigationList';
 import { SnackMessage } from './utils/snackMessage';
 import ErrorBoundary from './utils/errorboundary';
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 export type InnerLayoutProps = {
   window?: () => Window;
@@ -36,7 +36,16 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
   } as const;
 
   return (
-    <Box>
+    <Box
+      sx={{
+        // OverlayScrollbars
+        '.os-theme-dark.os-theme-custom': {
+          '> .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle': {
+            opacity: 0.2,
+          },
+        },
+      }}
+    >
       <SnackMessage />
       <HeaderBar onMenuButton={handleDrawerToggle} />
 
