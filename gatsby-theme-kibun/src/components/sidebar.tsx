@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Drawer, DrawerProps } from '@mui/material';
 import { Box, Toolbar } from '@mui/material';
-import { alpha } from '@mui/material/styles';
-import 'overlayscrollbars/css/OverlayScrollbars.css';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
 export const MobileDrawer: React.FC<DrawerProps> = (props) => {

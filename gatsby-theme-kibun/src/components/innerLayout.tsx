@@ -5,9 +5,12 @@ import { Paper } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
+import { FilterBox } from './filterBox';
 import { SectionNavigationList } from './sectionNavigationList';
 import { SnackMessage } from './utils/snackMessage';
 import ErrorBoundary from './utils/errorboundary';
+
+import 'overlayscrollbars/css/OverlayScrollbars.css';
 
 const drawerWidth = 300;
 
@@ -69,6 +72,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
               ...drawerSx,
             }}
           >
+            <FilterBox />
             <SectionNavigationList />
           </SideBarDrawer>
         </nav>
