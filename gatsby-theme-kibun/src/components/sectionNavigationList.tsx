@@ -35,7 +35,7 @@ function makeNaviMenu(naviMenuItems: NaviItemType[]): React.ReactElement[] {
     const nestedItemData = naviMenuItems[j];
     const linkText = (
       <React.Fragment>
-        <ListItemIcon sx={{ color: 'secondary.light', minWidth: 0 }}>
+        <ListItemIcon sx={{ color: 'primary.light', minWidth: 0 }}>
           <ArrowRightRoundedIcon />
         </ListItemIcon>
         <ListItemText>
@@ -94,8 +94,13 @@ export const SectionNavigationList: React.VFC = () => {
           color: 'primary.contrastText',
           backgroundColor: 'primary.main',
           lineHeight: '1em',
+          paddingLeft: 3,
           paddingTop: 1,
           paddingBottom: 1,
+          marginBottom: 1,
+          ':not(::first-child)': {
+            marginTop: 2,
+          },
         }}
       >
         {naviCategory.category}
