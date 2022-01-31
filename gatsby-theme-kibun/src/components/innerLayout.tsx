@@ -7,9 +7,11 @@ import { HeaderBar } from './headerBar';
 import { SideBarDrawer, MobileDrawer } from './sidebar';
 import { FilterBox } from './filterBox';
 import { SectionNavigationList } from './sectionNavigationList';
+import { Attachments } from './attachments';
 import { SnackMessage } from './utils/snackMessage';
 import ErrorBoundary from './utils/errorboundary';
 
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/css/OverlayScrollbars.css';
 
 const drawerWidth = 300;
@@ -77,13 +79,37 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
           </SideBarDrawer>
         </nav>
 
-        <Box component="main" sx={{ flexGrow: 1 }}>
-          <Toolbar />
-          <Container maxWidth="md" fixed disableGutters>
-            <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
-              <Paper>{children}</Paper>
-            </ErrorBoundary>
-          </Container>
+        <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1 }}>
+          <Box component="main">
+            <Toolbar />
+            <Container maxWidth="md" fixed disableGutters>
+              <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
+                <Paper>{children}</Paper>
+              </ErrorBoundary>
+            </Container>
+          </Box>
+
+          <Box width="350px" sx={{ flexShrink: 0 }}>
+            <Box
+              height="100%"
+              width="350px"
+              position="fixed"
+              left="auto"
+              sx={{ display: 'flex', flexDirection: 'column' }}
+            >
+              <Toolbar />
+              <OverlayScrollbarsComponent
+                options={{
+                  className: 'os-theme-dark os-theme-custom os-host-flexbox',
+                  scrollbars: {
+                    clickScrolling: true,
+                  },
+                }}
+              >
+                <Attachments />
+              </OverlayScrollbarsComponent>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>
