@@ -9,6 +9,7 @@ import { FilterBox } from './filterBox';
 import { SectionNavigationList } from './sectionNavigationList';
 import { Attachments } from './attachments';
 import { SnackMessage } from './utils/snackMessage';
+import { EditButton } from './editButton';
 import ErrorBoundary from './utils/errorboundary';
 
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -79,11 +80,26 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
           </SideBarDrawer>
         </nav>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
           <Box component="main">
             <Toolbar />
-            <Container maxWidth="md" fixed disableGutters>
+            <Container maxWidth="md" disableGutters sx={{ position: 'relative' }}>
               <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'none',
+                    '& > *': {
+                      pointerEvents: 'auto',
+                    },
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <EditButton />
+                </Box>
                 <Paper>{children}</Paper>
               </ErrorBoundary>
             </Container>
