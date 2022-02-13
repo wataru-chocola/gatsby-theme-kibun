@@ -10,6 +10,7 @@ import { SectionNavigationList } from './sectionNavigationList';
 import { Attachments } from './attachments';
 import { SnackMessage } from './utils/snackMessage';
 import { EditButton } from './editButton';
+import { Footer } from './footer';
 import ErrorBoundary from './utils/errorboundary';
 
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
@@ -100,7 +101,12 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
                 >
                   <EditButton />
                 </Box>
-                <Paper>{children}</Paper>
+                <Paper>
+                  {children}
+                  <Box mt={8}>
+                    <Footer />
+                  </Box>
+                </Paper>
               </ErrorBoundary>
             </Container>
           </Box>

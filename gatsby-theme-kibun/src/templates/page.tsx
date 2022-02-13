@@ -104,10 +104,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
           <Content>{html}</Content>
         </Box>
       </Box>
-
-      <Box mt={8} pt={2} pb={2} px={2} bgcolor="primary.light" color="primary.contrastText">
-        <div>footter</div>
-      </Box>
     </Layout>
   );
 };

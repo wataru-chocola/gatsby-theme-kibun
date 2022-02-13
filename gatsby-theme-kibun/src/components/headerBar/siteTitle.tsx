@@ -1,22 +1,11 @@
 import React from 'react';
 
-import { useStaticQuery, graphql } from 'gatsby';
+import { useSiteTitle } from '../../hooks/useSiteTitle';
 import { MuiGatsbyLink } from '../../utils/link';
 import { Box } from '@mui/material';
 
 export const SiteTitle: React.VFC = () => {
-  const data = useStaticQuery<GatsbyTypes.SiteTitleQuery>(
-    graphql`
-      query SiteTitle {
-        site {
-          siteMetadata {
-            title
-          }
-        }
-      }
-    `,
-  );
-  const siteTitle: string = data.site?.siteMetadata?.title || `(no sitename)`;
+  const siteTitle: string = useSiteTitle();
 
   return (
     <Box>
