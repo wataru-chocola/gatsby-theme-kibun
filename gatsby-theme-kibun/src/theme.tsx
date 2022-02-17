@@ -17,15 +17,15 @@ declare module '@mui/material/styles' {
     complementary: PaletteColor;
     gray: string[];
   }
+  interface PaletteOptions {
+    complementary: PaletteColorOptions;
+    gray: string[];
+  }
   interface PaletteColor {
     main: string;
     contrastText: string;
     tint: string[];
     shade: string[];
-  }
-  interface PaletteOptions {
-    complementary: PaletteColorOptions;
-    gray: string[];
   }
   interface PaletteColorOptions {
     main: string;
@@ -34,6 +34,15 @@ declare module '@mui/material/styles' {
     shade?: string[];
   }
 }
+
+declare module '@mui/material/styles/zIndex' {
+  interface ZIndex {
+    editButton: number;
+    editBox: number;
+  }
+}
+
+const defaultTheme = createTheme();
 
 const theme = createTheme(
   {
@@ -112,6 +121,10 @@ const theme = createTheme(
         lineHeight: 1.75,
         letterSpacing: '0.075em',
       },
+    },
+    zIndex: {
+      editButton: defaultTheme.zIndex.appBar + 10,
+      editBox: defaultTheme.zIndex.appBar + 20,
     },
   },
   jaJP,
