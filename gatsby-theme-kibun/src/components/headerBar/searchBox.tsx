@@ -25,7 +25,7 @@ export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
         placeholder="Search..."
         size="small"
         sx={{
-          color: 'black',
+          color: (theme) => theme.palette.text.primary,
           fontSize: '14px',
           flex: 1,
           '& .MuiInputBase-input': {
@@ -54,6 +54,10 @@ export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
           borderColor: (theme) => theme.palette.primary.tint[1],
           padding: 0.5,
           color: 'primary.main',
+          transition: (theme) =>
+            theme.transitions.create(['background-color', 'color'], {
+              duration: theme.transitions.duration.standard,
+            }),
           '&:hover': {
             color: 'white',
             backgroundColor: (theme) => theme.palette.primary.main,

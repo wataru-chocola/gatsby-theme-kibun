@@ -111,6 +111,10 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
         ref={ref}
         variant="outlined"
         sx={{
+          transition: (theme) =>
+            theme.transitions.create(['background-color', 'color'], {
+              duration: theme.transitions.duration.standard,
+            }),
           '&:hover': {
             backgroundColor: (theme) => theme.palette.primary.main,
             color: 'white',
