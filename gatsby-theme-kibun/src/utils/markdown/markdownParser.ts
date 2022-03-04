@@ -16,7 +16,7 @@ import { remarkExtendedTable, extendedTableHandlers } from 'remark-extended-tabl
 const mdastParagraph2hast: Handler = (h, tmp_node) => {
   const node = tmp_node as Paragraph;
   if (node.children.length === 1 && node.children[0].type === 'image') {
-    return h(node, 'div', all(h, node));
+    return h(node, 'div', { className: 'md-image' }, all(h, node));
   }
   return h(node, 'p', all(h, node));
 };

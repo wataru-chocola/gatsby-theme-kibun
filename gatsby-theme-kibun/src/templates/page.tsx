@@ -8,9 +8,10 @@ import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
-import * as css from './page.module.scss';
 import 'katex/dist/katex.min.css';
 
+import TableOfContents from '../components/toc';
+import Content from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
@@ -84,22 +85,24 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         </Slide>
       </ErrorBoundary>
 
-      <Box pt={2} pb={0.5} px={2}>
+      <Box pt={2} mx={6}>
         <PathBreadcrumbs crumbs={crumbs} />
       </Box>
-      <Box bgcolor="primary.light" color="primary.contrastText" px={2} py={1}>
-        <Typography variant="h1" sx={{ fontSize: 'h4' }}>
+      <Box bgcolor="primary.contrastText" color="primary.main" mx={6} my={2}>
+        <Typography variant="h1" sx={{ fontSize: '40px', fontWeight: 'bold' }}>
           {title}
         </Typography>
       </Box>
 
-      <Box p={4} onDoubleClick={openEditmode}>
-        {toc && <div className={css.toc}>{toc}</div>}
-        <div className={css.md}>{html}</div>
-      </Box>
-
-      <Box mt={4} pt={1} pb={2} px={2} bgcolor="primary.light" color="primary.contrastText">
-        <div>footter</div>
+      <Box onDoubleClick={openEditmode}>
+        {toc && (
+          <Box mt={4} mb={8}>
+            <TableOfContents>{toc}</TableOfContents>
+          </Box>
+        )}
+        <Box mx={6}>
+          <Content>{html}</Content>
+        </Box>
       </Box>
     </Layout>
   );

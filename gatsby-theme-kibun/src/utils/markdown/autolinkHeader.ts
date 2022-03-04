@@ -5,7 +5,6 @@ import GithubSlugger from 'github-slugger';
 import { Element } from 'hast';
 import { Plugin } from 'unified';
 import { Node as UnistNode } from 'unist';
-import * as css from './autolinkHeader.module.scss';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 const svgIcon = s(
@@ -44,7 +43,7 @@ const autolinkHeader: Plugin = () => {
         id: headerId,
       };
     }
-    const link = h('a', { href: `#${headerId}`, class: `${css.headers}` }, svgIcon);
+    const link = h('a', { href: `#${headerId}`, class: 'auto-headers' }, svgIcon);
     node.children.push(link);
   };
 

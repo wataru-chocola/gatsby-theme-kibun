@@ -201,7 +201,7 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
               (theme.mixins.toolbar.minHeight as number) + Number(theme.spacing(1).slice(0, -2))
             }px`,
           }),
-          zIndex: 'appBar',
+          zIndex: (theme) => theme.zIndex.editBox,
           backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'><path fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'></path></svg>")`,
         }}
       >

@@ -2,13 +2,13 @@ import React from 'react';
 import rehypeReact from 'rehype-react';
 import { unified } from 'unified';
 import { Root as HastRoot } from 'hast';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { MuiGatsbyLink } from '../link';
 import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
 import path from 'path';
 
 const H1: React.FC = (props: any) => (
-  <Typography variant="h1" component="h2" {...props}></Typography>
+  <Typography variant="h1" component="h1" {...props}></Typography>
 );
 
 const H2: React.FC = (props: any) => (
@@ -16,33 +16,20 @@ const H2: React.FC = (props: any) => (
 );
 
 const H3: React.FC = (props: any) => (
-  <Box mt={4} mb={2} py={0.5} px={1} borderLeft={4} borderColor="primary.500">
-    <Typography variant="h3" component="h3" {...props}></Typography>
-  </Box>
+  <Typography variant="h3" component="h3" {...props}></Typography>
 );
 
 const H4: React.FC = (props: any) => (
-  <Box mt={4} mb={2} py={0.5} borderBottom={1} borderColor="primary.500">
-    <Typography variant="h4" component="h4" {...props}></Typography>
-  </Box>
+  <Typography variant="h4" component="h4" {...props}></Typography>
 );
 
 const H5: React.FC = (props: any) => (
   <Typography variant="h5" component="h5" {...props}></Typography>
 );
 
-const H6: React.FC = (props: any) => {
-  return (
-    <Typography
-      variant="h6"
-      component="h6"
-      sx={{
-        color: 'text.secondary',
-      }}
-      {...props}
-    ></Typography>
-  );
-};
+const H6: React.FC = (props: any) => (
+  <Typography variant="h6" component="h6" {...props}></Typography>
+);
 
 const P: React.FC = (props: any) => (
   <Typography
@@ -81,7 +68,7 @@ export const hast2react: (
       if (imgdata != null) {
         const image = getImage(imgdata);
         if (image != null) {
-          return <GatsbyImage alt={altText} image={image} />;
+          return <GatsbyImage alt={altText} image={image} className="md-image" />;
         }
       }
     }

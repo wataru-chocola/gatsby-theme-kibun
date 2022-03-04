@@ -37,6 +37,7 @@ const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
       maxItems={4}
       itemsBeforeCollapse={1}
       itemsAfterCollapse={2}
+      sx={{ fontSize: '12px' }}
     >
       {items}
     </Breadcrumbs>

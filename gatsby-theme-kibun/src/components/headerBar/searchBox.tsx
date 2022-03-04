@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { alpha } from '@mui/material/styles';
-import { Box, InputBase } from '@mui/material';
+import { Box, IconButton, InputBase } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
@@ -9,40 +9,33 @@ export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
     <Box
       sx={{
         position: 'relative',
-        borderRadius: 2,
-        backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
+        display: 'flex',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderRadius: 42,
+        borderColor: (theme) => alpha(theme.palette.common.black, 0.25),
         '&:hover': {
-          backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
+          borderColor: (theme) => alpha(theme.palette.common.black, 0.5),
         },
-        marginRight: 2,
-        marginLeft: { sm: 3, xs: 0 },
+        padding: 0,
         width: { sm: 'auto', xs: '100%' },
       }}
     >
-      <Box
-        sx={{
-          padding: 2,
-          height: '100%',
-          position: 'absolute',
-          pointerEvents: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <SearchIcon />
-      </Box>
       <InputBase
         placeholder="Search..."
+        size="small"
         sx={{
-          color: 'inherit',
+          color: (theme) => theme.palette.text.primary,
+          fontSize: '14px',
+          flex: 1,
           '& .MuiInputBase-input': {
             padding: 1,
             // vertical padding + font size from searchIcon
-            paddingLeft: (theme) => `calc(1em + ${theme.spacing(4)})`,
+            paddingLeft: '2em',
+            paddingRight: (theme) => `calc(1em + ${theme.spacing(4)})`,
             transition: (theme) => theme.transitions.create('width'),
             width: {
-              sx: '100%',
+              xs: '100%',
               md: '20ch',
             },
           },
@@ -50,6 +43,29 @@ export const SearchBox = React.forwardRef<HTMLInputElement>((_props, ref) => {
         inputProps={{ 'aria-label': 'search' }}
         ref={ref}
       />
+      <IconButton
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          right: '1%',
+          transform: 'translateY(-50%)',
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: (theme) => theme.palette.primary.tint[1],
+          padding: 0.5,
+          color: 'primary.main',
+          transition: (theme) =>
+            theme.transitions.create(['background-color', 'color'], {
+              duration: theme.transitions.duration.standard,
+            }),
+          '&:hover': {
+            color: 'white',
+            backgroundColor: (theme) => theme.palette.primary.main,
+          },
+        }}
+      >
+        <SearchIcon />
+      </IconButton>
     </Box>
   );
 });
