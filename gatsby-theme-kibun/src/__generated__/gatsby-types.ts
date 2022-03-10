@@ -4167,6 +4167,11 @@ type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
 
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type githubRepositryQuery = { readonly sitePlugin: Maybe<Pick<SitePlugin, 'pluginOptions'>> };
+
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4174,11 +4179,6 @@ type SiteSectionMenuQuery = { readonly sectionMenu: Maybe<{ readonly childrenSec
       Pick<SectionMenuCategory, 'category'>
       & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
     )>>> }> };
-
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type githubRepositryQuery = { readonly sitePlugin: Maybe<Pick<SitePlugin, 'pluginOptions'>> };
 
 type SEOQueryVariables = Exact<{ [key: string]: never; }>;
 
