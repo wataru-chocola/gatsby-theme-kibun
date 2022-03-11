@@ -63,7 +63,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
             open={mobileDrawerOpen}
             onClose={handleDrawerToggle}
             sx={{
-              display: { xs: 'block', sm: 'none' },
+              display: { xs: 'block', md: 'none' },
               ...drawerSx,
             }}
           >
@@ -82,9 +82,17 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
-          <Box component="main">
+          <Box component="main" width="100%">
             <Toolbar />
-            <Container maxWidth="md" disableGutters sx={{ position: 'relative' }}>
+
+            <Container
+              disableGutters
+              sx={{
+                minWidth: { xs: '320px', sm: '768px', lg: 'md' },
+                maxWidth: { xs: '100%', sm: '900px', lg: 'md' },
+                position: 'relative',
+              }}
+            >
               <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
                 <Box
                   sx={{
@@ -111,7 +119,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
             </Container>
           </Box>
 
-          <Box width="350px" sx={{ flexShrink: 0 }}>
+          <Box width="350px" sx={{ display: { xs: 'none', lg: 'block' }, flexShrink: 0 }}>
             <Box
               height="100%"
               width="350px"

@@ -4167,11 +4167,6 @@ type GatsbyImageSharpFluid_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio
 
 type GatsbyImageSharpFluid_withWebp_noBase64Fragment = Pick<ImageSharpFluid, 'aspectRatio' | 'src' | 'srcSet' | 'srcWebp' | 'srcSetWebp' | 'sizes'>;
 
-type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-type githubRepositryQuery = { readonly sitePlugin: Maybe<Pick<SitePlugin, 'pluginOptions'>> };
-
 type SiteSectionMenuQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4180,14 +4175,19 @@ type SiteSectionMenuQuery = { readonly sectionMenu: Maybe<{ readonly childrenSec
       & { readonly menu: ReadonlyArray<Pick<SectionMenuItem, 'text' | 'to'>> }
     )>>> }> };
 
-type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+type githubRepositryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
+type githubRepositryQuery = { readonly sitePlugin: Maybe<Pick<SitePlugin, 'pluginOptions'>> };
 
 type SiteTitleQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 type SiteTitleQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title'>> }> };
+
+type SEOQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+type SEOQuery = { readonly site: Maybe<{ readonly siteMetadata: Maybe<Pick<SiteSiteMetadata, 'title' | 'description'>> }> };
 
 }

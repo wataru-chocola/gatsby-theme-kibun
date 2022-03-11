@@ -122,6 +122,15 @@ const theme = createTheme(
         letterSpacing: '0.075em',
       },
     },
+    breakpoints: {
+      values: {
+        xs: 0, // mobile
+        sm: 768, // one pane
+        md: 1280, // two pane
+        lg: 1600, // three pane
+        xl: 1920,
+      },
+    },
     zIndex: {
       editButton: defaultTheme.zIndex.appBar + 10,
       editBox: defaultTheme.zIndex.appBar + 20,
