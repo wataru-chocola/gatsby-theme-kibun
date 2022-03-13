@@ -151,6 +151,12 @@ const Content: React.FC = (props) => {
           marginBottom: 5,
         },
 
+        // Img
+        img: {
+          maxWidth: '100%',
+          objectFit: 'cover',
+        },
+
         // Inline elements
         '& :not(pre) > code': {
           fontSize: '0.9em',
