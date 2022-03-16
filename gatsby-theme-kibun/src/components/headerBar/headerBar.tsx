@@ -5,6 +5,7 @@ import { Divider } from '@mui/material';
 import { useScrollTrigger } from '@mui/material';
 
 import { MenuButton } from './menuButton';
+import { ActionButton } from './actionButton';
 import { SiteTitle } from './siteTitle';
 import { SearchBox } from './searchBox';
 import { AccountButton } from './accountButton';
@@ -37,7 +38,7 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
             },
           }}
         >
-          <MenuButton onClick={props.onMenuButton} />
+          <MenuButton onClick={props.onMenuButton} edge="start" />
         </Box>
         <Box
           alignSelf="center"
@@ -71,7 +72,17 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
         <Box mt={1} mb={1} mr={2} ml={{ sm: 3, xs: 0 }} display={{ sm: 'block', xs: 'none' }}>
           <SearchBox />
         </Box>
-        <Box sx={{ flexShrink: 0 }}>{isLoggedIn ? <AccountButton /> : <LogInButton />}</Box>
+        <Box sx={{ flexShrink: 0, alignSelf: 'center' }}>
+          {isLoggedIn ? (
+            <AccountButton />
+          ) : (
+            <React.Fragment>
+              <LogInButton />
+              <Box width={8} display="inline-block" />
+              <ActionButton edge="end" />
+            </React.Fragment>
+          )}
+        </Box>
       </Toolbar>
 
       <Divider variant="middle" />

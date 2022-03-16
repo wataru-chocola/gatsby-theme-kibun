@@ -121,7 +121,7 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
           },
         }}
       >
-        Sign in
+        Login
       </Button>
       {loginForm}
     </React.Fragment>

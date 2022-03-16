@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { IconButton, IconButtonProps } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-type MenuButtonProps = Pick<IconButtonProps, 'onClick' | 'edge'>;
+type ActionButtonProps = Pick<IconButtonProps, 'onClick' | 'edge'>;
 
-export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>((props, ref) => {
+export const ActionButton = React.forwardRef<HTMLButtonElement, ActionButtonProps>((props, ref) => {
   return (
     <IconButton
       color="primary"
@@ -20,8 +20,8 @@ export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>((
       }}
       {...props}
     >
-      <MenuIcon />
+      <MoreVertIcon />
     </IconButton>
   );
 });
-MenuButton.displayName = 'MenuButton';
+ActionButton.displayName = 'ActionButton';
