@@ -23,7 +23,15 @@ export const SiteTitle: React.VFC = () => {
           },
         }}
       >
-        {siteTitle}
+        <Box
+          sx={{
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {siteTitle}
+        </Box>
       </MuiGatsbyLink>
     </Box>
   );

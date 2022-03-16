@@ -19,10 +19,11 @@ import 'overlayscrollbars/css/OverlayScrollbars.css';
 const drawerWidth = 300;
 
 export type InnerLayoutProps = {
+  pageTitle: string;
   window?: () => Window;
 } & Pick<ContainerProps, 'children'>;
 
-const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
+const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, window, children }) => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
   const container = window !== undefined ? () => window().document.body : undefined;
 
@@ -54,7 +55,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ window, children }) => {
       }}
     >
       <SnackMessage />
-      <HeaderBar onMenuButton={handleDrawerToggle} />
+      <HeaderBar onMenuButton={handleDrawerToggle} pageTitle={pageTitle} />
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
