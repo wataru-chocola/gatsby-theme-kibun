@@ -1,17 +1,13 @@
 import React from 'react';
 import { IconButton } from '../uiparts/iconButton';
-import { Menu, MenuItem } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
-import { useAppDispatch } from '../../state/hooks';
-import { loginActions } from '../../state/loginSlice';
+import { ActionMenu } from './actionMenu';
 
 export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
   const menuId = 'account-menu';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
   const isMenuOpen = Boolean(anchorEl);
-  const dispatch = useAppDispatch();
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -20,23 +16,16 @@ export const AccountButton = React.forwardRef<HTMLButtonElement>((_props, ref) =
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    dispatch(loginActions.logOut({}));
-    setAnchorEl(null);
-  };
-
   const renderMenu = (
-    <Menu
+    <ActionMenu
       anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       id={menuId}
       keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
-    </Menu>
+      close={handleMenuClose}
+    />
   );
 
   return (
