@@ -10,7 +10,7 @@ import { SiteTitle } from './siteTitle';
 import { SearchBox } from './searchBox';
 import { AccountButton } from './accountButton';
 import { LogInButton } from './logInButton';
-import { Flipcard } from '../utils/flipcard';
+import { Flipcard } from '../uiparts/flipcard';
 
 import { useAppSelector } from '../../state/hooks';
 import { selectIsLoggedIn } from '../../state/loginSelector';
@@ -77,9 +77,9 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
             <AccountButton />
           ) : (
             <React.Fragment>
+              <ActionButton />
+              <Box width={8} display={{ xs: 'none', md: 'inline-block' }} />
               <LogInButton />
-              <Box width={8} display="inline-block" />
-              <ActionButton edge="end" />
             </React.Fragment>
           )}
         </Box>
