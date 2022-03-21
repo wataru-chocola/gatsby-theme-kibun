@@ -85,10 +85,10 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         </Slide>
       </ErrorBoundary>
 
-      <Box pt={2} mx={6}>
+      <Box pt={2} mx={{ xs: 2, sm: 6 }}>
         <PathBreadcrumbs crumbs={crumbs} />
       </Box>
-      <Box bgcolor="primary.contrastText" color="primary.main" mx={6} my={2}>
+      <Box bgcolor="primary.contrastText" color="primary.main" mx={{ xs: 2, sm: 6 }} my={2}>
         <Typography variant="h1" sx={{ fontSize: '40px', fontWeight: 'bold' }}>
           {title}
         </Typography>
@@ -100,7 +100,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
             <TableOfContents>{toc}</TableOfContents>
           </Box>
         )}
-        <Box mx={6}>
+        <Box mx={{ xs: 2, sm: 6 }}>
           <Content>{html}</Content>
         </Box>
       </Box>

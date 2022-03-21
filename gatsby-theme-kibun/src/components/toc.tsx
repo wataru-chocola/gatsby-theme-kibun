@@ -22,7 +22,7 @@ const TableOfContents: React.FC = (props) => {
           paddingLeft: 1,
         },
         '& > * > ul': {
-          marginLeft: 3,
+          marginX: { xs: 0, sm: 3 },
           '> li': {
             position: 'relative',
             listStyle: 'none',

@@ -70,13 +70,16 @@ const Content: React.FC = (props) => {
         dt: {
           display: 'inline-block',
           marginBottom: 1,
-          marginLeft: 1,
+          marginLeft: { xs: 0, sm: 1 },
           background: 'linear-gradient(transparent 80%, #C5E1A4 80%)',
           lineHeight: 1.1,
         },
         dd: {
           marginBottom: 2,
-          marginLeft: 4,
+          marginLeft: { xs: 1, sm: 4 },
+        },
+        'ul, ol': {
+          paddingLeft: { xs: 3, sm: 5 },
         },
         'ul, ol, dl': {
           marginTop: 2,
@@ -127,13 +130,14 @@ const Content: React.FC = (props) => {
         // Blockquote
         blockquote: {
           borderLeft: '4px solid',
-          paddingLeft: 4,
+          paddingLeft: { xs: 2, sm: 4 },
           borderLeftColor: (theme) => theme.palette.gray[0],
           color: (theme) => theme.palette.gray[5],
           marginLeft: 0,
+          marginRight: { xs: 2, sm: 4 },
 
           '&::before': {
-            display: 'inline-block',
+            display: 'block',
             content:
               "url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M13%2014.725c0-5.141%203.892-10.519%2010-11.725l.984%202.126c-2.215.835-4.163%203.742-4.38%205.746%202.491.392%204.396%202.547%204.396%205.149%200%203.182-2.584%204.979-5.199%204.979-3.015%200-5.801-2.305-5.801-6.275zm-13%200c0-5.141%203.892-10.519%2010-11.725l.984%202.126c-2.215.835-4.163%203.742-4.38%205.746%202.491.392%204.396%202.547%204.396%205.149%200%203.182-2.584%204.979-5.199%204.979-3.015%200-5.801-2.305-5.801-6.275z%22%20fill%3D%22%23cccccc%22%20%2F%3E%3C%2Fsvg%3E')",
           },
@@ -144,8 +148,8 @@ const Content: React.FC = (props) => {
           fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
         },
         '& > div > pre': {
-          marginX: -6,
-          paddingX: 7,
+          marginX: { xs: -2, sm: -6 },
+          paddingX: { xs: 2, sm: 7 },
           borderRadius: 0,
           marginTop: 4,
           marginBottom: 5,

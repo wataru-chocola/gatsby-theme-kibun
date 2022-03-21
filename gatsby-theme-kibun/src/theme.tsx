@@ -42,10 +42,21 @@ declare module '@mui/material/styles/zIndex' {
   }
 }
 
+const breakpoints = {
+  values: {
+    xs: 0, // mobile
+    sm: 768, // one pane
+    md: 1280, // two pane
+    lg: 1600, // three pane
+    xl: 1920,
+  },
+};
+
 const defaultTheme = createTheme();
 
 const theme = createTheme(
   {
+    breakpoints,
     palette: {
       primary: {
         main: '#8BC34A',
@@ -84,33 +95,51 @@ const theme = createTheme(
         fontWeight: 500,
         lineHeight: 1.75,
         letterSpacing: '-0.035em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1.65rem',
+        },
       },
       h2: {
         fontSize: '1.65rem',
         fontWeight: 500,
         lineHeight: 1.6,
         letterSpacing: '-0.03em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1.4rem',
+        },
       },
       h3: {
         fontSize: '1.5rem',
         fontWeight: 500,
         lineHeight: 1.5,
         letterSpacing: '-0.025em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1.25rem',
+        },
       },
       h4: {
         fontSize: '1.25rem',
         lineHeight: 1.5,
         letterSpacing: '-0.02em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1.15rem',
+        },
       },
       h5: {
         fontSize: '1.15rem',
         lineHeight: 1.5,
         letterSpacing: '-0.02em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1.05rem',
+        },
       },
       h6: {
         fontSize: '1.05rem',
         lineHeight: 1.5,
         letterSpacing: '-0.02em',
+        [`@media screen and (max-width: ${breakpoints.values.sm}px)`]: {
+          fontSize: '1rem',
+        },
       },
       body1: {
         lineHeight: 1.7,
@@ -120,15 +149,6 @@ const theme = createTheme(
         fontSize: '0.85rem',
         lineHeight: 1.75,
         letterSpacing: '0.075em',
-      },
-    },
-    breakpoints: {
-      values: {
-        xs: 0, // mobile
-        sm: 768, // one pane
-        md: 1280, // two pane
-        lg: 1600, // three pane
-        xl: 1920,
       },
     },
     zIndex: {
