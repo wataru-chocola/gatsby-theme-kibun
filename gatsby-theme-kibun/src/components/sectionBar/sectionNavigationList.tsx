@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
 import { Typography } from '@mui/material';
-import { GatsbyLink, GatsbyLinkProps } from '../utils/link';
+import { GatsbyLink, GatsbyLinkProps } from '../../utils/link';
 import { useStaticQuery, graphql } from 'gatsby';
 
 type ListItemLinkProps = Omit<ListItemProps<'a', GatsbyLinkProps & { button?: true }>, 'component'>;

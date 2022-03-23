@@ -4,7 +4,7 @@ import { TextField, TextFieldProps } from '@mui/material';
 import { inputBaseClasses, inputLabelClasses } from '@mui/material';
 import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { GatsbyLink } from '../utils/link';
+import { GatsbyLink } from '../../utils/link';
 import MuiLink, { LinkProps } from '@mui/material/Link';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 

@@ -38,7 +38,7 @@ const Content: React.FC = (props) => {
           color: (theme) => theme.palette.secondary.shade[0],
         },
         '.auto-headers': {
-          display: 'inline-block',
+          display: { xs: 'none', sm: 'inline-block' },
           marginLeft: '0.3em',
           paddingX: 0.5,
 

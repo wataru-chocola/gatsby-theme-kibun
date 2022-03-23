@@ -4,9 +4,7 @@ import { Box, Container, ContainerProps } from '@mui/material';
 import { Paper } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
-import { SideBarDrawer, MobileDrawer } from './sidebar';
-import { FilterBox } from './filterBox';
-import { SectionNavigationList } from './sectionNavigationList';
+import { SectionBar } from './sectionBar';
 import { Attachments } from './attachments';
 import { SnackMessage } from './utils/snackMessage';
 import { EditButton } from './editButton';
@@ -16,32 +14,22 @@ import ErrorBoundary from './utils/errorboundary';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/css/OverlayScrollbars.css';
 
-const drawerWidth = 300;
-
 export type InnerLayoutProps = {
   pageTitle: string;
-  window?: () => Window;
 } & Pick<ContainerProps, 'children'>;
 
-const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, window, children }) => {
-  const [mobileDrawerOpen, setMobileDrawerOpen] = React.useState(false);
-  const container = window !== undefined ? () => window().document.body : undefined;
-
-  const handleDrawerToggle = useCallback(() => {
-    setMobileDrawerOpen((prev) => !prev);
-  }, [setMobileDrawerOpen]);
-
-  const drawerSx = {
-    width: {
-      sm: drawerWidth,
+const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const toggleDrawer = useCallback(
+    (open?: boolean) => () => {
+      if (open != null) {
+        setDrawerOpen(open);
+      } else {
+        setDrawerOpen((prev) => !prev);
+      }
     },
-    flexShrink: {
-      sm: 0,
-    },
-    '& .MuiDrawer-paper': {
-      width: drawerWidth,
-    },
-  } as const;
+    [setDrawerOpen],
+  );
 
   return (
     <Box
@@ -55,31 +43,11 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, window, children }
       }}
     >
       <SnackMessage />
-      <HeaderBar onMenuButton={handleDrawerToggle} pageTitle={pageTitle} />
+      <HeaderBar onMenuButton={toggleDrawer()} pageTitle={pageTitle} />
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
-          <MobileDrawer
-            container={container}
-            open={mobileDrawerOpen}
-            onClose={handleDrawerToggle}
-            sx={{
-              display: { xs: 'block', md: 'none' },
-              ...drawerSx,
-            }}
-          >
-            <SectionNavigationList />
-          </MobileDrawer>
-
-          <SideBarDrawer
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              ...drawerSx,
-            }}
-          >
-            <FilterBox />
-            <SectionNavigationList />
-          </SideBarDrawer>
+          <SectionBar drawerOpenState={drawerOpen} toggleDrawer={toggleDrawer} />
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
