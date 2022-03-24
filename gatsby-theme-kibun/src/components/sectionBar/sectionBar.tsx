@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme, useMediaQuery } from '@mui/material';
 import { ResponsiveDrawer } from '../uiparts/responsiveDrawer';
 import { FilterBox } from './filterBox';
 import { SectionNaviList } from './sectionNaviList';
@@ -27,9 +26,6 @@ export const SectionBar: React.VFC<Props> = (props) => {
     },
   } as const;
 
-  const theme = useTheme();
-  const sidebarDensed = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
-
   return (
     <nav aria-label="sidemenu">
       <ResponsiveDrawer
@@ -47,14 +43,8 @@ export const SectionBar: React.VFC<Props> = (props) => {
             },
           }}
         >
-          {sidebarDensed ? (
-            <MemorizedSectionNavigationList />
-          ) : (
-            <React.Fragment>
-              <FilterBox />
-              <MemorizedSectionNavigationList />
-            </React.Fragment>
-          )}
+          <FilterBox />
+          <MemorizedSectionNavigationList />
         </OverlayScrollbarsComponent>
       </ResponsiveDrawer>
     </nav>

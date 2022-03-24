@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { TextField, TextFieldProps } from '@mui/material';
 import { inputBaseClasses, inputLabelClasses } from '@mui/material';
 import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { GatsbyLink } from '../../utils/link';
 import MuiLink, { LinkProps } from '@mui/material/Link';
@@ -21,9 +22,13 @@ const MuiGatsbyLink = React.forwardRef<HTMLAnchorElement, LinkProps & { to?: str
         sx={{
           display: 'block',
           paddingLeft: 2,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
+          marginBottom: 1,
+          '@media (hover: hover)': {
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            marginBottom: 0,
+          },
 
           '&:hover': {
             backgroundColor: 'secondary.main',
@@ -67,22 +72,28 @@ const CustomizedTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const filterPages: (pages: string[], input: string) => Array<React.ReactElement> = (
+const useFilterPages: (pages: string[], filterInput: string) => Array<React.ReactElement> = (
   pages,
   filterInput,
 ) => {
-  return pages
-    .filter((value) => value.match(filterInput))
-    .map((e, i) => (
-      <CustomizedTooltip key={i} title={e} arrow placement="right-start">
-        <MuiGatsbyLink to={`/${e}`}>{e}</MuiGatsbyLink>
-      </CustomizedTooltip>
-    ));
+  const theme = useTheme();
+  const placement = useMediaQuery(theme.breakpoints.down('md')) ? 'bottom-start' : 'right-start';
+
+  if (filterInput.length === 0) {
+    return [];
+  } else {
+    return pages
+      .filter((value) => value.match(filterInput))
+      .map((e, i) => (
+        <CustomizedTooltip key={i} title={e} arrow placement={placement}>
+          <MuiGatsbyLink to={`/${e}`}>{e}</MuiGatsbyLink>
+        </CustomizedTooltip>
+      ));
+  }
 };
 
 export const FilterBox: React.VFC = (_props) => {
   const [inputValue, setInputValue] = React.useState('');
-  const [candidates, setCandidates] = React.useState<React.ReactElement[]>([]);
   const [hiddenResults, setHiddenResults] = React.useState<boolean>(true);
 
   const dummypages: Array<string> = [];
@@ -93,14 +104,14 @@ export const FilterBox: React.VFC = (_props) => {
       setInputValue(value);
       if (value.length === 0) {
         setHiddenResults(true);
-        setCandidates([]);
       } else {
         setHiddenResults(false);
-        setCandidates(filterPages(dummypages, value));
       }
     },
     [setInputValue, dummypages],
   );
+  const candidates = useFilterPages(dummypages, inputValue);
+
   return (
     <React.Fragment>
       <Box marginX={2} marginY={3}>
@@ -116,13 +127,13 @@ export const FilterBox: React.VFC = (_props) => {
         />
       </Box>
       <Box
-        marginY={3}
+        marginY={hiddenResults ? 0 : 3}
         marginRight={1}
         sx={{
           visibility: hiddenResults ? 'hidden' : 'visible',
           height: hiddenResults ? 0 : 100,
           transition: (theme) =>
-            theme.transitions.create(['height'], {
+            theme.transitions.create(['height', 'margin'], {
               duration: theme.transitions.duration.standard,
             }),
         }}
@@ -146,7 +157,11 @@ export const FilterBox: React.VFC = (_props) => {
                 }),
             }}
           >
-            {candidates.length > 0 ? candidates : <Box paddingLeft={2}>{'(no matches)'}</Box>}
+            {hiddenResults ? null : candidates.length > 0 ? (
+              candidates
+            ) : (
+              <Box paddingLeft={2}>{'(no matches)'}</Box>
+            )}
           </Box>
         </OverlayScrollbarsComponent>
       </Box>
