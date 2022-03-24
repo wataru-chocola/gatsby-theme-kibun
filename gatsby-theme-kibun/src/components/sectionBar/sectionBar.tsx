@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import { ResponsiveDrawer } from '../uiparts/responsiveDrawer';
 import { FilterBox } from './filterBox';
-import { SectionNavigationList } from './sectionNavigationList';
+import { SectionNaviList } from './sectionNaviList';
 import { Toolbar } from '@mui/material';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
@@ -11,7 +11,7 @@ interface Props {
   toggleDrawer: (open?: boolean) => () => void;
 }
 
-const MemorizedSectionNavigationList = React.memo(SectionNavigationList);
+const MemorizedSectionNavigationList = React.memo(SectionNaviList);
 
 export const SectionBar: React.VFC<Props> = (props) => {
   const drawerWidth = 300;

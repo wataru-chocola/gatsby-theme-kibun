@@ -9,7 +9,7 @@ import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
-import { MuiGatsbyLink } from '../utils/link';
+import { MuiGatsbyLink } from './uiparts/link';
 
 const StyledIconButton = styled((props: IconButtonProps) => <IconButton {...props}></IconButton>)(
   sx({

@@ -38,6 +38,7 @@ export const ResponsiveDrawer: React.FC<Props> = (props) => {
       open={props.drawerOpenState}
       onOpen={evtHandlerToggleDrawer(true)}
       onClose={evtHandlerToggleDrawer(false)}
+      keepMounted={true}
       sx={props.sx}
     >
       {props.children}

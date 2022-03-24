@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSiteTitle } from '../../hooks/useSiteTitle';
-import { MuiGatsbyLink } from '../../utils/link';
+import { MuiGatsbyLink } from '../uiparts/link';
 import { Box } from '@mui/material';
 
 export const SiteTitle: React.VFC = () => {

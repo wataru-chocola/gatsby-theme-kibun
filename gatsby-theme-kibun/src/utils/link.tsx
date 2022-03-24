@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, GatsbyLinkProps as OriginalGatsbyLinkProps } from 'gatsby';
-import MuiLink, { LinkProps } from '@mui/material/Link';
 
 interface ALinkProps extends Omit<OriginalGatsbyLinkProps<any>, 'to'> {
   href: string;
@@ -40,28 +39,3 @@ export const GatsbyLink = React.forwardRef(
 GatsbyLink.displayName = 'GatsbyLink';
 
 export type GatsbyLinkProps = Parameters<typeof GatsbyLink>[0];
-
-export const MuiGatsbyLink = React.forwardRef<HTMLAnchorElement, LinkProps & { to?: string }>(
-  (props, ref) => {
-    const { to } = props;
-    return to ? (
-      <MuiLink
-        color="secondary"
-        ref={ref}
-        component={GatsbyLink}
-        underline="none"
-        to={to}
-        sx={{
-          '&:hover': {
-            backgroundColor: 'secondary.main',
-            color: 'white',
-          },
-        }}
-        {...props}
-      />
-    ) : (
-      <MuiLink color="secondary" ref={ref} underline="hover" {...props} />
-    );
-  },
-);
-MuiGatsbyLink.displayName = 'MuiGatsbyLink';
