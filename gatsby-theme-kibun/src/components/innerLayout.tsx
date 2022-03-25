@@ -51,43 +51,40 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
-          <Box component="main" width="100%">
+          <Box
+            component="main"
+            sx={{
+              minWidth: { xs: '320px', sm: '768px', lg: 'md' },
+              maxWidth: { xs: '100%', sm: '900px', lg: 'md' },
+              position: 'relative',
+            }}
+          >
             <Toolbar />
 
-            <Container
-              disableGutters
-              sx={{
-                minWidth: { xs: '320px', sm: '768px', lg: 'md' },
-                maxWidth: { xs: '100%', sm: '900px', lg: 'md' },
-                position: 'relative',
-              }}
-            >
-              <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    pointerEvents: 'none',
-                    '& > *': {
-                      pointerEvents: 'auto',
-                    },
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  <EditButton />
+            <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                  '& > *': {
+                    pointerEvents: 'auto',
+                  },
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <EditButton />
+              </Box>
+              <Paper>
+                {children}
+                <Box mt={8}>
+                  <Footer />
                 </Box>
-                <Paper>
-                  {children}
-                  <Box mt={8}>
-                    <Footer />
-                  </Box>
-                </Paper>
-              </ErrorBoundary>
-            </Container>
+              </Paper>
+            </ErrorBoundary>
           </Box>
-
           <Box width="350px" sx={{ display: { xs: 'none', lg: 'block' }, flexShrink: 0 }}>
             <Box
               height="100%"
