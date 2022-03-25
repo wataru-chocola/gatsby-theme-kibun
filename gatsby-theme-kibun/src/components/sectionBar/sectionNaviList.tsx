@@ -19,7 +19,9 @@ type NaviCategory = {
 type NaviData = NaviCategory[];
 
 const NaviListItem: React.VFC<{ key: string | number; item: NaviItem }> = (props) => {
-  const nestedStyle = { paddingTop: { md: 0 }, paddingBottom: { md: 0 } } as const;
+  const nestedStyle = {
+    '@media not all and (pointer: coarse)': { paddingTop: 0.1, paddingBottom: 0.1 },
+  } as const;
   let itemProps: ListItemLinkProps;
   if (props.item.to != null) {
     itemProps = { key: props.key, sx: nestedStyle, to: props.item.to };
