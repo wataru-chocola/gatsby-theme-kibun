@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Toolbar } from '@mui/material';
-import { Box, Container, ContainerProps } from '@mui/material';
+import { Box } from '@mui/material';
 import { Paper } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
@@ -16,7 +16,7 @@ import 'overlayscrollbars/css/OverlayScrollbars.css';
 
 export type InnerLayoutProps = {
   pageTitle: string;
-} & Pick<ContainerProps, 'children'>;
+};
 
 const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -54,8 +54,9 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
           <Box
             component="main"
             sx={{
-              minWidth: { xs: '320px', sm: '768px', lg: 'md' },
-              maxWidth: { xs: '100%', sm: '900px', lg: 'md' },
+              minWidth: { xs: '320px' },
+              maxWidth: { xs: '100%', sm: '900px', md: '900px' },
+              width: '100%',
               position: 'relative',
             }}
           >
