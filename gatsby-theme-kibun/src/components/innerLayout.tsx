@@ -1,15 +1,13 @@
 import React, { useCallback } from 'react';
-import { Toolbar } from '@mui/material';
 import { Box } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
 import { SectionBar } from './sectionBar';
-import { Attachments } from './attachments';
+import { RightPanel } from './rightPanel';
 import { SnackMessage } from './utils/snackMessage';
 import { ContentContainer } from './contentContainer';
 import { Footer } from './footer';
 
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/css/OverlayScrollbars.css';
 
 export type InnerLayoutProps = {
@@ -17,16 +15,28 @@ export type InnerLayoutProps = {
 };
 
 const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const toggleDrawer = useCallback(
+  const [leftMenuOpen, setLeftMenuOpen] = React.useState(false);
+  const toggleLeftMenu = useCallback(
     (open?: boolean) => () => {
       if (open != null) {
-        setDrawerOpen(open);
+        setLeftMenuOpen(open);
       } else {
-        setDrawerOpen((prev) => !prev);
+        setLeftMenuOpen((prev) => !prev);
       }
     },
-    [setDrawerOpen],
+    [setLeftMenuOpen],
+  );
+
+  const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
+  const toggleRightPanel = useCallback(
+    (open?: boolean) => () => {
+      if (open != null) {
+        setRightPanelOpen(open);
+      } else {
+        setRightPanelOpen((prev) => !prev);
+      }
+    },
+    [setRightPanelOpen],
   );
 
   return (
@@ -41,40 +51,20 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
       }}
     >
       <SnackMessage />
-      <HeaderBar onMenuButton={toggleDrawer()} pageTitle={pageTitle} />
+      <HeaderBar onMenuButton={toggleLeftMenu()} pageTitle={pageTitle} />
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
-          <SectionBar drawerOpenState={drawerOpen} toggleDrawer={toggleDrawer} />
+          <SectionBar openState={leftMenuOpen} toggle={toggleLeftMenu} />
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
           <ContentContainer footer={<Footer />}>{children}</ContentContainer>
-          <Box width="350px" sx={{ display: { xs: 'none', lg: 'block' }, flexShrink: 0 }}>
-            <Box
-              height="100%"
-              width="350px"
-              position="fixed"
-              left="auto"
-              sx={{ display: 'flex', flexDirection: 'column' }}
-            >
-              <Toolbar />
-              <OverlayScrollbarsComponent
-                options={{
-                  className: 'os-theme-dark os-theme-custom os-host-flexbox',
-                  scrollbars: {
-                    clickScrolling: true,
-                  },
-                }}
-              >
-                <Attachments />
-              </OverlayScrollbarsComponent>
-            </Box>
-          </Box>
+          <RightPanel openState={rightPanelOpen} toggle={toggleRightPanel} />
         </Box>
       </Box>
     </Box>
   );
 };
-
+InnerLayout.displayName = 'InnerLayout';
 export default InnerLayout;

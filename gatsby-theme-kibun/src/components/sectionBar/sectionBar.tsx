@@ -6,8 +6,8 @@ import { Toolbar } from '@mui/material';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
 interface Props {
-  drawerOpenState: boolean;
-  toggleDrawer: (open?: boolean) => () => void;
+  openState: boolean;
+  toggle: (open?: boolean) => () => void;
 }
 
 const MemorizedSectionNavigationList = React.memo(SectionNaviList);
@@ -29,8 +29,8 @@ export const SectionBar: React.VFC<Props> = (props) => {
   return (
     <nav aria-label="sidemenu">
       <ResponsiveDrawer
-        drawerOpenState={props.drawerOpenState}
-        toggleDrawer={props.toggleDrawer}
+        openState={props.openState}
+        toggle={props.toggle}
         breakpoint="md"
         sx={drawerSx}
       >

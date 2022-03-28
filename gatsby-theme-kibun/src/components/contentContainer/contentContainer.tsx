@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import { Paper } from '@mui/material';
 
 import { EditButton } from './editButton';
-import { Footer } from '../footer';
 import ErrorBoundary from '../utils/errorboundary';
 
 export type ContentContainerProps = {

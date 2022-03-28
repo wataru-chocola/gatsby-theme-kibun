@@ -5,8 +5,8 @@ import { useTheme, useMediaQuery } from '@mui/material';
 
 interface Props {
   anchor?: DrawerProps['anchor'];
-  drawerOpenState: boolean;
-  toggleDrawer: (open?: boolean) => () => void;
+  openState: boolean;
+  toggle: (open?: boolean) => () => void;
   sx: SxProps;
   breakpoint?: Breakpoint;
 }
@@ -28,14 +28,14 @@ export const ResponsiveDrawer: React.FC<Props> = (props) => {
         return;
       }
 
-      props.toggleDrawer(open)();
+      props.toggle(open)();
     };
 
   return drawerTemporary ? (
     <SwipeableDrawer
       variant="temporary"
       anchor={props.anchor}
-      open={props.drawerOpenState}
+      open={props.openState}
       onOpen={evtHandlerToggleDrawer(true)}
       onClose={evtHandlerToggleDrawer(false)}
       keepMounted={true}

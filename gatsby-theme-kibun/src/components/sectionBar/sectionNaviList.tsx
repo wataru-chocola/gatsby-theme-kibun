@@ -18,15 +18,15 @@ type NaviCategory = {
 
 type NaviData = NaviCategory[];
 
-const NaviListItem: React.VFC<{ key: string | number; item: NaviItem }> = (props) => {
+const NaviListItem: React.VFC<{ item: NaviItem }> = (props) => {
   const nestedStyle = {
     '@media not all and (pointer: coarse)': { paddingTop: 0.1, paddingBottom: 0.1 },
   } as const;
   let itemProps: ListItemLinkProps;
   if (props.item.to != null) {
-    itemProps = { key: props.key, sx: nestedStyle, to: props.item.to };
+    itemProps = { sx: nestedStyle, to: props.item.to };
   } else {
-    itemProps = { key: props.key, sx: nestedStyle };
+    itemProps = { sx: nestedStyle };
   }
 
   return (
@@ -44,16 +44,14 @@ const NaviListItem: React.VFC<{ key: string | number; item: NaviItem }> = (props
 };
 NaviListItem.displayName = 'NaviListItem';
 
-const NaviItemList: React.VFC<{ key: string | number; naviItems: NaviItem[] }> = React.memo(
-  (props) => {
-    const listItems: React.ReactElement[] = [];
-    for (let j = 0; j < props.naviItems.length; j++) {
-      const itemData = props.naviItems[j];
-      listItems.push(<NaviListItem key={j} item={itemData} />);
-    }
-    return <List key={props.key}>{listItems}</List>;
-  },
-);
+const NaviItemList: React.VFC<{ naviItems: NaviItem[] }> = React.memo((props) => {
+  const listItems: React.ReactElement[] = [];
+  for (let j = 0; j < props.naviItems.length; j++) {
+    const itemData = props.naviItems[j];
+    listItems.push(<NaviListItem key={j} item={itemData} />);
+  }
+  return <List>{listItems}</List>;
+});
 NaviItemList.displayName = 'NaviItemList';
 
 const SectionNaviListInner: React.VFC<{ naviData: NaviData }> = React.memo((props) => {
