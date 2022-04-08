@@ -1,21 +1,32 @@
 import React from 'react';
 
-import { Box, AppBar, Toolbar } from '@mui/material';
+import { Box, AppBar, Toolbar, MenuProps } from '@mui/material';
 import { Divider } from '@mui/material';
 import { useScrollTrigger } from '@mui/material';
 
-import { MenuButton } from './menuButton';
-import { ActionButton } from './actionButton';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
+import { HamburgerButton } from './hamburgerButton';
+import { MenuButton } from '../uiparts/menuButton';
 import { SiteTitle } from './siteTitle';
 import { SearchBox } from './searchBox';
-import { AccountButton } from './accountButton';
 import { LogInButton } from './logInButton';
 import { Flipcard } from '../uiparts/flipcard';
 
 import { useAppSelector } from '../../state/hooks';
 import { selectIsLoggedIn } from '../../state/loginSelector';
 
-export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string }> = (props) => {
+type HeaderBarProps<P extends MenuProps = MenuProps> = {
+  onHamburgerButton: () => void;
+  pageTitle: string;
+  menu: React.VFC<P>;
+  menuExtraProps?: P;
+};
+
+export function HeaderBar<P extends MenuProps = MenuProps>(
+  props: HeaderBarProps<P>,
+): React.ReactElement {
   const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
 
@@ -38,7 +49,7 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
             },
           }}
         >
-          <MenuButton onClick={props.onMenuButton} edge="start" />
+          <HamburgerButton onClick={props.onHamburgerButton} edge="start" />
         </Box>
         <Box
           alignSelf="center"
@@ -74,10 +85,25 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
         </Box>
         <Box sx={{ flexShrink: 0, alignSelf: 'center' }}>
           {isLoggedIn ? (
-            <AccountButton />
+            <MenuButton
+              menuId="account-menu"
+              icon={<AccountCircle />}
+              menu={props.menu}
+              menuExtraProps={props.menuExtraProps}
+              edge="end"
+              aria-label="account of current user"
+              aria-haspopup="true"
+            />
           ) : (
             <React.Fragment>
-              <ActionButton />
+              <MenuButton
+                menuId="action-menu"
+                icon={<MoreVertIcon />}
+                menu={props.menu}
+                menuExtraProps={props.menuExtraProps}
+                aria-label="open action menu"
+                aria-haspopup="true"
+              />
               <Box width={8} display={{ xs: 'none', md: 'inline-block' }} />
               <LogInButton />
             </React.Fragment>
@@ -88,5 +114,4 @@ export const HeaderBar: React.VFC<{ onMenuButton: () => void; pageTitle: string 
       <Divider variant="middle" />
     </AppBar>
   );
-};
-HeaderBar.displayName = 'HeaderBar';
+}

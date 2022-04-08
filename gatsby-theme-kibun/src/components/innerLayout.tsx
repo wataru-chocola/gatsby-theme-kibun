@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, MenuProps } from '@mui/material';
 
 import { HeaderBar } from './headerBar';
+import { ActionMenu } from './headerBar/actionMenu';
 import { SectionBar } from './sectionBar';
 import { RightPanel } from './rightPanel';
 import { SnackMessage } from './utils/snackMessage';
@@ -38,6 +39,12 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
     },
     [setRightPanelOpen],
   );
+  const newActionMenu = useCallback(
+    (props: MenuProps) => {
+      return <ActionMenu handleOpenAttachment={toggleRightPanel(true)} {...props} />;
+    },
+    [toggleRightPanel],
+  );
 
   return (
     <Box
@@ -51,7 +58,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
       }}
     >
       <SnackMessage />
-      <HeaderBar onMenuButton={toggleLeftMenu()} pageTitle={pageTitle} />
+      <HeaderBar onHamburgerButton={toggleLeftMenu()} pageTitle={pageTitle} menu={newActionMenu} />
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">

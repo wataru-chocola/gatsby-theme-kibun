@@ -6,43 +6,57 @@ import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { selectIsLoggedIn } from '../../state/loginSelector';
 import { loginActions } from '../../state/loginSlice';
 
-type ActionMenuProps = MenuProps & {
-  close: () => void;
+type ActionHandlersProps = {
+  handleEdit?: () => void;
+  handleMove?: () => void;
+  handleOpenAttachment?: () => void;
+  handleLogout?: () => void;
 };
+type ActionMenuProps = MenuProps & ActionHandlersProps;
 
 export const ActionMenu = React.forwardRef<HTMLDivElement, ActionMenuProps>(
-  ({ close, ...props }, ref) => {
+  ({ handleEdit, handleMove, handleOpenAttachment, handleLogout, ...props }, ref) => {
     const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
     const dispatch = useAppDispatch();
 
-    const handleEdit = () => {
+    const handleNothing = () => {
       return;
     };
+    handleEdit = handleEdit || handleNothing;
+    handleMove = handleMove || handleNothing;
+    handleOpenAttachment = handleOpenAttachment || handleNothing;
 
-    const handleMove = () => {
-      return;
-    };
+    handleLogout =
+      handleLogout ||
+      (() => {
+        dispatch(loginActions.logOut({}));
+      });
 
-    const handleOpenAttachment = () => {
-      return;
-    };
-
-    const handleLogout = () => {
-      dispatch(loginActions.logOut({}));
-      close();
+    const withClose: (
+      f: React.MouseEventHandler<HTMLLIElement>,
+    ) => React.MouseEventHandler<HTMLLIElement> = (f) => {
+      return (...args: Parameters<React.MouseEventHandler<HTMLLIElement>>) => {
+        try {
+          return f(...args);
+        } finally {
+          if (props.onClose != null) {
+            props.onClose({}, 'backdropClick');
+          }
+        }
+      };
     };
 
     return (
       <Menu ref={ref} {...props}>
-        <MenuItem disabled={!isLoggedIn} onClick={handleEdit}>
+        <MenuItem disabled={!isLoggedIn} onClick={withClose(handleEdit)}>
           Edit
         </MenuItem>
-        <MenuItem disabled={!isLoggedIn} onClick={handleMove}>
+        <MenuItem disabled={!isLoggedIn} onClick={withClose(handleMove)}>
           Move
         </MenuItem>
-        <MenuItem onClick={handleOpenAttachment}>Attachment</MenuItem>
+        <MenuItem onClick={withClose(handleOpenAttachment)}>Attachment</MenuItem>
         <Divider />
-        <MenuItem disabled={!isLoggedIn} onClick={handleLogout}>
+        <MenuItem disabled={!isLoggedIn} onClick={withClose(handleLogout)}>
           Logout
         </MenuItem>
       </Menu>
