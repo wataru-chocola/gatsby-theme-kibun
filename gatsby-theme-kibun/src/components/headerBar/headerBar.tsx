@@ -17,16 +17,13 @@ import { Flipcard } from '../uiparts/flipcard';
 import { useAppSelector } from '../../state/hooks';
 import { selectIsLoggedIn } from '../../state/loginSelector';
 
-type HeaderBarProps<P extends MenuProps = MenuProps> = {
+type HeaderBarProps = {
   onHamburgerButton: () => void;
   pageTitle: string;
-  menu: React.VFC<P>;
-  menuExtraProps?: P;
+  menuRender: (props: MenuProps) => React.ReactNode;
 };
 
-export function HeaderBar<P extends MenuProps = MenuProps>(
-  props: HeaderBarProps<P>,
-): React.ReactElement {
+export function HeaderBar(props: HeaderBarProps): React.ReactElement {
   const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
 
@@ -88,8 +85,7 @@ export function HeaderBar<P extends MenuProps = MenuProps>(
             <MenuButton
               menuId="account-menu"
               icon={<AccountCircle />}
-              menu={props.menu}
-              menuExtraProps={props.menuExtraProps}
+              menuRender={props.menuRender}
               edge="end"
               aria-label="account of current user"
               aria-haspopup="true"
@@ -99,8 +95,7 @@ export function HeaderBar<P extends MenuProps = MenuProps>(
               <MenuButton
                 menuId="action-menu"
                 icon={<MoreVertIcon />}
-                menu={props.menu}
-                menuExtraProps={props.menuExtraProps}
+                menuRender={props.menuRender}
                 aria-label="open action menu"
                 aria-haspopup="true"
               />

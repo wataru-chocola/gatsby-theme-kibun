@@ -39,7 +39,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
     },
     [setRightPanelOpen],
   );
-  const newActionMenu = useCallback(
+  const menuRender = useCallback(
     (props: MenuProps) => {
       return <ActionMenu handleOpenAttachment={toggleRightPanel(true)} {...props} />;
     },
@@ -58,7 +58,11 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
       }}
     >
       <SnackMessage />
-      <HeaderBar onHamburgerButton={toggleLeftMenu()} pageTitle={pageTitle} menu={newActionMenu} />
+      <HeaderBar
+        onHamburgerButton={toggleLeftMenu()}
+        pageTitle={pageTitle}
+        menuRender={menuRender}
+      />
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
