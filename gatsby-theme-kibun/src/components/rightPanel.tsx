@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Toolbar, SwipeableDrawer } from '@mui/material';
+import { Box, Toolbar, SwipeableDrawer, IconButton } from '@mui/material';
 import { useMediaQuery, useTheme, Breakpoint } from '@mui/material';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { Attachments } from './attachments';
 
@@ -65,6 +66,11 @@ const RightPanelShell: React.FC<Props> = (props) => {
 RightPanelShell.displayName = 'RightPanelShell';
 
 export const RightPanel: React.VFC<Props> = (props) => {
+  const theme = useTheme();
+  const temporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'lg'), {
+    noSsr: true,
+  });
+
   return (
     <RightPanelShell {...props}>
       <Toolbar />
@@ -76,7 +82,21 @@ export const RightPanel: React.VFC<Props> = (props) => {
           },
         }}
       >
-        <Attachments />
+        <Box sx={{ position: 'relative' }}>
+          <IconButton
+            onClick={props.toggle(false)}
+            sx={{
+              display: temporary ? 'span' : 'none',
+              position: 'absolute',
+              top: (theme) => theme.spacing(2),
+              right: (theme) => theme.spacing(2),
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <Attachments />
+        </Box>
       </OverlayScrollbarsComponent>
     </RightPanelShell>
   );
