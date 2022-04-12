@@ -10,9 +10,11 @@ interface Props {
   openState: boolean;
   toggle: (open?: boolean) => () => void;
   breakpoint?: Breakpoint;
+  width?: string;
 }
 
 const RightPanelShell: React.FC<Props> = (props) => {
+  const width = props.width || '350px';
   const theme = useTheme();
   const temporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'lg'), {
     noSsr: true,
@@ -42,7 +44,7 @@ const RightPanelShell: React.FC<Props> = (props) => {
     >
       <Box
         height="100%"
-        width="350px"
+        width={width}
         left="auto"
         sx={{ display: 'flex', flexDirection: 'column' }}
       >
@@ -50,10 +52,10 @@ const RightPanelShell: React.FC<Props> = (props) => {
       </Box>
     </SwipeableDrawer>
   ) : (
-    <Box width="350px" sx={{ flexShrink: 0 }}>
+    <Box width={width} sx={{ flexShrink: 0 }}>
       <Box
         height="100%"
-        width="350px"
+        width={width}
         position="fixed"
         left="auto"
         sx={{ display: 'flex', flexDirection: 'column' }}

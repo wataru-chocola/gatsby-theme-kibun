@@ -15,6 +15,8 @@ export type InnerLayoutProps = {
   pageTitle: string;
 };
 
+const rightPanelWidth = '320px';
+
 const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
   const [leftMenuOpen, setLeftMenuOpen] = React.useState(false);
   const toggleLeftMenu = useCallback(
@@ -71,7 +73,11 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
           <ContentContainer footer={<Footer />}>{children}</ContentContainer>
-          <RightPanel openState={rightPanelOpen} toggle={toggleRightPanel} />
+          <RightPanel
+            width={rightPanelWidth}
+            openState={rightPanelOpen}
+            toggle={toggleRightPanel}
+          />
         </Box>
       </Box>
     </Box>
