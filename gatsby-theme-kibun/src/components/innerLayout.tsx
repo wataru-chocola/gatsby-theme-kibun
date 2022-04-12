@@ -19,27 +19,30 @@ const rightPanelWidth = '320px';
 
 const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
   const [leftMenuOpen, setLeftMenuOpen] = React.useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
+
   const toggleLeftMenu = useCallback(
     (open?: boolean) => () => {
+      setRightPanelOpen(false);
       if (open != null) {
         setLeftMenuOpen(open);
       } else {
         setLeftMenuOpen((prev) => !prev);
       }
     },
-    [setLeftMenuOpen],
+    [setLeftMenuOpen, setRightPanelOpen],
   );
 
-  const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
   const toggleRightPanel = useCallback(
     (open?: boolean) => () => {
+      setLeftMenuOpen(false);
       if (open != null) {
         setRightPanelOpen(open);
       } else {
         setRightPanelOpen((prev) => !prev);
       }
     },
-    [setRightPanelOpen],
+    [setLeftMenuOpen, setRightPanelOpen],
   );
   const menuRender = useCallback(
     (props: MenuProps) => {
