@@ -15,6 +15,7 @@ export type InnerLayoutProps = {
   pageTitle: string;
 };
 
+const sidebarWidth = '300px';
 const rightPanelWidth = '320px';
 
 const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
@@ -71,11 +72,20 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
-          <SectionBar openState={leftMenuOpen} toggle={toggleLeftMenu} />
+          <SectionBar width={sidebarWidth} openState={leftMenuOpen} toggle={toggleLeftMenu} />
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
-          <ContentContainer footer={<Footer />}>{children}</ContentContainer>
+          <ContentContainer
+            footer={<Footer />}
+            sx={{
+              minWidth: { xs: '320px' },
+              maxWidth: { xs: '100%', sm: '900px', md: '900px' },
+              width: '100%',
+            }}
+          >
+            {children}
+          </ContentContainer>
           <RightPanel
             width={rightPanelWidth}
             openState={rightPanelOpen}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Toolbar } from '@mui/material';
+import { SxProps, Toolbar } from '@mui/material';
 import { Box } from '@mui/material';
 import { Paper } from '@mui/material';
 
@@ -8,16 +8,16 @@ import ErrorBoundary from '../utils/errorboundary';
 
 export type ContentContainerProps = {
   footer: React.ReactElement;
+  sx?: Omit<SxProps, 'position'>;
 };
 
 export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
+  const sx = props.sx || {};
   return (
     <Box
       component="main"
       sx={{
-        minWidth: { xs: '320px' },
-        maxWidth: { xs: '100%', sm: '900px', md: '900px' },
-        width: '100%',
+        ...sx,
         position: 'relative',
       }}
     >

@@ -10,7 +10,7 @@ interface Props {
   openState: boolean;
   toggle: (open?: boolean) => () => void;
   breakpoint?: Breakpoint;
-  width?: string;
+  width?: string | number;
 }
 
 const RightPanelShell: React.FC<Props> = (props) => {

@@ -8,12 +8,13 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 interface Props {
   openState: boolean;
   toggle: (open?: boolean) => () => void;
+  width?: string | number;
 }
 
 const MemorizedSectionNavigationList = React.memo(SectionNaviList);
 
 export const SectionBar: React.VFC<Props> = (props) => {
-  const drawerWidth = 300;
+  const drawerWidth = props.width || 300;
   const drawerSx = {
     width: {
       sm: drawerWidth,
