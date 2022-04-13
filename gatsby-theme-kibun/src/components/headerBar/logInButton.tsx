@@ -1,5 +1,13 @@
 import React from 'react';
-import { Popover, TextField, Box, Typography, Button } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Box,
+  Button,
+  DialogActions,
+} from '@mui/material';
 import { Collapse, CircularProgress } from '@mui/material';
 import Alert from '@mui/material/Alert';
 
@@ -9,13 +17,11 @@ import { githubAPIActions } from '../../state/githubAPISlice';
 import { selectLoginState, selectLoginError } from '../../state/loginSelector';
 
 export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [formOpen, setFormOpen] = React.useState(false);
   const [patoken, setPAToken] = React.useState<string>('');
   const loginState = useAppSelector((state) => selectLoginState(state));
   const loginError = useAppSelector((state) => selectLoginError(state));
   const dispatch = useAppDispatch();
-
-  const isMenuOpen = Boolean(anchorEl);
 
   const updatePAToken = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,12 +30,12 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
     [setPAToken],
   );
 
-  const handleLoginBoxOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleLoginBoxOpen = (_event: React.MouseEvent<HTMLElement>) => {
     dispatch(loginActions.clearState({}));
-    setAnchorEl(event.currentTarget);
+    setFormOpen(true);
   };
   const handleLoginBoxClose = () => {
-    setAnchorEl(null);
+    setFormOpen(false);
   };
 
   const clickLoginButton = () => {
@@ -37,20 +43,15 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
   };
 
   const loginForm = (
-    <Popover
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+    <Dialog
       id="account-login-form"
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      keepMounted
-      open={isMenuOpen}
+      open={formOpen}
       onClose={handleLoginBoxClose}
+      fullWidth={true}
+      maxWidth="xs"
     >
-      <Box p={3} width={400}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-          Sign in to GitHub
-        </Typography>
-
+      <DialogTitle sx={{ fontWeight: 'bold' }}>Sign in to GitHub</DialogTitle>
+      <DialogContent>
         <TextField
           required
           id="input-password"
@@ -67,7 +68,19 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
           fullWidth={true}
         />
 
-        <Box sx={{ display: 'flex', position: 'relative', marginTop: 3 }}>
+        <Collapse in={loginState === 'succeeded'}>
+          <Alert severity="success" sx={{ paddingY: 1 }}>
+            success
+          </Alert>
+        </Collapse>
+        <Collapse in={loginState === 'failed'}>
+          <Alert severity="error" sx={{ paddingY: 1 }}>
+            failed: {loginError}
+          </Alert>
+        </Collapse>
+      </DialogContent>
+      <DialogActions sx={{ marginBottom: 2, marginX: 2 }}>
+        <Box sx={{ display: 'flex', position: 'relative' }}>
           <Button
             variant="contained"
             color="primary"
@@ -89,16 +102,8 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
             />
           )}
         </Box>
-        <Box py={2}>
-          <Collapse in={loginState === 'succeeded'}>
-            <Alert severity="success">success</Alert>
-          </Collapse>
-          <Collapse in={loginState === 'failed'}>
-            <Alert severity="error">failed: {loginError}</Alert>
-          </Collapse>
-        </Box>
-      </Box>
-    </Popover>
+      </DialogActions>
+    </Dialog>
   );
 
   return (
@@ -121,7 +126,7 @@ export const LogInButton = React.forwardRef<HTMLButtonElement>((_props, ref) => 
           },
         }}
       >
-        Sign in
+        Login
       </Button>
       {loginForm}
     </React.Fragment>

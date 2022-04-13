@@ -3,7 +3,7 @@ import rehypeReact from 'rehype-react';
 import { unified } from 'unified';
 import { Root as HastRoot } from 'hast';
 import { Typography } from '@mui/material';
-import { MuiGatsbyLink } from '../link';
+import { MuiGatsbyLink } from '../../components/uiparts/link';
 import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
 import path from 'path';
 

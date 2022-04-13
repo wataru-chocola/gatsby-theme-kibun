@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Typography, ButtonGroup } from '@mui/material';
-import { IconButton, IconButtonProps, styled, experimental_sx as sx } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
+import { IconButton, IconButtonProps, styled } from '@mui/material';
 import { Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
@@ -9,16 +10,7 @@ import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
-import { MuiGatsbyLink } from '../utils/link';
-
-const StyledIconButton = styled((props: IconButtonProps) => <IconButton {...props}></IconButton>)(
-  sx({
-    borderRadius: 1,
-    padding: 0,
-    verticalAlign: 'top',
-    ':hover': { backgroundColor: 'primary.main', color: 'white', cursor: 'pointer' },
-  }),
-);
+import { MuiGatsbyLink } from './uiparts/link';
 
 const CustomizedTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -28,35 +20,68 @@ const CustomizedTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const AttachmentItem: React.VFC<{ name: string; to: string }> = (props) => {
+const AttachmentItemIconButton: React.FC<IconButtonProps> = ({ children, ...props }) => {
+  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: false });
+
   return (
-    <Box sx={{ display: 'flex', columnGap: 1 }}>
+    <IconButton
+      {...props}
+      sx={{
+        borderRadius: 0,
+        border: isPointerCoarse ? '1px solid #dddddd' : 'none',
+        marginY: isPointerCoarse ? 0.5 : 0,
+        paddingY: isPointerCoarse ? 1 : 0,
+        paddingX: isPointerCoarse ? 2 : 0,
+        verticalAlign: 'top',
+        ':hover': { backgroundColor: 'primary.main', color: 'white', cursor: 'pointer' },
+      }}
+    >
+      {children}
+    </IconButton>
+  );
+};
+
+const AttachmentItem: React.VFC<{ name: string; to: string }> = (props) => {
+  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: false });
+  return (
+    <Box sx={{ display: 'flex', columnGap: 1, paddingBottom: isPointerCoarse ? 1 : 0 }}>
       <ArrowCircleRightRoundedIcon sx={{ flexShrink: 0 }}></ArrowCircleRightRoundedIcon>
-      <Typography
-        fontSize="14px"
+      <Box
         sx={{
+          display: 'flex',
+          columnGap: 1,
           flexGrow: 1,
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
           overflow: 'hidden',
+          flexWrap: isPointerCoarse ? 'wrap' : 'none',
         }}
       >
-        <CustomizedTooltip title={props.name} arrow placement="right-end">
-          <MuiGatsbyLink to={props.to}>{props.name}</MuiGatsbyLink>
-        </CustomizedTooltip>
-      </Typography>
+        <Typography
+          fontSize="14px"
+          sx={{
+            flexGrow: 1,
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            width: isPointerCoarse ? '100%' : 'auto',
+          }}
+        >
+          <CustomizedTooltip title={props.name} arrow placement="right-end">
+            <MuiGatsbyLink to={props.to}>{props.name}</MuiGatsbyLink>
+          </CustomizedTooltip>
+        </Typography>
 
-      <ButtonGroup size="small">
-        <StyledIconButton>
-          <ModeEditOutlinedIcon></ModeEditOutlinedIcon>
-        </StyledIconButton>
-        <StyledIconButton>
-          <FileDownloadOutlinedIcon></FileDownloadOutlinedIcon>
-        </StyledIconButton>
-        <StyledIconButton>
-          <DeleteForeverOutlinedIcon></DeleteForeverOutlinedIcon>
-        </StyledIconButton>
-      </ButtonGroup>
+        <Box flexShrink={0}>
+          <AttachmentItemIconButton>
+            <ModeEditOutlinedIcon />
+          </AttachmentItemIconButton>
+          <AttachmentItemIconButton>
+            <FileDownloadOutlinedIcon />
+          </AttachmentItemIconButton>
+          <AttachmentItemIconButton>
+            <DeleteForeverOutlinedIcon />
+          </AttachmentItemIconButton>
+        </Box>
+      </Box>
     </Box>
   );
 };

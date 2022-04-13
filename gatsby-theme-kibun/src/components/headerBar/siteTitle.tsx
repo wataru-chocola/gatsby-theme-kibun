@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSiteTitle } from '../../hooks/useSiteTitle';
-import { MuiGatsbyLink } from '../../utils/link';
+import { MuiGatsbyLink } from '../uiparts/link';
 import { Box } from '@mui/material';
 
 export const SiteTitle: React.VFC = () => {
@@ -23,7 +23,15 @@ export const SiteTitle: React.VFC = () => {
           },
         }}
       >
-        {siteTitle}
+        <Box
+          sx={{
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {siteTitle}
+        </Box>
       </MuiGatsbyLink>
     </Box>
   );

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Breadcrumbs, BreadcrumbsProps } from '@mui/material';
 import { Typography } from '@mui/material';
-import { MuiGatsbyLink } from '../utils/link';
+import { useTheme, useMediaQuery } from '@mui/material';
+import { MuiGatsbyLink } from './uiparts/link';
 
 interface PathBreadcrumb {
   path: string;
@@ -13,6 +14,10 @@ interface PathBreadcrumbsProps extends BreadcrumbsProps {
 }
 
 const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
+  const theme = useTheme();
+  const smallDisplay = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
+  const fontSize = smallDisplay ? '8pt' : '10pt';
+
   const items = props.crumbs.map((crumb, i) => {
     let slug = crumb.path;
     if (slug.endsWith('/')) {
@@ -22,11 +27,14 @@ const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
     const title: string = crumb.title || pathElem || '';
 
     return i !== props.crumbs.length - 1 ? (
-      <MuiGatsbyLink to={crumb.path} key={i} style={{ fontSize: 'sm' }}>
+      <MuiGatsbyLink to={crumb.path} key={i}>
         {title}
       </MuiGatsbyLink>
     ) : (
-      <Typography color="textPrimary" key={i} style={{ fontSize: 'sm' }}>
+      <Typography
+        key={i}
+        sx={{ fontSize: fontSize, color: (theme) => theme.palette.gray[2], lineHeight: 1 }}
+      >
         {title}
       </Typography>
     );
@@ -34,10 +42,12 @@ const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
   return (
     <Breadcrumbs
       aria-label="breadcrumb"
-      maxItems={4}
-      itemsBeforeCollapse={1}
-      itemsAfterCollapse={2}
-      sx={{ fontSize: '12px' }}
+      maxItems={smallDisplay ? 1 : 4}
+      itemsBeforeCollapse={smallDisplay ? 0 : 1}
+      itemsAfterCollapse={smallDisplay ? 1 : 2}
+      sx={{
+        fontSize: fontSize,
+      }}
     >
       {items}
     </Breadcrumbs>
