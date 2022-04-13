@@ -21,7 +21,7 @@ const CustomizedTooltip = styled(({ className, ...props }: TooltipProps) => (
 });
 
 const AttachmentItemIconButton: React.FC<IconButtonProps> = ({ children, ...props }) => {
-  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: false });
+  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: true });
 
   return (
     <IconButton
@@ -42,7 +42,7 @@ const AttachmentItemIconButton: React.FC<IconButtonProps> = ({ children, ...prop
 };
 
 const AttachmentItem: React.VFC<{ name: string; to: string }> = (props) => {
-  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: false });
+  const isPointerCoarse = useMediaQuery('(pointer:coarse)', { noSsr: true });
   return (
     <Box sx={{ display: 'flex', columnGap: 1, paddingBottom: isPointerCoarse ? 1 : 0 }}>
       <ArrowCircleRightRoundedIcon sx={{ flexShrink: 0 }}></ArrowCircleRightRoundedIcon>
