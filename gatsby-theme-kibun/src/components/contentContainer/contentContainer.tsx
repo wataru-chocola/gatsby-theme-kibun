@@ -23,8 +23,6 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
         position: 'relative',
       }}
     >
-      <Toolbar />
-
       <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
         <Box
           sx={{
@@ -41,6 +39,8 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
         >
           <EditButton />
         </Box>
+
+        <Toolbar />
         <Paper elevation={isSinglePane ? 0 : 1}>
           {props.children}
           <Box mt={8}>{props.footer}</Box>
