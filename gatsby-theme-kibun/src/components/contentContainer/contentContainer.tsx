@@ -1,5 +1,5 @@
 import React from 'react';
-import { SxProps, Toolbar } from '@mui/material';
+import { SxProps, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 import { Box } from '@mui/material';
 import { Paper } from '@mui/material';
 
@@ -13,6 +13,8 @@ export type ContentContainerProps = {
 
 export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
   const sx = props.sx || {};
+  const theme = useTheme();
+  const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
   return (
     <Box
       component="main"
@@ -39,7 +41,7 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
         >
           <EditButton />
         </Box>
-        <Paper>
+        <Paper elevation={isSinglePane ? 0 : 1}>
           {props.children}
           <Box mt={8}>{props.footer}</Box>
         </Paper>

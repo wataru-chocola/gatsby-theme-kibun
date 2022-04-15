@@ -8,6 +8,7 @@ import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
 import TableOfContents from '../components/toc';
@@ -16,6 +17,7 @@ import EditBox, { EditBoxMonitor } from '../components/editbox';
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
 import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
+import { useViewportWidth } from '../hooks/useViewportWidth';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
 import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
@@ -27,6 +29,8 @@ interface PageSlugContext {
 }
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
+  const contentBoxRef = React.useRef<null | HTMLDivElement>(null);
+  const [contentBoxWidth, setContentBoxWidth] = React.useState(0);
   const pageinfo = props.data.markdown!;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
@@ -48,8 +52,24 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
 
   const dispatch = useAppDispatch();
-
   const [editmode, setEditmode] = React.useState(false);
+
+  const vpWidth = useViewportWidth();
+  const theme = useTheme();
+  const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
+
+  React.useLayoutEffect(() => {
+    const updateBoxWidth = () => {
+      if (contentBoxRef.current !== null) {
+        const rect = contentBoxRef.current.getBoundingClientRect();
+        setContentBoxWidth(rect.width);
+      }
+    };
+
+    updateBoxWidth();
+    window.addEventListener('resize', updateBoxWidth);
+    return () => window.removeEventListener('resize', updateBoxWidth);
+  }, [setContentBoxWidth, contentBoxRef]);
 
   const resetMarkdown = React.useCallback(
     () => setCurrentMarkdown(markdown),
@@ -94,14 +114,24 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         </Typography>
       </Box>
 
-      <Box onDoubleClick={openEditmode}>
+      <Box onDoubleClick={openEditmode} ref={contentBoxRef}>
         {toc && (
           <Box mt={4} mb={8}>
-            <TableOfContents>{toc}</TableOfContents>
+            <TableOfContents
+              containerWidth={contentBoxWidth}
+              expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
+            >
+              {toc}
+            </TableOfContents>
           </Box>
         )}
         <Box mx={{ xs: 2, sm: 6 }}>
-          <Content>{html}</Content>
+          <Content
+            containerWidth={contentBoxWidth}
+            expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
+          >
+            {html}
+          </Content>
         </Box>
       </Box>
     </Layout>

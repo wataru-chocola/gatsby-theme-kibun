@@ -1,7 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const Content: React.FC = (props) => {
+type ContentProps = {
+  containerWidth: number;
+  expandedWidth?: number;
+};
+const Content: React.FC<ContentProps> = ({ containerWidth, expandedWidth, children }) => {
   return (
     <Box
       sx={{
@@ -148,8 +152,21 @@ const Content: React.FC = (props) => {
           fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
         },
         '& > div > pre': {
-          marginX: { xs: -2, sm: -6 },
-          paddingX: { xs: 2, sm: 7 },
+          marginX: (theme) => ({
+            xs: -2,
+            sm: `${-(
+              parseInt(theme.spacing(6)) +
+              (expandedWidth ? (expandedWidth - containerWidth) / 2 : 0)
+            )}px`,
+          }),
+          paddingY: '1.5em',
+          paddingX: (theme) => ({
+            xs: 2,
+            sm: `${
+              parseInt(theme.spacing(7)) +
+              (expandedWidth ? (expandedWidth - containerWidth) / 2 : 0)
+            }px`,
+          }),
           borderRadius: 0,
           marginTop: 4,
           marginBottom: 5,
@@ -173,7 +190,7 @@ const Content: React.FC = (props) => {
         },
       }}
     >
-      {props.children}
+      {children}
     </Box>
   );
 };

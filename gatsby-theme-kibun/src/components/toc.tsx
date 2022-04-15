@@ -1,7 +1,16 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const TableOfContents: React.FC = (props) => {
+type TableOfContentsProps = {
+  containerWidth: number;
+  expandedWidth?: number;
+};
+
+const TableOfContents: React.FC<TableOfContentsProps> = ({
+  containerWidth,
+  expandedWidth,
+  children,
+}) => {
   return (
     <Box
       borderTop={1}
@@ -9,6 +18,9 @@ const TableOfContents: React.FC = (props) => {
       paddingTop={3}
       paddingBottom={1}
       bgcolor="#F6F6F6"
+      marginX={expandedWidth ? `${-(expandedWidth - containerWidth) / 2}px` : 0}
+      paddingX={expandedWidth ? `${(expandedWidth - containerWidth) / 2}px` : 0}
+      width={expandedWidth || 'auto'}
       sx={{
         position: 'relative',
         fontSize: '14px',
@@ -54,7 +66,7 @@ const TableOfContents: React.FC = (props) => {
       >
         Table Of Contents
       </Box>
-      {props.children}
+      {children}
     </Box>
   );
 };
