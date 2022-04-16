@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
@@ -14,9 +14,8 @@ import 'katex/dist/katex.min.css';
 import TableOfContents from '../components/toc';
 import Content from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
-import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
-import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
+import { useMarkdownEditor } from '../hooks/useMarkdownEditor';
 import { useElementWidth } from '../hooks/useElementWidth';
 import { useViewportWidth } from '../hooks/useViewportWidth';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
@@ -38,18 +37,12 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     title: crumb!.title,
   }));
 
-  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
-  const [frontmatter, _setFrontmatter] = React.useState(content[0]);
-  const [markdown, setMarkdown] = React.useState(content[1]);
-  const {
-    setMarkdown: setCurrentMarkdown,
-    html,
-    toc,
-  } = useMarkdownRenderer(markdown, slug, {
-    imageDataFromQL: props.data.markdown!.fields?.images as ImageDataFromQL,
-    prismAliasesFromQL: props.data.prismAliasMap?.aliasesMap as PrismAliasesFromQL,
-  });
-  useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
+  const { frontmatter, toc, html, markdown, editor } = useMarkdownEditor(
+    props.data.markdown!.parent!.internal.content!,
+    slug,
+    props.data.markdown!.fields?.images as ImageDataFromQL,
+    props.data.prismAliasMap?.aliasesMap as PrismAliasesFromQL,
+  );
 
   const dispatch = useAppDispatch();
   const [editmode, setEditmode] = React.useState(false);
@@ -60,10 +53,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
 
   const contentBoxWidth = useElementWidth(contentBoxRef);
 
-  const resetMarkdown = React.useCallback(
-    () => setCurrentMarkdown(markdown),
-    [markdown, setCurrentMarkdown],
-  );
   const openEditmode = React.useCallback(() => setEditmode(true), [setEditmode]);
   const closeEditmode = React.useCallback(() => setEditmode(false), [setEditmode]);
 
@@ -84,9 +73,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         <Slide in={editmode} mountOnEnter unmountOnExit>
           <EditBox
             closeEditmode={closeEditmode}
-            saveMarkdown={setMarkdown}
-            renderMarkdown={setCurrentMarkdown}
-            resetMarkdown={resetMarkdown}
+            saveMarkdown={editor.saveMarkdown}
+            renderMarkdown={editor.renderMarkdown}
+            resetMarkdown={editor.resetMarkdown}
             md={markdown}
             frontmatter={frontmatter}
             srcPath={pageinfo.parent?.relativePath || ''}
