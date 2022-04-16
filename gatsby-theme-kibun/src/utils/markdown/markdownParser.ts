@@ -27,13 +27,13 @@ const markdownHastProcessor = unified()
   .use(remarkMath, { singleDollarTextMath: false })
   .use(remarkGfm, { singleTilde: false })
   .use(remarkExtendedTable, { colspanWithEmpty: true })
-  .use(remarkRehype, {
+  .use(remarkRehype, null, {
     allowDangerousHtml: true,
-    handlers: Object.assign(
-      { paragraph: mdastParagraph2hast },
-      defListHastHandlers,
-      extendedTableHandlers,
-    ),
+    handlers: {
+      paragraph: mdastParagraph2hast,
+      ...defListHastHandlers,
+      ...extendedTableHandlers,
+    },
   })
   .use(rehypeRaw)
   .use(rehypeKatex)

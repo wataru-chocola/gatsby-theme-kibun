@@ -1,9 +1,9 @@
-import { visit, Visitor } from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
 import { h } from 'hastscript';
 import { Element as HastElement, Root } from 'hast';
 import { hast2react } from './hast2react';
-import { HastRoot } from 'remark-rehype';
+import { Root as HastRoot } from 'hast';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 
@@ -18,7 +18,7 @@ export function hast2toc(hast: HastRoot): React.ReactElement | null {
 export default function hastToc(tree: HastRoot): Root | null {
   let toc: Root | null = null;
 
-  const visitor: Visitor<HastElement> = (node, _index, _parent) => {
+  visit(tree, 'element', (node, _index, _parent) => {
     if (!headerTags.has(node.tagName)) {
       return;
     }
@@ -57,8 +57,7 @@ export default function hastToc(tree: HastRoot): Root | null {
     }
 
     listContainer.children.push(h('li', headerItem));
-  };
+  });
 
-  visit<HastElement, string>(tree, 'element', visitor);
   return toc;
 }
