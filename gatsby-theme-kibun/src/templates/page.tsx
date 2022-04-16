@@ -17,6 +17,7 @@ import EditBox, { EditBoxMonitor } from '../components/editbox';
 import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
 import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
+import { useElementWidth } from '../hooks/useElementWidth';
 import { useViewportWidth } from '../hooks/useViewportWidth';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
 import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
@@ -29,8 +30,7 @@ interface PageSlugContext {
 }
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
-  const contentBoxRef = React.useRef<null | HTMLDivElement>(null);
-  const [contentBoxWidth, setContentBoxWidth] = React.useState(0);
+  const contentBoxRef = React.useRef<HTMLDivElement>(null);
   const pageinfo = props.data.markdown!;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
@@ -58,18 +58,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   const theme = useTheme();
   const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
 
-  React.useLayoutEffect(() => {
-    const updateBoxWidth = () => {
-      if (contentBoxRef.current !== null) {
-        const rect = contentBoxRef.current.getBoundingClientRect();
-        setContentBoxWidth(rect.width);
-      }
-    };
-
-    updateBoxWidth();
-    window.addEventListener('resize', updateBoxWidth);
-    return () => window.removeEventListener('resize', updateBoxWidth);
-  }, [setContentBoxWidth, contentBoxRef]);
+  const contentBoxWidth = useElementWidth(contentBoxRef);
 
   const resetMarkdown = React.useCallback(
     () => setCurrentMarkdown(markdown),
