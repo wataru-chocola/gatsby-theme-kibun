@@ -1,11 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-type ContentProps = {
-  containerWidth: number;
-  expandedWidth?: number;
-};
-const Content: React.FC<ContentProps> = ({ containerWidth, expandedWidth, children }) => {
+import { ContentLayoutContext } from '../context/contentLayoutContext';
+
+const Content: React.FC = ({ children }) => {
+  const { contentBoxWidth, expandedContentWidth } = React.useContext(ContentLayoutContext);
+  const isExpanded = expandedContentWidth && contentBoxWidth;
+
   return (
     <Box
       sx={{
@@ -156,7 +157,7 @@ const Content: React.FC<ContentProps> = ({ containerWidth, expandedWidth, childr
             xs: -2,
             sm: `${-(
               parseInt(theme.spacing(6)) +
-              (expandedWidth ? (expandedWidth - containerWidth) / 2 : 0)
+              (isExpanded ? (expandedContentWidth - contentBoxWidth) / 2 : 0)
             )}px`,
           }),
           paddingY: '1.5em',
@@ -164,7 +165,7 @@ const Content: React.FC<ContentProps> = ({ containerWidth, expandedWidth, childr
             xs: 2,
             sm: `${
               parseInt(theme.spacing(7)) +
-              (expandedWidth ? (expandedWidth - containerWidth) / 2 : 0)
+              (isExpanded ? (expandedContentWidth - contentBoxWidth) / 2 : 0)
             }px`,
           }),
           borderRadius: 0,

@@ -1,16 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-type TableOfContentsProps = {
-  containerWidth: number;
-  expandedWidth?: number;
-};
+import { ContentLayoutContext } from '../context/contentLayoutContext';
 
-const TableOfContents: React.FC<TableOfContentsProps> = ({
-  containerWidth,
-  expandedWidth,
-  children,
-}) => {
+const TableOfContents: React.FC = ({ children }) => {
+  const { contentBoxWidth, expandedContentWidth } = React.useContext(ContentLayoutContext);
+  const isExpanded = expandedContentWidth && contentBoxWidth;
+
   return (
     <Box
       borderTop={1}
@@ -18,9 +14,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       paddingTop={3}
       paddingBottom={1}
       bgcolor="#F6F6F6"
-      marginX={expandedWidth ? `${-(expandedWidth - containerWidth) / 2}px` : 0}
-      paddingX={expandedWidth ? `${(expandedWidth - containerWidth) / 2}px` : 0}
-      width={expandedWidth || 'auto'}
+      marginX={isExpanded ? `${-(expandedContentWidth - contentBoxWidth) / 2}px` : 0}
+      paddingX={isExpanded ? `${(expandedContentWidth - contentBoxWidth) / 2}px` : 0}
+      width={isExpanded ? expandedContentWidth : 'auto'}
       sx={{
         position: 'relative',
         fontSize: '14px',
@@ -70,5 +66,6 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
     </Box>
   );
 };
+TableOfContents.displayName = 'TableOfContents';
 
 export default TableOfContents;

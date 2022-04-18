@@ -8,7 +8,6 @@ import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
-import { useMediaQuery, useTheme } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
 import TableOfContents from '../components/toc';
@@ -16,8 +15,6 @@ import Content from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
 
 import { useMarkdownEditor } from '../hooks/useMarkdownEditor';
-import { useElementWidth } from '../hooks/useElementWidth';
-import { useViewportWidth } from '../hooks/useViewportWidth';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
 import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
@@ -46,12 +43,6 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
 
   const dispatch = useAppDispatch();
   const [editmode, setEditmode] = React.useState(false);
-
-  const vpWidth = useViewportWidth();
-  const theme = useTheme();
-  const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
-
-  const contentBoxWidth = useElementWidth(contentBoxRef);
 
   const openEditmode = React.useCallback(() => setEditmode(true), [setEditmode]);
   const closeEditmode = React.useCallback(() => setEditmode(false), [setEditmode]);
@@ -95,21 +86,11 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
       <Box onDoubleClick={openEditmode} ref={contentBoxRef}>
         {toc && (
           <Box mt={4} mb={8}>
-            <TableOfContents
-              containerWidth={contentBoxWidth}
-              expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
-            >
-              {toc}
-            </TableOfContents>
+            <TableOfContents>{toc}</TableOfContents>
           </Box>
         )}
         <Box mx={{ xs: 2, sm: 6 }}>
-          <Content
-            containerWidth={contentBoxWidth}
-            expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
-          >
-            {html}
-          </Content>
+          <Content>{html}</Content>
         </Box>
       </Box>
     </Layout>
