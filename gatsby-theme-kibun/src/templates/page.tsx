@@ -10,8 +10,8 @@ import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
-import TableOfContents from '../components/toc';
-import Content from '../components/content';
+import TableOfContents from '../components/content/toc';
+import { Content } from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
 
 import { useMarkdownEditor } from '../hooks/useMarkdownEditor';

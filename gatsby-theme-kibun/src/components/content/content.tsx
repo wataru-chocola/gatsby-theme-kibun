@@ -1,75 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import { ContentLayoutContext } from '../context/contentLayoutContext';
-
-const Content: React.FC = ({ children }) => {
-  const { contentBoxWidth, expandedContentWidth } = React.useContext(ContentLayoutContext);
-  const isExpanded = expandedContentWidth && contentBoxWidth;
-
+export const Content: React.FC = ({ children }) => {
   return (
     <Box
+      className="content"
       sx={{
         fontSize: '16px',
-
-        // Headers
-        'h1, h2, h3, h4, h5, h6': {
-          '+ h1, + h2, + h3, + h4, + h5, + h6': {
-            marginTop: 4,
-          },
-          marginTop: 6,
-          marginBottom: 2,
-          lineHeight: 1.2,
-
-          ':hover .auto-headers svg': {
-            visibility: 'visible',
-          },
-        },
-        'h1, h2, h3, h4': {
-          color: 'primary.main',
-        },
-        h2: {
-          paddingTop: 0.5,
-          paddingLeft: '0.5em',
-          borderLeft: 4,
-        },
-        h4: {
-          borderBottom: 1,
-        },
-        h5: {
-          color: 'secondary.main',
-        },
-        h6: {
-          color: (theme) => theme.palette.secondary.shade[0],
-        },
-        '.auto-headers': {
-          display: { xs: 'none', sm: 'inline-block' },
-          marginLeft: '0.3em',
-          paddingX: 0.5,
-
-          svg: {
-            fill: '#77a8d2',
-            visibility: 'hidden',
-            width: '0.8em',
-            height: '0.8em',
-          },
-
-          ':hover': {
-            backgroundColor: '#d1e2f0',
-            svg: {
-              visibility: 'visible',
-            },
-          },
-
-          ':focus svg': {
-            visibility: 'visible',
-          },
-        },
-
-        // Paragraph
-        p: {
-          marginY: 1,
-        },
 
         // Lists
         dt: {
@@ -151,26 +88,6 @@ const Content: React.FC = ({ children }) => {
         // Code
         code: {
           fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
-        },
-        '& > div > pre': {
-          marginX: (theme) => ({
-            xs: -2,
-            sm: `${-(
-              parseInt(theme.spacing(6)) +
-              (isExpanded ? (expandedContentWidth - contentBoxWidth) / 2 : 0)
-            )}px`,
-          }),
-          paddingY: '1.5em',
-          paddingX: (theme) => ({
-            xs: 2,
-            sm: `${
-              parseInt(theme.spacing(7)) +
-              (isExpanded ? (expandedContentWidth - contentBoxWidth) / 2 : 0)
-            }px`,
-          }),
-          borderRadius: 0,
-          marginTop: 4,
-          marginBottom: 5,
         },
 
         // Img

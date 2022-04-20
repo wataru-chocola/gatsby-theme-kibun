@@ -2,54 +2,13 @@ import React from 'react';
 import rehypeReact from 'rehype-react';
 import { unified } from 'unified';
 import { Root as HastRoot } from 'hast';
-import { Typography } from '@mui/material';
-import { MuiGatsbyLink } from '../../components/uiparts/link';
 import { GatsbyImage, getImage, ImageDataLike } from 'gatsby-plugin-image';
 import path from 'path';
 
-const H1: React.FC = (props: any) => (
-  <Typography variant="h1" component="h1" {...props}></Typography>
-);
-
-const H2: React.FC = (props: any) => (
-  <Typography variant="h2" component="h2" {...props}></Typography>
-);
-
-const H3: React.FC = (props: any) => (
-  <Typography variant="h3" component="h3" {...props}></Typography>
-);
-
-const H4: React.FC = (props: any) => (
-  <Typography variant="h4" component="h4" {...props}></Typography>
-);
-
-const H5: React.FC = (props: any) => (
-  <Typography variant="h5" component="h5" {...props}></Typography>
-);
-
-const H6: React.FC = (props: any) => (
-  <Typography variant="h6" component="h6" {...props}></Typography>
-);
-
-const P: React.FC = (props: any) => (
-  <Typography
-    variant="body1"
-    component="p"
-    style={{ marginTop: `1rem`, marginBottom: `1rem`, lineHeight: 1.8 }}
-    {...props}
-    paragraph
-  ></Typography>
-);
-
-const A: React.FC = (props: any) => {
-  const { href, ...remainedProps } = props;
-  const link = href ? (
-    <MuiGatsbyLink to={href} {...remainedProps}></MuiGatsbyLink>
-  ) : (
-    <MuiGatsbyLink {...remainedProps}></MuiGatsbyLink>
-  );
-  return link;
-};
+import { H1, H2, H3, H4, H5, H6 } from '../../components/content/elements/heading';
+import { P } from '../../components/content/elements/p';
+import { A } from '../../components/content/elements/a';
+import { Pre } from '../../components/content/elements/pre';
 
 export interface ImageDataCollection {
   [key: string]: ImageDataLike;
@@ -85,12 +44,14 @@ export const hast2react: (
     p: P,
     a: A,
     img: IMG,
+    pre: Pre,
   };
 
   return unified()
     .use(rehypeReact, {
       createElement: React.createElement,
       components: componentMapping,
+      Fragment: React.Fragment,
     })
     .stringify(tree) as unknown as React.ReactElement;
 };
