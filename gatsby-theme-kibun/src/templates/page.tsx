@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { PageProps, graphql } from 'gatsby';
 
 import Layout from '../components/layout';
@@ -8,16 +8,13 @@ import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
-import { useMediaQuery, useTheme } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
-import TableOfContents from '../components/toc';
-import Content from '../components/content';
+import TableOfContents from '../components/content/toc';
+import { Content } from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
-import { splitFrontmatter } from '../utils/markdown/markdownParser';
 
-import { useMarkdownRenderer } from '../hooks/useMarkdownRenderer';
-import { useViewportWidth } from '../hooks/useViewportWidth';
+import { useMarkdownEditor } from '../hooks/useMarkdownEditor';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';
 import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
@@ -29,8 +26,7 @@ interface PageSlugContext {
 }
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
-  const contentBoxRef = React.useRef<null | HTMLDivElement>(null);
-  const [contentBoxWidth, setContentBoxWidth] = React.useState(0);
+  const contentBoxRef = React.useRef<HTMLDivElement>(null);
   const pageinfo = props.data.markdown!;
   const slug = props.pageContext.slug! as string;
   const crumbs = pageinfo.breadcrumbs!.map((crumb) => ({
@@ -38,43 +34,16 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     title: crumb!.title,
   }));
 
-  const content = splitFrontmatter(props.data.markdown!.parent!.internal.content!);
-  const [frontmatter, _setFrontmatter] = React.useState(content[0]);
-  const [markdown, setMarkdown] = React.useState(content[1]);
-  const {
-    setMarkdown: setCurrentMarkdown,
-    html,
-    toc,
-  } = useMarkdownRenderer(markdown, slug, {
-    imageDataFromQL: props.data.markdown!.fields?.images as ImageDataFromQL,
-    prismAliasesFromQL: props.data.prismAliasMap?.aliasesMap as PrismAliasesFromQL,
-  });
-  useEffect(() => setCurrentMarkdown(markdown), [markdown, setCurrentMarkdown]);
+  const { frontmatter, toc, html, markdown, editor } = useMarkdownEditor(
+    props.data.markdown!.parent!.internal.content!,
+    slug,
+    props.data.markdown!.fields?.images as ImageDataFromQL,
+    props.data.prismAliasMap?.aliasesMap as PrismAliasesFromQL,
+  );
 
   const dispatch = useAppDispatch();
   const [editmode, setEditmode] = React.useState(false);
 
-  const vpWidth = useViewportWidth();
-  const theme = useTheme();
-  const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
-
-  React.useLayoutEffect(() => {
-    const updateBoxWidth = () => {
-      if (contentBoxRef.current !== null) {
-        const rect = contentBoxRef.current.getBoundingClientRect();
-        setContentBoxWidth(rect.width);
-      }
-    };
-
-    updateBoxWidth();
-    window.addEventListener('resize', updateBoxWidth);
-    return () => window.removeEventListener('resize', updateBoxWidth);
-  }, [setContentBoxWidth, contentBoxRef]);
-
-  const resetMarkdown = React.useCallback(
-    () => setCurrentMarkdown(markdown),
-    [markdown, setCurrentMarkdown],
-  );
   const openEditmode = React.useCallback(() => setEditmode(true), [setEditmode]);
   const closeEditmode = React.useCallback(() => setEditmode(false), [setEditmode]);
 
@@ -95,9 +64,9 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         <Slide in={editmode} mountOnEnter unmountOnExit>
           <EditBox
             closeEditmode={closeEditmode}
-            saveMarkdown={setMarkdown}
-            renderMarkdown={setCurrentMarkdown}
-            resetMarkdown={resetMarkdown}
+            saveMarkdown={editor.saveMarkdown}
+            renderMarkdown={editor.renderMarkdown}
+            resetMarkdown={editor.resetMarkdown}
             md={markdown}
             frontmatter={frontmatter}
             srcPath={pageinfo.parent?.relativePath || ''}
@@ -117,21 +86,11 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
       <Box onDoubleClick={openEditmode} ref={contentBoxRef}>
         {toc && (
           <Box mt={4} mb={8}>
-            <TableOfContents
-              containerWidth={contentBoxWidth}
-              expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
-            >
-              {toc}
-            </TableOfContents>
+            <TableOfContents>{toc}</TableOfContents>
           </Box>
         )}
         <Box mx={{ xs: 2, sm: 6 }}>
-          <Content
-            containerWidth={contentBoxWidth}
-            expandedWidth={isSinglePane && vpWidth > contentBoxWidth ? vpWidth : undefined}
-          >
-            {html}
-          </Content>
+          <Content>{html}</Content>
         </Box>
       </Box>
     </Layout>

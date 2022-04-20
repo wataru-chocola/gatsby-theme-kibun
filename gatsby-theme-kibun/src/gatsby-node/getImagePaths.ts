@@ -38,11 +38,15 @@ export async function getImagePaths(md: string, dir?: string): Promise<string[]>
   const mdast = markdownParser.parse(md);
 
   const markdownImageNodes: (MdastImage | MdastImageReference | MdastDefinition)[] = [];
-  visit(mdast, ['image', 'imageReference'], (node: MdastImage | MdastImageReference) => {
+  visit(mdast, 'image', (node) => {
     markdownImageNodes.push(node);
   });
+  visit(mdast, 'imageReference', (node) => {
+    markdownImageNodes.push(node);
+  });
+
   const rawHtmlNodes: MdastHTML[] = [];
-  visit(mdast, ['html'], (node: MdastHTML) => {
+  visit(mdast, 'html', (node) => {
     rawHtmlNodes.push(node);
   });
 

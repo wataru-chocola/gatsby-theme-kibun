@@ -46,7 +46,7 @@ export function sourceSectionMenuYaml(
   }
 
   const yamlText = fs.readFileSync(filepath, 'utf8');
-  const sectionMenuNode = {
+  const sectionMenuNodeInfo = {
     id: createNodeId(`gatsby-theme-kibun-section-menu`),
     children: [],
     parent: null,
@@ -56,7 +56,7 @@ export function sourceSectionMenuYaml(
       contentDigest: createContentDigest(yamlText),
     },
   };
-  createNode(sectionMenuNode);
+  createNode(sectionMenuNodeInfo);
 
   const yamlData = yaml.load(yamlText, { schema: yaml.FAILSAFE_SCHEMA }) as Array<NaviCategoryType>;
   for (let i = 0; i < yamlData.length; i++) {
@@ -64,7 +64,7 @@ export function sourceSectionMenuYaml(
     const nodeContent = JSON.stringify(nodeData);
     const nodeMeta = {
       id: createNodeId(`gatsby-theme-kibun-section-menu-category-${i}`),
-      parent: sectionMenuNode.id,
+      parent: sectionMenuNodeInfo.id,
       children: [],
       internal: {
         type: `SectionMenuCategory`,
@@ -73,7 +73,12 @@ export function sourceSectionMenuYaml(
       },
     };
     const node = Object.assign({}, nodeData, nodeMeta);
-    createParentChildLink({ parent: getNode(sectionMenuNode.id), child: node });
-    createNode<typeof nodeData>(node);
+    const sectionMenuNode = getNode(sectionMenuNodeInfo.id);
+    if (!sectionMenuNode) {
+      reporter.panicOnBuild('failed to create section menu node');
+    } else {
+      createParentChildLink({ parent: sectionMenuNode, child: node });
+      createNode<typeof nodeData>(node);
+    }
   }
 }

@@ -1,10 +1,9 @@
-import { visit, Visitor } from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { toString } from 'hast-util-to-string';
 import { h, s } from 'hastscript';
 import GithubSlugger from 'github-slugger';
-import { Element } from 'hast';
+import { Root as HastRoot } from 'hast';
 import { Plugin } from 'unified';
-import { Node as UnistNode } from 'unist';
 
 const headerTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
 const svgIcon = s(
@@ -23,32 +22,31 @@ const svgIcon = s(
   }),
 );
 
-const autolinkHeader: Plugin = () => {
+const autolinkHeader: Plugin<any[], HastRoot> = () => {
   const slugger = new GithubSlugger();
-  const visitor: Visitor<Element> = (node, _index, _parent) => {
-    if (!headerTags.has(node.tagName)) {
-      return;
-    }
 
-    let headerId = node.properties?.id;
-    if (!headerId) {
-      const nodeText = toString(node);
-      headerId = slugger.slug(nodeText, false);
-    }
+  return (tree: HastRoot) => {
+    visit(tree, 'element', (node, _index, _parent) => {
+      if (!headerTags.has(node.tagName)) {
+        return;
+      }
 
-    if (node.properties != null) {
-      node.properties.id = headerId;
-    } else {
-      node.properties = {
-        id: headerId,
-      };
-    }
-    const link = h('a', { href: `#${headerId}`, class: 'auto-headers' }, svgIcon);
-    node.children.push(link);
-  };
+      let headerId = node.properties?.id;
+      if (!headerId) {
+        const nodeText = toString(node);
+        headerId = slugger.slug(nodeText, false);
+      }
 
-  return (tree: UnistNode) => {
-    visit<Element, string>(tree as Element, 'element', visitor);
+      if (node.properties != null) {
+        node.properties.id = headerId;
+      } else {
+        node.properties = {
+          id: headerId,
+        };
+      }
+      const link = h('a', { href: `#${headerId}`, class: 'auto-headers' }, svgIcon);
+      node.children.push(link);
+    });
     slugger.reset();
   };
 };

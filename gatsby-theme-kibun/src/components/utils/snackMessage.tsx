@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 export const SnackMessage: React.VFC<Record<string, never>> = () => {
   const msg = useAppSelector((state) => selectSnackMessage(state), shallowEqual);
   const dispatch = useAppDispatch();
-  const handleClose = (_event: React.SyntheticEvent | React.MouseEvent, _reason?: string) => {
+  const handleClose = () => {
     dispatch(snackMessageActions.removeMessage({}));
   };
 
