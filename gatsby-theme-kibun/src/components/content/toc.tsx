@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import { ContentLayoutContext } from '../context/contentLayoutContext';
+import { ContentLayoutContext } from '../../context/contentLayoutContext';
 
 const TableOfContents: React.FC = ({ children }) => {
   const { contentBoxWidth, expandedContentWidth } = React.useContext(ContentLayoutContext);
