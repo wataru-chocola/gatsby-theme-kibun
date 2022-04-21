@@ -1,17 +1,19 @@
 import React from 'react';
 import { PageProps, graphql } from 'gatsby';
 
-import Layout from '../components/layout';
+import Layout, { useLayoutControl } from '../components/layout';
 import PathBreadcrumbs from '../components/breadcrumbs';
 
 import ErrorBoundary from '../components/utils/errorboundary';
 
 import { Typography } from '@mui/material';
-import { Box, Slide } from '@mui/material';
+import { Box, Slide, MenuProps } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
+import { HeaderBar } from '../components/headerBar';
 import { SectionBar } from '../components/sectionBar';
 import { Attachments } from '../components/attachments';
+import { ActionMenu } from '../components/headerBar/actionMenu';
 
 import TableOfContents from '../components/content/toc';
 import { Content } from '../components/content';
@@ -29,6 +31,7 @@ interface PageSlugContext {
 }
 
 const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (props) => {
+  const layoutControl = useLayoutControl();
   const contentBoxRef = React.useRef<HTMLDivElement>(null);
   const pageinfo = props.data.markdown!;
   const slug = props.pageContext.slug! as string;
@@ -59,9 +62,23 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
     [dispatch, setEditmode],
   );
 
+  const toggleRightPanel = layoutControl.toggleRightPanel;
+  const menuRender = React.useCallback(
+    (props: MenuProps) => {
+      return <ActionMenu handleOpenAttachment={() => toggleRightPanel(true)} {...props} />;
+    },
+    [toggleRightPanel],
+  );
+
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
-    <Layout pageTitle={title} sidebarContent={<SectionBar />} rightPanelContent={<Attachments />}>
+    <Layout
+      pageTitle={title}
+      headerContent={<HeaderBar pageTitle={title} menuRender={menuRender} />}
+      sidebarContent={<SectionBar />}
+      rightPanelContent={<Attachments />}
+      control={layoutControl}
+    >
       <EditBoxMonitor />
       <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
         <Slide in={editmode} mountOnEnter unmountOnExit>

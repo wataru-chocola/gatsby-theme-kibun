@@ -1,12 +1,10 @@
 import React, { useCallback } from 'react';
-import { Box, MenuProps } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { SidebarLayout } from './sidebarLayout';
 import { HeaderBarLayout } from './headerBarLayout';
 import { RightPanelLayout } from './rightPanelLayout';
 
-import { HeaderBar } from '../headerBar';
-import { ActionMenu } from '../headerBar/actionMenu';
 import { SnackMessage } from '../utils/snackMessage';
 import { ContentContainer } from '../contentContainer';
 import { Footer } from '../footer';
@@ -19,7 +17,7 @@ type LayoutControl = {
   toggleSidebar: (open?: boolean) => void;
   toggleRightPanel: (open?: boolean) => void;
 };
-function useLayoutControl(): LayoutControl {
+export function useLayoutControl(): LayoutControl {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
 
@@ -56,28 +54,23 @@ function useLayoutControl(): LayoutControl {
 }
 
 export type InnerLayoutProps = {
-  pageTitle: string;
+  headerContent: React.ReactElement;
   sidebarContent: React.ReactElement;
   rightPanelContent: React.ReactElement;
+  control: LayoutControl;
 };
 
 const sidebarWidth = '300px';
 const rightPanelWidth = '320px';
 
 const InnerLayout: React.FC<InnerLayoutProps> = ({
-  pageTitle,
+  headerContent,
   sidebarContent,
   rightPanelContent,
+  control,
   children,
 }) => {
-  const control = useLayoutControl();
   const onHamburgerButton = React.useCallback(() => control.toggleSidebar(), [control]);
-  const menuRender = useCallback(
-    (props: MenuProps) => {
-      return <ActionMenu handleOpenAttachment={() => control.toggleRightPanel(true)} {...props} />;
-    },
-    [control],
-  );
 
   return (
     <Box
@@ -91,9 +84,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
       }}
     >
       <SnackMessage />
-      <HeaderBarLayout onHamburgerButton={onHamburgerButton}>
-        <HeaderBar pageTitle={pageTitle} menuRender={menuRender} />
-      </HeaderBarLayout>
+      <HeaderBarLayout onHamburgerButton={onHamburgerButton}>{headerContent}</HeaderBarLayout>
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">

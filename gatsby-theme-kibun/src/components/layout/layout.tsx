@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ pageTitle, ...props }) => {
       <Seo title={pageTitle} />
 
       <CssBaseline />
-      <InnerLayout pageTitle={pageTitle} {...props} />
+      <InnerLayout {...props} />
     </React.Fragment>
   );
 };
