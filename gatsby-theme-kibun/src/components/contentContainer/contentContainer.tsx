@@ -37,31 +37,38 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
         position: 'relative',
       }}
     >
-      <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
-        <ContentLayoutContext.Provider value={value}>
-          <Box
-            sx={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              pointerEvents: 'none',
-              '& > *': {
-                pointerEvents: 'auto',
-              },
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <EditButton />
-          </Box>
+      <Toolbar />
+      <Box
+        sx={{
+          ...sx,
+          position: 'relative',
+        }}
+      >
+        <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
+          <ContentLayoutContext.Provider value={value}>
+            <Box
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+                '& > *': {
+                  pointerEvents: 'auto',
+                },
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <EditButton />
+            </Box>
 
-          <Toolbar />
-          <Paper elevation={isSinglePane ? 0 : 1}>
-            {props.children}
-            <Box mt={8}>{props.footer}</Box>
-          </Paper>
-        </ContentLayoutContext.Provider>
-      </ErrorBoundary>
+            <Paper elevation={isSinglePane ? 0 : 1}>
+              {props.children}
+              <Box mt={8}>{props.footer}</Box>
+            </Paper>
+          </ContentLayoutContext.Provider>
+        </ErrorBoundary>
+      </Box>
     </Box>
   );
 };

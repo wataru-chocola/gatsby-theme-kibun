@@ -1,13 +1,16 @@
 import React, { useCallback } from 'react';
 import { Box, MenuProps } from '@mui/material';
 
-import { HeaderBar } from './headerBar';
-import { ActionMenu } from './headerBar/actionMenu';
-import { SectionBar } from './sectionBar';
-import { RightPanel } from './rightPanel';
-import { SnackMessage } from './utils/snackMessage';
-import { ContentContainer } from './contentContainer';
-import { Footer } from './footer';
+import { SidebarLayout } from './sidebarLayout';
+import { HeaderBarLayout } from './headerBarLayout';
+
+import { HeaderBar } from '../headerBar';
+import { ActionMenu } from '../headerBar/actionMenu';
+import { SectionBar } from '../sectionBar';
+import { RightPanel } from '../rightPanel';
+import { SnackMessage } from '../utils/snackMessage';
+import { ContentContainer } from '../contentContainer';
+import { Footer } from '../footer';
 
 import 'overlayscrollbars/css/OverlayScrollbars.css';
 
@@ -64,15 +67,15 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
       }}
     >
       <SnackMessage />
-      <HeaderBar
-        onHamburgerButton={toggleLeftMenu()}
-        pageTitle={pageTitle}
-        menuRender={menuRender}
-      />
+      <HeaderBarLayout onHamburgerButton={toggleLeftMenu()}>
+        <HeaderBar pageTitle={pageTitle} menuRender={menuRender} />
+      </HeaderBarLayout>
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
-          <SectionBar width={sidebarWidth} openState={leftMenuOpen} toggle={toggleLeftMenu} />
+          <SidebarLayout width={sidebarWidth} openState={leftMenuOpen} toggle={toggleLeftMenu}>
+            <SectionBar />
+          </SidebarLayout>
         </nav>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>

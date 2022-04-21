@@ -1,7 +1,7 @@
 import React from 'react';
 import { CssBaseline } from '@mui/material';
 
-import Seo from './utils/seo';
+import Seo from '../utils/seo';
 import InnerLayout, { InnerLayoutProps } from './innerLayout';
 
 import './layout.css';

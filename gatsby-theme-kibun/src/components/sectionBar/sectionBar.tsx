@@ -1,54 +1,15 @@
 import React from 'react';
-import { ResponsiveDrawer } from '../uiparts/responsiveDrawer';
 import { FilterBox } from './filterBox';
 import { SectionNaviList } from './sectionNaviList';
-import { Toolbar } from '@mui/material';
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
-
-interface Props {
-  openState: boolean;
-  toggle: (open?: boolean) => () => void;
-  width?: string | number;
-}
 
 const MemorizedSectionNavigationList = React.memo(SectionNaviList);
 
-export const SectionBar: React.VFC<Props> = (props) => {
-  const drawerWidth = props.width || 300;
-  const drawerSx = {
-    width: {
-      sm: drawerWidth,
-    },
-    flexShrink: {
-      sm: 0,
-    },
-    '& .MuiDrawer-paper': {
-      width: drawerWidth,
-    },
-  } as const;
-
+export const SectionBar: React.VFC = () => {
   return (
-    <nav aria-label="sidemenu">
-      <ResponsiveDrawer
-        openState={props.openState}
-        toggle={props.toggle}
-        breakpoint="md"
-        sx={drawerSx}
-      >
-        <Toolbar />
-        <OverlayScrollbarsComponent
-          options={{
-            className: 'os-theme-dark os-theme-custom os-host-flexbox',
-            scrollbars: {
-              clickScrolling: true,
-            },
-          }}
-        >
-          <FilterBox />
-          <MemorizedSectionNavigationList />
-        </OverlayScrollbarsComponent>
-      </ResponsiveDrawer>
-    </nav>
+    <React.Fragment>
+      <FilterBox />
+      <MemorizedSectionNavigationList />
+    </React.Fragment>
   );
 };
 SectionBar.displayName = 'SectionBar';
