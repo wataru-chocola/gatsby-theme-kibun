@@ -4,7 +4,7 @@ import { SectionNaviList } from './sectionNaviList';
 
 const MemorizedSectionNavigationList = React.memo(SectionNaviList);
 
-export const SectionBar: React.VFC = () => {
+export const SectionMenu: React.VFC = () => {
   return (
     <React.Fragment>
       <FilterBox />
@@ -12,4 +12,4 @@ export const SectionBar: React.VFC = () => {
     </React.Fragment>
   );
 };
-SectionBar.displayName = 'SectionBar';
+SectionMenu.displayName = 'SectionBar';

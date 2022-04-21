@@ -20,19 +20,13 @@ type HeaderBarProps = {
   menuRender: (props: MenuProps) => React.ReactNode;
 };
 
-export function HeaderBar(props: HeaderBarProps): React.ReactElement {
+export function HeaderContent(props: HeaderBarProps): React.ReactElement {
   const isLoggedIn = useAppSelector((state) => selectIsLoggedIn(state));
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 50 });
 
   return (
     <Box display="flex">
-      <Box
-        alignSelf="center"
-        sx={{
-          flexGrow: 1,
-          overflow: 'hidden',
-        }}
-      >
+      <Box alignSelf="center" flexGrow={1} overflow="hidden">
         <Flipcard
           reversed={scrolled}
           front={<SiteTitle />}
@@ -58,7 +52,7 @@ export function HeaderBar(props: HeaderBarProps): React.ReactElement {
       <Box mt={1} mb={1} mr={2} ml={{ sm: 3, xs: 0 }} display={{ sm: 'block', xs: 'none' }}>
         <SearchBox />
       </Box>
-      <Box sx={{ flexShrink: 0, alignSelf: 'center' }}>
+      <Box flexShrink={0} alignSelf="center">
         {isLoggedIn ? (
           <MenuButton
             menuId="account-menu"

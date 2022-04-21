@@ -10,10 +10,10 @@ import { Typography } from '@mui/material';
 import { Box, Slide, MenuProps } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
-import { HeaderBar } from '../components/headerBar';
-import { SectionBar } from '../components/sectionBar';
+import { HeaderContent } from '../components/header';
+import { SectionMenu } from '../components/sectionMenu';
 import { Attachments } from '../components/attachments';
-import { ActionMenu } from '../components/headerBar/actionMenu';
+import { ActionMenu } from '../components/header/actionMenu';
 
 import TableOfContents from '../components/content/toc';
 import { Content } from '../components/content';
@@ -74,8 +74,8 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   return (
     <Layout
       pageTitle={title}
-      headerContent={<HeaderBar pageTitle={title} menuRender={menuRender} />}
-      sidebarContent={<SectionBar />}
+      headerContent={<HeaderContent pageTitle={title} menuRender={menuRender} />}
+      sidebarContent={<SectionMenu />}
       rightPanelContent={<Attachments />}
       control={layoutControl}
     >
