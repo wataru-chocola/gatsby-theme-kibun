@@ -1,13 +1,11 @@
 import React, { useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, Toolbar } from '@mui/material';
 
 import { SidebarLayout } from './sidebarLayout';
 import { HeaderBarLayout } from './headerBarLayout';
 import { RightPanelLayout } from './rightPanelLayout';
 
 import { SnackMessage } from '../utils/snackMessage';
-import { ContentContainer } from '../contentContainer';
-import { Footer } from '../footer';
 
 import 'overlayscrollbars/css/OverlayScrollbars.css';
 
@@ -86,7 +84,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
       <SnackMessage />
       <HeaderBarLayout onHamburgerButton={onHamburgerButton}>{headerContent}</HeaderBarLayout>
 
-      <Box sx={{ display: 'flex' }}>
+      <Box display="flex">
         <nav aria-label="sidemenu">
           <SidebarLayout
             width={sidebarWidth}
@@ -97,17 +95,17 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
           </SidebarLayout>
         </nav>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, width: '100%' }}>
-          <ContentContainer
-            footer={<Footer />}
-            sx={{
-              minWidth: { xs: '320px' },
-              maxWidth: { xs: '100%', sm: '900px', md: '900px' },
-              width: '100%',
-            }}
+        <Box display="flex" justifyContent="center" flexGrow={1} width="100%">
+          <Box
+            component="main"
+            minWidth={{ xs: '320px' }}
+            maxWidth={{ xs: '100%', sm: '900px', md: '900px' }}
+            width="100%"
           >
+            <Toolbar />
             {children}
-          </ContentContainer>
+          </Box>
+
           <RightPanelLayout
             width={rightPanelWidth}
             openState={control.rightPanelOpen}

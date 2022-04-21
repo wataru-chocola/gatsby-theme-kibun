@@ -14,6 +14,7 @@ import { HeaderContent } from '../components/header';
 import { SectionMenu } from '../components/sectionMenu';
 import { Attachments } from '../components/attachments';
 import { ActionMenu } from '../components/header/actionMenu';
+import { ContentContainer } from '../components/contentContainer';
 
 import TableOfContents from '../components/content/toc';
 import { Content } from '../components/content';
@@ -25,6 +26,7 @@ import { PrismAliasesFromQL } from '../hooks/usePrismAliasesMapFromQL';
 
 import { useAppDispatch } from '../state/hooks';
 import { snackMessageActions } from '../state/snackMessageSlice';
+import { Footer } from '../components/footer';
 
 interface PageSlugContext {
   slug: string;
@@ -94,25 +96,27 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         </Slide>
       </ErrorBoundary>
 
-      <Box pt={2} mx={{ xs: 2, sm: 6 }}>
-        <PathBreadcrumbs crumbs={crumbs} />
-      </Box>
-      <Box bgcolor="primary.contrastText" color="primary.main" mx={{ xs: 2, sm: 6 }} my={2}>
-        <Typography variant="h1" sx={{ fontSize: '40px', fontWeight: 'bold' }}>
-          {title}
-        </Typography>
-      </Box>
-
-      <Box onDoubleClick={openEditmode} ref={contentBoxRef}>
-        {toc && (
-          <Box mt={4} mb={8}>
-            <TableOfContents>{toc}</TableOfContents>
-          </Box>
-        )}
-        <Box mx={{ xs: 2, sm: 6 }}>
-          <Content>{html}</Content>
+      <ContentContainer footer={<Footer />} onEditClick={openEditmode}>
+        <Box pt={2} mx={{ xs: 2, sm: 6 }}>
+          <PathBreadcrumbs crumbs={crumbs} />
         </Box>
-      </Box>
+        <Box bgcolor="primary.contrastText" color="primary.main" mx={{ xs: 2, sm: 6 }} my={2}>
+          <Typography variant="h1" sx={{ fontSize: '40px', fontWeight: 'bold' }}>
+            {title}
+          </Typography>
+        </Box>
+
+        <Box onDoubleClick={openEditmode} ref={contentBoxRef}>
+          {toc && (
+            <Box mt={4} mb={8}>
+              <TableOfContents>{toc}</TableOfContents>
+            </Box>
+          )}
+          <Box mx={{ xs: 2, sm: 6 }}>
+            <Content>{html}</Content>
+          </Box>
+        </Box>
+      </ContentContainer>
     </Layout>
   );
 };
