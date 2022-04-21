@@ -4,8 +4,6 @@ import { useMediaQuery, useTheme, Breakpoint } from '@mui/material';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { Attachments } from './attachments';
-
 interface Props {
   openState: boolean;
   toggle: (open?: boolean) => () => void;
@@ -67,7 +65,7 @@ const RightPanelShell: React.FC<Props> = (props) => {
 };
 RightPanelShell.displayName = 'RightPanelShell';
 
-export const RightPanel: React.VFC<Props> = (props) => {
+export const RightPanelLayout: React.FC<Props> = ({ children, ...props }) => {
   const theme = useTheme();
   const temporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'lg'), {
     noSsr: true,
@@ -97,10 +95,10 @@ export const RightPanel: React.VFC<Props> = (props) => {
             <CloseIcon />
           </IconButton>
 
-          <Attachments />
+          {children}
         </Box>
       </OverlayScrollbarsComponent>
     </RightPanelShell>
   );
 };
-RightPanel.displayName = 'RightPanel';
+RightPanelLayout.displayName = 'RightPanelLayout';

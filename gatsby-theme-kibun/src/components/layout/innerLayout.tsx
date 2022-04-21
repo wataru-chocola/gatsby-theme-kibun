@@ -3,11 +3,10 @@ import { Box, MenuProps } from '@mui/material';
 
 import { SidebarLayout } from './sidebarLayout';
 import { HeaderBarLayout } from './headerBarLayout';
+import { RightPanelLayout } from './rightPanel';
 
 import { HeaderBar } from '../headerBar';
 import { ActionMenu } from '../headerBar/actionMenu';
-import { SectionBar } from '../sectionBar';
-import { RightPanel } from '../rightPanel';
 import { SnackMessage } from '../utils/snackMessage';
 import { ContentContainer } from '../contentContainer';
 import { Footer } from '../footer';
@@ -16,12 +15,19 @@ import 'overlayscrollbars/css/OverlayScrollbars.css';
 
 export type InnerLayoutProps = {
   pageTitle: string;
+  sidebarContent: React.ReactElement;
+  rightPanelContent: React.ReactElement;
 };
 
 const sidebarWidth = '300px';
 const rightPanelWidth = '320px';
 
-const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
+const InnerLayout: React.FC<InnerLayoutProps> = ({
+  pageTitle,
+  sidebarContent,
+  rightPanelContent,
+  children,
+}) => {
   const [leftMenuOpen, setLeftMenuOpen] = React.useState(false);
   const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
 
@@ -74,7 +80,7 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
           <SidebarLayout width={sidebarWidth} openState={leftMenuOpen} toggle={toggleLeftMenu}>
-            <SectionBar />
+            {sidebarContent}
           </SidebarLayout>
         </nav>
 
@@ -89,11 +95,13 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({ pageTitle, children }) => {
           >
             {children}
           </ContentContainer>
-          <RightPanel
+          <RightPanelLayout
             width={rightPanelWidth}
             openState={rightPanelOpen}
             toggle={toggleRightPanel}
-          />
+          >
+            {rightPanelContent}
+          </RightPanelLayout>
         </Box>
       </Box>
     </Box>

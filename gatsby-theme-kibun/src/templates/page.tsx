@@ -10,6 +10,9 @@ import { Typography } from '@mui/material';
 import { Box, Slide } from '@mui/material';
 import 'katex/dist/katex.min.css';
 
+import { SectionBar } from '../components/sectionBar';
+import { Attachments } from '../components/attachments';
+
 import TableOfContents from '../components/content/toc';
 import { Content } from '../components/content';
 import EditBox, { EditBoxMonitor } from '../components/editbox';
@@ -58,7 +61,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
 
   const title = pageinfo.frontmatter?.title || `(no title)`;
   return (
-    <Layout pageTitle={title}>
+    <Layout pageTitle={title} sidebarContent={<SectionBar />} rightPanelContent={<Attachments />}>
       <EditBoxMonitor />
       <ErrorBoundary fallback={null} errHandler={editboxErrHandler}>
         <Slide in={editmode} mountOnEnter unmountOnExit>
