@@ -5,7 +5,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
 interface Props {
   openState: boolean;
-  toggle: (open?: boolean) => () => void;
+  toggle: (open?: boolean) => void;
   width?: string | number;
 }
 

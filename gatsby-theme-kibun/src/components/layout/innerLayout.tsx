@@ -3,7 +3,7 @@ import { Box, MenuProps } from '@mui/material';
 
 import { SidebarLayout } from './sidebarLayout';
 import { HeaderBarLayout } from './headerBarLayout';
-import { RightPanelLayout } from './rightPanel';
+import { RightPanelLayout } from './rightPanelLayout';
 
 import { HeaderBar } from '../headerBar';
 import { ActionMenu } from '../headerBar/actionMenu';
@@ -12,6 +12,48 @@ import { ContentContainer } from '../contentContainer';
 import { Footer } from '../footer';
 
 import 'overlayscrollbars/css/OverlayScrollbars.css';
+
+type LayoutControl = {
+  sidebarOpen: boolean;
+  rightPanelOpen: boolean;
+  toggleSidebar: (open?: boolean) => void;
+  toggleRightPanel: (open?: boolean) => void;
+};
+function useLayoutControl(): LayoutControl {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
+
+  const toggleSidebar = useCallback(
+    (open?: boolean) => {
+      setRightPanelOpen(false);
+      if (open != null) {
+        setSidebarOpen(open);
+      } else {
+        setSidebarOpen((prev) => !prev);
+      }
+    },
+    [setSidebarOpen, setRightPanelOpen],
+  );
+
+  const toggleRightPanel = useCallback(
+    (open?: boolean) => {
+      setSidebarOpen(false);
+      if (open != null) {
+        setRightPanelOpen(open);
+      } else {
+        setRightPanelOpen((prev) => !prev);
+      }
+    },
+    [setSidebarOpen, setRightPanelOpen],
+  );
+
+  return {
+    sidebarOpen,
+    rightPanelOpen,
+    toggleSidebar,
+    toggleRightPanel,
+  };
+}
 
 export type InnerLayoutProps = {
   pageTitle: string;
@@ -28,37 +70,13 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
   rightPanelContent,
   children,
 }) => {
-  const [leftMenuOpen, setLeftMenuOpen] = React.useState(false);
-  const [rightPanelOpen, setRightPanelOpen] = React.useState(false);
-
-  const toggleLeftMenu = useCallback(
-    (open?: boolean) => () => {
-      setRightPanelOpen(false);
-      if (open != null) {
-        setLeftMenuOpen(open);
-      } else {
-        setLeftMenuOpen((prev) => !prev);
-      }
-    },
-    [setLeftMenuOpen, setRightPanelOpen],
-  );
-
-  const toggleRightPanel = useCallback(
-    (open?: boolean) => () => {
-      setLeftMenuOpen(false);
-      if (open != null) {
-        setRightPanelOpen(open);
-      } else {
-        setRightPanelOpen((prev) => !prev);
-      }
-    },
-    [setLeftMenuOpen, setRightPanelOpen],
-  );
+  const control = useLayoutControl();
+  const onHamburgerButton = React.useCallback(() => control.toggleSidebar(), [control]);
   const menuRender = useCallback(
     (props: MenuProps) => {
-      return <ActionMenu handleOpenAttachment={toggleRightPanel(true)} {...props} />;
+      return <ActionMenu handleOpenAttachment={() => control.toggleRightPanel(true)} {...props} />;
     },
-    [toggleRightPanel],
+    [control],
   );
 
   return (
@@ -73,13 +91,17 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
       }}
     >
       <SnackMessage />
-      <HeaderBarLayout onHamburgerButton={toggleLeftMenu()}>
+      <HeaderBarLayout onHamburgerButton={onHamburgerButton}>
         <HeaderBar pageTitle={pageTitle} menuRender={menuRender} />
       </HeaderBarLayout>
 
       <Box sx={{ display: 'flex' }}>
         <nav aria-label="sidemenu">
-          <SidebarLayout width={sidebarWidth} openState={leftMenuOpen} toggle={toggleLeftMenu}>
+          <SidebarLayout
+            width={sidebarWidth}
+            openState={control.sidebarOpen}
+            toggle={control.toggleSidebar}
+          >
             {sidebarContent}
           </SidebarLayout>
         </nav>
@@ -97,8 +119,8 @@ const InnerLayout: React.FC<InnerLayoutProps> = ({
           </ContentContainer>
           <RightPanelLayout
             width={rightPanelWidth}
-            openState={rightPanelOpen}
-            toggle={toggleRightPanel}
+            openState={control.rightPanelOpen}
+            toggle={control.toggleRightPanel}
           >
             {rightPanelContent}
           </RightPanelLayout>
