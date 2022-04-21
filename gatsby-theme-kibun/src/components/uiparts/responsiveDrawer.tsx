@@ -6,38 +6,53 @@ import { useTheme, useMediaQuery } from '@mui/material';
 interface Props {
   anchor?: DrawerProps['anchor'];
   openState: boolean;
-  toggle: (open?: boolean) => () => void;
+  toggle: (open?: boolean) => void;
   sx: SxProps;
   breakpoint?: Breakpoint;
 }
 
-export const ResponsiveDrawer: React.FC<Props> = (props) => {
+export const ResponsiveDrawer: React.FC<Props> = ({ toggle, ...props }) => {
   const theme = useTheme();
   const drawerTemporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'md'), {
     noSsr: true,
   });
 
-  const evtHandlerToggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
+  const isSkipKeys = React.useCallback((event: React.KeyboardEvent | React.MouseEvent) => {
+    return (
+      event &&
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    );
+  }, []);
+
+  const onOpen = React.useCallback(
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (isSkipKeys(event)) {
         return;
       }
+      toggle(true);
+    },
+    [isSkipKeys, toggle],
+  );
 
-      props.toggle(open)();
-    };
+  const onClose = React.useCallback(
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (isSkipKeys(event)) {
+        return;
+      }
+      toggle(false);
+    },
+    [isSkipKeys, toggle],
+  );
 
   return drawerTemporary ? (
     <SwipeableDrawer
       variant="temporary"
       anchor={props.anchor}
       open={props.openState}
-      onOpen={evtHandlerToggleDrawer(true)}
-      onClose={evtHandlerToggleDrawer(false)}
+      onOpen={onOpen}
+      onClose={onClose}
       keepMounted={true}
       sx={props.sx}
     >

@@ -4,42 +4,56 @@ import { useMediaQuery, useTheme, Breakpoint } from '@mui/material';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { Attachments } from './attachments';
-
 interface Props {
   openState: boolean;
-  toggle: (open?: boolean) => () => void;
+  toggle: (open?: boolean) => void;
   breakpoint?: Breakpoint;
   width?: string | number;
 }
 
-const RightPanelShell: React.FC<Props> = (props) => {
+const RightPanelShell: React.FC<Props> = ({ toggle, ...props }) => {
   const width = props.width || '350px';
   const theme = useTheme();
   const temporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'lg'), {
     noSsr: true,
   });
 
-  const evtHandlerTogglePanel =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
+  const isSkipKeys = React.useCallback((event: React.KeyboardEvent | React.MouseEvent) => {
+    return (
+      event &&
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    );
+  }, []);
+
+  const onOpen = React.useCallback(
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (isSkipKeys(event)) {
         return;
       }
+      toggle(true);
+    },
+    [isSkipKeys, toggle],
+  );
 
-      props.toggle(open)();
-    };
+  const onClose = React.useCallback(
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (isSkipKeys(event)) {
+        return;
+      }
+      toggle(false);
+    },
+    [isSkipKeys, toggle],
+  );
+
   return temporary ? (
     <SwipeableDrawer
       variant="temporary"
       anchor="right"
       open={props.openState}
-      onOpen={evtHandlerTogglePanel(true)}
-      onClose={evtHandlerTogglePanel(false)}
+      onOpen={onOpen}
+      onClose={onClose}
       keepMounted={true}
     >
       <Box
@@ -67,11 +81,13 @@ const RightPanelShell: React.FC<Props> = (props) => {
 };
 RightPanelShell.displayName = 'RightPanelShell';
 
-export const RightPanel: React.VFC<Props> = (props) => {
+export const RightPanelLayout: React.FC<Props> = ({ children, ...props }) => {
   const theme = useTheme();
   const temporary = useMediaQuery(theme.breakpoints.down(props.breakpoint || 'lg'), {
     noSsr: true,
   });
+  const toggle = props.toggle;
+  const onClose = React.useCallback(() => toggle(false), [toggle]);
 
   return (
     <RightPanelShell {...props}>
@@ -86,7 +102,7 @@ export const RightPanel: React.VFC<Props> = (props) => {
       >
         <Box sx={{ position: 'relative' }}>
           <IconButton
-            onClick={props.toggle(false)}
+            onClick={onClose}
             sx={{
               display: temporary ? 'span' : 'none',
               position: 'absolute',
@@ -97,10 +113,10 @@ export const RightPanel: React.VFC<Props> = (props) => {
             <CloseIcon />
           </IconButton>
 
-          <Attachments />
+          {children}
         </Box>
       </OverlayScrollbarsComponent>
     </RightPanelShell>
   );
 };
-RightPanel.displayName = 'RightPanel';
+RightPanelLayout.displayName = 'RightPanelLayout';

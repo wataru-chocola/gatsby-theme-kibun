@@ -1,1 +1,0 @@
-export { SectionBar } from './sectionBar';

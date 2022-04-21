@@ -1,5 +1,5 @@
 import React from 'react';
-import { SxProps, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { Box } from '@mui/material';
 import { Paper } from '@mui/material';
 
@@ -12,12 +12,11 @@ import ErrorBoundary from '../utils/errorboundary';
 
 export type ContentContainerProps = {
   footer: React.ReactElement;
-  sx?: Omit<SxProps, 'position'>;
+  onEditClick: () => void;
 };
 
 export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
   const contentBoxRef = React.useRef<HTMLDivElement>(null);
-  const sx = props.sx || {};
   const theme = useTheme();
   const isSinglePane = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
 
@@ -29,14 +28,7 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
   };
 
   return (
-    <Box
-      component="main"
-      ref={contentBoxRef}
-      sx={{
-        ...sx,
-        position: 'relative',
-      }}
-    >
+    <Box ref={contentBoxRef} position="relative">
       <ErrorBoundary fallback={<h1>Error: Something wrong happened (&gt;&lt;)</h1>}>
         <ContentLayoutContext.Provider value={value}>
           <Box
@@ -52,10 +44,9 @@ export const ContentContainer: React.FC<ContentContainerProps> = (props) => {
               justifyContent: 'flex-end',
             }}
           >
-            <EditButton />
+            <EditButton onClick={props.onEditClick} />
           </Box>
 
-          <Toolbar />
           <Paper elevation={isSinglePane ? 0 : 1}>
             {props.children}
             <Box mt={8}>{props.footer}</Box>
