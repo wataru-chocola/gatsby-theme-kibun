@@ -67,7 +67,13 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
   const toggleRightPanel = layoutControl.toggleRightPanel;
   const menuRender = React.useCallback(
     (props: MenuProps) => {
-      return <ActionMenu handleOpenAttachment={() => toggleRightPanel(true)} {...props} />;
+      return (
+        <ActionMenu
+          handleOpenAttachment={() => toggleRightPanel(true)}
+          handleEdit={openEditmode}
+          {...props}
+        />
+      );
     },
     [toggleRightPanel],
   );
