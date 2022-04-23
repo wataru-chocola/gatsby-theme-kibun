@@ -75,7 +75,7 @@ const Page: React.VFC<PageProps<GatsbyTypes.PageQuery, PageSlugContext>> = (prop
         />
       );
     },
-    [toggleRightPanel],
+    [toggleRightPanel, openEditmode],
   );
 
   const title = pageinfo.frontmatter?.title || `(no title)`;
