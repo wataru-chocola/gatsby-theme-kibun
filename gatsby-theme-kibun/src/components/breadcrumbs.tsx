@@ -41,7 +41,7 @@ const PathBreadcrumbs: React.VFC<PathBreadcrumbsProps> = (props) => {
   });
   return (
     <Breadcrumbs
-      aria-label="breadcrumb"
+      aria-label="path breadcrumb"
       maxItems={smallDisplay ? 1 : 4}
       itemsBeforeCollapse={smallDisplay ? 0 : 1}
       itemsAfterCollapse={smallDisplay ? 1 : 2}
