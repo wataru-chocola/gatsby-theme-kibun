@@ -21,11 +21,21 @@ module.exports = {
   },
   testPathIgnorePatterns: [`node_modules`, `\\.cache`, `<rootDir>.*/public`],
   transformIgnorePatterns: [
-    '/node_modules/(?!micromark|unist|mdast-util|parse-entities|character-entities|gatsby)',
+    '/node_modules/(?!' +
+      'gatsby|refractor' +
+      '|unified|micromark|remark|rehype' +
+      '|unist|mdast-util|hast-|hastscript|vfile' +
+      '|web-namespaces|html-void-elements' +
+      '|decode-named-character-reference|character-reference-invalid' +
+      '|space-separated-tokens|comma-separated-tokens' +
+      '|parse-entities|character-entities' +
+      '|bail|trough|property-information|zwitch|ccount|escape-string-regexp|markdown-table|longest-streak' +
+      '|is-plain-obj|is-decimal|is-hexadecimal|is-alphanumerical|is-alphabetica' +
+      ')',
   ],
   globals: {
     __PATH_PREFIX__: ``,
   },
   testURL: 'http://localhost',
-  setupFiles: [`<rootDir>/loadershim.js`],
+  setupFiles: [`<rootDir>/loadershim.js`, `<rootDir>/test.setup.js`],
 };

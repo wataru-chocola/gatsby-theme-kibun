@@ -9,6 +9,10 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { storeReducers } from '../state/store';
+import type { RootState } from '../state/store';
 import wrapWithThemeProvider from '../theme';
 
 // custom queries
@@ -33,16 +37,27 @@ const customQueries = {
 };
 export { queryByClassName, getAllByClassName, getByClassName, findAllByClassName, findByClassName };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const customRender = (
+type customRenderOptions = {
+  preloadedState?: RootState;
+  store?: any;
+} & Omit<RenderOptions, 'wrapper' | 'queries'>;
+
+const customRender: (
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'wrapper' | 'queries'>,
-) =>
-  render(ui, {
+  options?: customRenderOptions,
+) => ReturnType<typeof render> = (ui, options) => {
+  const {
+    preloadedState,
+    store = configureStore({ reducer: storeReducers, preloadedState }),
+    ...renderOptions
+  } = options ?? ({} as customRenderOptions);
+
+  return render(ui, {
     queries: { ...queries, ...customQueries },
-    wrapper: ({ children }) => wrapWithThemeProvider(children),
-    ...options,
+    wrapper: ({ children }) => wrapWithThemeProvider(<Provider store={store}>{children}</Provider>),
+    ...renderOptions,
   });
+};
 
 export * from '@testing-library/react';
 export { customRender as render };
