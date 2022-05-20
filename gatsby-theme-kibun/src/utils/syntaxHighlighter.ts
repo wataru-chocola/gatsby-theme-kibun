@@ -26,7 +26,7 @@ export function highlightSync(tree: HastRoot, options?: Options): [HastRoot, Arr
 
   const missingLanguages = [] as Array<string>;
   const targets = getCodeElements(tree);
-  targets.map(([node, parent]) => {
+  targets.forEach(([node, parent]) => {
     const classNames = (node.properties?.className || []) as string[];
     let lang = getLanguage(classNames);
 
@@ -36,9 +36,8 @@ export function highlightSync(tree: HastRoot, options?: Options): [HastRoot, Arr
     }
     const result = refractor.highlight(toString(node), lang);
 
-    addLangClassToParent(parent, lang);
+    setLangClassToParent(parent, lang);
     node.children = result.children as HastElement[];
-    return null;
   });
 
   return [tree, missingLanguages];
@@ -84,7 +83,7 @@ export async function highlightAsync(
       }
       const result = refractor.highlight(toString(node), lang);
 
-      addLangClassToParent(parent, lang);
+      setLangClassToParent(parent, lang);
       node.children = result.children as HastElement[];
     }),
   );
@@ -115,11 +114,17 @@ function getCodeElements(tree: HastRoot): Array<[HastElement, HastElement]> {
   return targets;
 }
 
-function addLangClassToParent(parent: HastElement, lang: string): void {
+function setLangClassToParent(parent: HastElement, lang: string): void {
+  if (parent.tagName !== 'pre') {
+    return;
+  }
+
   const langClass = 'language-' + lang;
   if (parent.properties != null) {
-    const parent_classes = (parent.properties?.className || []) as string[];
-    parent.properties.className = parent_classes.concat(langClass);
+    const parent_classes = (parent.properties!.className || []) as string[];
+    parent.properties.className = parent_classes
+      .filter((c) => !c.startsWith('language-'))
+      .concat(langClass);
   } else {
     parent.properties = {
       className: [langClass],

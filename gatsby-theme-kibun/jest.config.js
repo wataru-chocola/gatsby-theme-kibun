@@ -37,5 +37,9 @@ module.exports = {
     __PATH_PREFIX__: ``,
   },
   testURL: 'http://localhost',
-  setupFiles: [`<rootDir>/loadershim.js`, `<rootDir>/test.setup.js`],
+  setupFiles: [
+    `<rootDir>/loadershim.js`,
+    `<rootDir>/test.setup.js`,
+    `<rootDir>/jest-fix-instanceof-error.js`,
+  ],
 };

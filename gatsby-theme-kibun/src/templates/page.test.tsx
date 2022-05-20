@@ -1,6 +1,6 @@
 import { StaticQuery, useStaticQuery } from 'gatsby';
 import React from 'react';
-import { render, screen } from '../utils/test-utils';
+import { render, screen, waitFor } from '../utils/test-utils';
 
 import Page from './page';
 
@@ -16,7 +16,7 @@ beforeEach(() => {
   (useStaticQuery as jest.Mock).mockImplementation(() => mockGraphQLData);
 });
 
-test('should render in success', () => {
+test('should render in success', async () => {
   const markdownData = {
     frontmatter: {
       title: 'test',
@@ -25,15 +25,30 @@ test('should render in success', () => {
     parent: {
       relativePath: '/hello',
       internal: {
-        content: `# Heading 1`,
+        content: `# Heading 1
+
+Hello, world.
+
+\`\`\`bash
+echo 'hello, bash'
+\`\`\`
+
+\`\`\`mysh
+echo 'hello, mysh'
+\`\`\`
+
+\`\`\`unksh
+echo 'hello, unksh'
+\`\`\`
+`,
       },
     },
   };
   const prismAliasMap = {
     aliasesMap: [
       {
-        alias: 'bash',
-        name: 'sh',
+        alias: 'mysh',
+        name: 'bash',
       },
     ],
   };
@@ -43,7 +58,7 @@ test('should render in success', () => {
     prismAliasMap,
   };
   // @ts-ignore
-  render(<Page data={data} pageContext={{ slug: '/hello' }} />);
+  const { container } = render(<Page data={data} pageContext={{ slug: '/hello' }} />);
 
   // breadcrumbs
   expect(screen.getByText('AAA')).toHaveAttribute('href', '/aaa');
@@ -52,4 +67,11 @@ test('should render in success', () => {
 
   expect(screen.getByRole('navigation', { name: 'table of contents' })).toBeInTheDocument();
   expect(screen.getByRole('main')).toBeInTheDocument();
+
+  // prism alias
+  await waitFor(() => expect(container.querySelectorAll('pre.language-bash')).toHaveLength(2));
+  await waitFor(() => expect(container.querySelectorAll('code.language-bash')).toHaveLength(1));
+  await waitFor(() => expect(container.querySelectorAll('code.language-mysh')).toHaveLength(1));
+  await waitFor(() => expect(container.querySelectorAll('pre.language-text')).toHaveLength(1));
+  await waitFor(() => expect(container.querySelectorAll('code.language-unksh')).toHaveLength(1));
 });
