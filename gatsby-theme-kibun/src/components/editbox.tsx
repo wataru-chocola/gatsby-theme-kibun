@@ -210,6 +210,9 @@ export const EditBox = React.forwardRef<HTMLDivElement, EditBoxProps>(
             <Grid item xs={12} md>
               <TextField
                 variant="outlined"
+                inputProps={{
+                  'aria-label': 'markdown source',
+                }}
                 multiline
                 fullWidth
                 rows={10}
