@@ -22,6 +22,7 @@ const store = createStore();
 export const wrapperWithStore: (element: React.ReactElement) => React.ReactElement = (element) => {
   return <Provider store={store}>{element}</Provider>;
 };
+export const initialState = store.getState();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

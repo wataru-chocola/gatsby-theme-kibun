@@ -229,7 +229,8 @@ export class githubRepoOperator {
   }
 
   private getPathElements(page_path: string): Array<string> {
-    return this.basePath.split('/').concat(page_path.split('/'));
+    const page_abspath = this.basePath ? this.basePath + '/' + page_path : page_path;
+    return page_abspath.split('/');
   }
 
   private async getMainRef(): Promise<RestEndpointMethodTypes['git']['getRef']['response']> {

@@ -2,6 +2,8 @@ import { useStaticQuery } from 'gatsby';
 import React from 'react';
 import { render, screen, waitFor } from '../utils/test-utils';
 import userEvent from '@testing-library/user-event';
+import { initialState } from '../state/store';
+import merge from 'deepmerge';
 
 import { server } from '../__mocks__/server';
 
@@ -41,16 +43,33 @@ afterEach(() => server.resetHandlers());
 
 afterAll(() => server.close());
 
-test('should render in success', async () => {
-  const markdownData = {
-    frontmatter: {
-      title: 'Test Title',
+const markdownData = {
+  frontmatter: {
+    title: 'Test Title',
+  },
+  breadcrumbs: [{ slug: '/aaa', title: 'AAA' }, { slug: '/bbb' }, { slug: '/ccc', title: 'CCC' }],
+  parent: {
+    relativePath: 'testpage/index.md',
+    internal: {
+      content: `# Heading 1`,
     },
-    breadcrumbs: [{ slug: '/aaa', title: 'AAA' }, { slug: '/bbb' }, { slug: '/ccc', title: 'CCC' }],
-    parent: {
-      relativePath: '/hello',
-      internal: {
-        content: `# Heading 1
+  },
+};
+const prismAliasMap = {
+  aliasesMap: [
+    {
+      alias: 'mysh',
+      name: 'bash',
+    },
+  ],
+};
+const basePageData = {
+  markdown: markdownData,
+  prismAliasMap,
+};
+
+test('should render in success', async () => {
+  const testMarkdown = `# Heading 1
 
 Hello, world.
 
@@ -65,25 +84,13 @@ echo 'hello, mysh'
 \`\`\`unksh
 echo 'hello, unksh'
 \`\`\`
-`,
-      },
-    },
-  };
-  const prismAliasMap = {
-    aliasesMap: [
-      {
-        alias: 'mysh',
-        name: 'bash',
-      },
-    ],
-  };
+`;
 
-  const data = {
-    markdown: markdownData,
-    prismAliasMap,
-  };
+  const testData = merge(basePageData, {
+    markdown: { parent: { internal: { content: testMarkdown } } },
+  });
   // @ts-ignore
-  const { container } = render(<Page data={data} pageContext={{ slug: '/hello' }} />);
+  const { container } = render(<Page data={testData} pageContext={{ slug: '/testpage' }} />);
 
   // breadcrumbs
   expect(screen.getByText('AAA')).toHaveAttribute('href', '/aaa');
@@ -103,32 +110,8 @@ echo 'hello, unksh'
 });
 
 test('edit, preview, cancel', async () => {
-  const markdownData = {
-    frontmatter: {
-      title: 'Test Title',
-    },
-    breadcrumbs: [{ slug: '/aaa', title: 'AAA' }, { slug: '/bbb' }, { slug: '/ccc', title: 'CCC' }],
-    parent: {
-      relativePath: '/hello',
-      internal: {
-        content: `# Heading 1`,
-      },
-    },
-  };
-  const prismAliasMap = {
-    aliasesMap: [
-      {
-        alias: 'mysh',
-        name: 'bash',
-      },
-    ],
-  };
-  const data = {
-    markdown: markdownData,
-    prismAliasMap,
-  };
   // @ts-ignore
-  render(<Page data={data} pageContext={{ slug: '/hello' }} />);
+  render(<Page data={basePageData} pageContext={{ slug: '/testpage' }} />);
 
   const heading = screen.getByText('Heading 1', { selector: 'h1' });
   expect(heading).toBeInTheDocument();
@@ -154,3 +137,35 @@ test('edit, preview, cancel', async () => {
   );
   expect(screen.queryByText('Heading 2', { selector: 'h1' })).not.toBeInTheDocument();
 }, 10000);
+
+test('edit, save while logged in', async () => {
+  // @ts-ignore
+  render(<Page data={basePageData} pageContext={{ slug: '/testpage' }} />, {
+    preloadedState: Object.assign({}, initialState, {
+      login: { isLoggedIn: true, token: 'xxx', state: 'succeededDone' },
+    }),
+  });
+
+  const heading = screen.getByText('Heading 1', { selector: 'h1' });
+  expect(heading).toBeInTheDocument();
+
+  // 1. double click on content to open editbox
+  await userEvent.dblClick(heading);
+  await waitFor(() =>
+    expect(screen.getByRole('textbox', { name: 'markdown source' })).toBeInTheDocument(),
+  );
+
+  // 2. edit markdown source
+  const textbox = screen.getByRole('textbox', { name: 'markdown source' });
+  await userEvent.type(textbox, '\n\n# Heading 2');
+
+  // 3. click save button, and content changes
+  await userEvent.click(screen.getByRole('button', { name: 'save' }));
+  await waitFor(() =>
+    expect(screen.queryByRole('textbox', { name: 'markdown source' })).not.toBeInTheDocument(),
+  );
+  await screen.findByText('Heading 2', { selector: 'h1' });
+
+  await screen.findByText('saving changes');
+  await screen.findByText('success!');
+});
