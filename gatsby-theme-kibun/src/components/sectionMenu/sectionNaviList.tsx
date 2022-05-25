@@ -44,23 +44,10 @@ const NaviListItem: React.VFC<{ item: NaviItem }> = (props) => {
 };
 NaviListItem.displayName = 'NaviListItem';
 
-const NaviItemList: React.VFC<{ naviItems: NaviItem[] }> = React.memo((props) => {
-  const listItems: React.ReactElement[] = [];
-  for (let j = 0; j < props.naviItems.length; j++) {
-    const itemData = props.naviItems[j];
-    listItems.push(<NaviListItem key={j} item={itemData} />);
-  }
-  return <List>{listItems}</List>;
-});
-NaviItemList.displayName = 'NaviItemList';
-
-const SectionNaviListInner: React.VFC<{ naviData: NaviData }> = React.memo((props) => {
-  const naviListItems: React.ReactElement[] = [];
-
-  props.naviData.forEach((naviCategory, i) => {
-    naviListItems.push(
+const SectionCategoryNavi: React.VFC<NaviCategory> = React.memo((props) => {
+  return (
+    <React.Fragment>
       <ListSubheader
-        key={`header-${i}`}
         component="div"
         disableSticky
         sx={{
@@ -71,21 +58,23 @@ const SectionNaviListInner: React.VFC<{ naviData: NaviData }> = React.memo((prop
           paddingTop: 1.3,
           paddingBottom: 0.7,
           marginBottom: 1,
-          ':not(:first-child)': {
+          ':not(:first-of-type)': {
             marginTop: 2,
           },
         }}
       >
-        {naviCategory.category}
-      </ListSubheader>,
-    );
+        {props.category}
+      </ListSubheader>
 
-    naviListItems.push(<NaviItemList key={`list-${i}`} naviItems={naviCategory.menu} />);
-  });
-
-  return <List>{naviListItems}</List>;
+      <List>
+        {props.menu.map((itemData, j) => (
+          <NaviListItem key={j} item={itemData} />
+        ))}
+      </List>
+    </React.Fragment>
+  );
 });
-SectionNaviListInner.displayName = 'SectionNaviListInner';
+SectionCategoryNavi.displayName = 'SectionCategoryNavi';
 
 export const SectionNaviList: React.VFC = () => {
   const data = useStaticQuery<GatsbyTypes.SiteSectionMenuQuery>(
@@ -104,6 +93,15 @@ export const SectionNaviList: React.VFC = () => {
     `,
   );
   const naviData: NaviData = (data.sectionMenu?.childrenSectionMenuCategory as NaviData) || [];
-  return <SectionNaviListInner naviData={naviData} />;
+
+  const naviItems = naviData.map((naviCategory, i) => (
+    <SectionCategoryNavi key={i} category={naviCategory.category} menu={naviCategory.menu} />
+  ));
+
+  return (
+    <List role="navigation" aria-label="section navigation">
+      {naviItems}
+    </List>
+  );
 };
 SectionNaviList.displayName = 'SectionNaviList';
