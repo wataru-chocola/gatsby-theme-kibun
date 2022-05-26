@@ -18,7 +18,7 @@ import { ContentContainer } from '../components/contentContainer';
 
 import TableOfContents from '../components/content/toc';
 import { Content } from '../components/content';
-import EditBox, { EditBoxMonitor } from '../components/editbox';
+import { EditBox, EditBoxMonitor } from '../components/editbox';
 
 import { useMarkdownEditor } from '../hooks/useMarkdownEditor';
 import { ImageDataFromQL } from '../hooks/useImageDataCollectionFromQL';

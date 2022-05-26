@@ -13,7 +13,7 @@ const snackMessageSlice = createSlice({
   initialState: null as snackMessage | null,
   reducers: {
     setMessage(
-      state,
+      _state,
       action: PayloadAction<{
         message: string;
         severity?: severityType;
@@ -29,7 +29,7 @@ const snackMessageSlice = createSlice({
     },
     addErrorMessage: {
       reducer(
-        state,
+        _state,
         action: PayloadAction<{
           message: string;
           autoHideDuration?: number;
@@ -48,13 +48,13 @@ const snackMessageSlice = createSlice({
         return { payload: { message: emsg, autoHideDuration: autoHideDuration } };
       },
     },
-    hideMessage(state, action) {
+    hideMessage(state, _action) {
       if (state != null) {
         state.on = false;
       }
       return state;
     },
-    removeMessage(state, action) {
+    removeMessage(_state, _action) {
       return null;
     },
   },

@@ -9,6 +9,8 @@ const TableOfContents: React.FC = ({ children }) => {
 
   return (
     <Box
+      component="nav"
+      aria-label="table of contents"
       borderTop={1}
       borderBottom={1}
       paddingTop={3}
@@ -51,14 +53,12 @@ const TableOfContents: React.FC = ({ children }) => {
     >
       <Box
         paddingX={2}
-        sx={{
-          fontSize: '12px',
-          backgroundColor: 'primary.main',
-          color: 'white',
-          position: 'absolute',
-          top: '0%',
-          left: '0%',
-        }}
+        fontSize="12px"
+        bgcolor="primary.main"
+        color="white"
+        position="absolute"
+        top="0%"
+        left="0%"
       >
         Table Of Contents
       </Box>

@@ -108,7 +108,7 @@ export const FilterBox: React.VFC = (_props) => {
         setHiddenResults(false);
       }
     },
-    [setInputValue, dummypages],
+    [setInputValue],
   );
   const candidates = useFilterPages(dummypages, inputValue);
 
