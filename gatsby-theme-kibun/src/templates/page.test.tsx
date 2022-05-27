@@ -136,7 +136,7 @@ test('edit, preview, cancel', async () => {
     expect(screen.queryByRole('textbox', { name: 'markdown source' })).not.toBeInTheDocument(),
   );
   expect(screen.queryByText('Heading 2', { selector: 'h1' })).not.toBeInTheDocument();
-}, 10000);
+}, 15000);
 
 test('edit, save while logged in', async () => {
   // @ts-ignore
@@ -168,4 +168,4 @@ test('edit, save while logged in', async () => {
 
   await screen.findByText('saving changes');
   await screen.findByText('success!');
-});
+}, 15000);
