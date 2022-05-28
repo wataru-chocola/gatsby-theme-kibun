@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Box, Paper, Grid } from '@mui/material';
+import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 
 interface EditBoxLayoutProps {
   cancelBtn: React.ReactElement;
@@ -14,7 +15,7 @@ export const EditBoxLayout = React.forwardRef<HTMLDivElement, EditBoxLayoutProps
     const innerRef = React.useRef<HTMLDivElement | null>(null);
     React.useImperativeHandle(forwardedRef, () => innerRef.current!);
 
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const editBoxHeight = innerRef?.current?.scrollHeight;
       if (editBoxHeight != null) {
         window.scrollBy(0, editBoxHeight);

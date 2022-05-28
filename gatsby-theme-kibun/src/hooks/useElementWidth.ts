@@ -1,4 +1,5 @@
 import React from 'react';
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 function getWidth(e: HTMLElement): number {
   const rect = e.getBoundingClientRect();
@@ -9,7 +10,7 @@ export function useElementWidth(ref: React.RefObject<HTMLElement>): number {
   const [contentBoxWidth, setContentBoxWidth] = React.useState(
     ref.current ? getWidth(ref.current) : 0,
   );
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const updateBoxWidth = () => {
       if (ref.current !== null) {
         setContentBoxWidth(getWidth(ref.current));
